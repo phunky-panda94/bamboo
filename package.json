@@ -1,0 +1,11 @@
+{
+  "name": "bloghouse",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "concurrently": "^6.4.0"
+  },
+  "scripts": {
+    "start": "concurrently \"cd client; npm start\" \"cd server; npm run dev\""
+  }
+}
