@@ -2,6 +2,12 @@ const assert = require('chai').assert;
 const expect = require('chai').expect;
 const User = require('./user.model');
 
+const request = require('supertest');
+const routes = require('./user.routes');
+const express = require('express');
+const app = express();
+app.use('/', routes);
+
 describe('user model', () => {
     
     it('should be invalid if first name is empty', () => {
@@ -40,3 +46,14 @@ describe('user model', () => {
 
 })
 
+describe('user routes', () => {
+
+    it('POST request for login', () => {
+
+    }),
+
+    it('POST request to register', () => {
+
+    })
+
+})
