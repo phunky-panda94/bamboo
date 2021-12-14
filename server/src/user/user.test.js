@@ -1,12 +1,19 @@
 const assert = require('chai').assert;
 const expect = require('chai').expect;
-const User = require('./user.model');
 
+// route test dependencies
 const request = require('supertest');
 const routes = require('./user.routes');
 const express = require('express');
 const app = express();
 app.use('/', routes);
+
+// model test dependencies
+const User = require('./user.model');
+
+// mock database
+const { connectMockDatabase, disconnectMockDatabase } = require('../../util/mockDatabase');
+
 
 describe('user model', () => {
     
@@ -48,11 +55,18 @@ describe('user model', () => {
 
 describe('user routes', () => {
 
-    it('POST request for login', () => {
+    before(async () => connectMockDatabase());
+    after(async () => disconnectMockDatabase());
 
-    }),
+    describe('', () => {
 
-    it('POST request to register', () => {
+        it('POST request for login', () => {
+        
+        }),
+    
+        it('POST request to register', () => {
+    
+        })
 
     })
 
