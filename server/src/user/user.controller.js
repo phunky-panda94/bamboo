@@ -16,7 +16,7 @@ exports.register = [
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json(errors.array());
+            res.status(400).json(errors.array());
         } else {
 
             let encryptedPassword = encryptPassword(req.body.password);
@@ -29,10 +29,10 @@ exports.register = [
             })
 
             newUser.save(err => {
-                if (err) return res.status(400).json('Error occurred while registering new user');
+                console.log(err);
             })
 
-            return res.status(201).json('New user successfully registered');
+            res.status(201).json('New user successfully registered');
 
         }
 

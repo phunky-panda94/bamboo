@@ -10,7 +10,7 @@ router.post('/register', userController.register);
 
 router.post('/login', (req, res) => {
     // authenticate
-
+    
     // return token
 })
 
