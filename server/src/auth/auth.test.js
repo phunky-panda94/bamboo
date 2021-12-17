@@ -1,5 +1,4 @@
-const { authenticateToken, authenticateToken } = require('./auth');
-
+const { authenticateToken, authenticateUser } = require('./auth');
 
 describe('authenticate user',  () => {
 
