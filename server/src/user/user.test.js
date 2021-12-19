@@ -1,30 +1,27 @@
-const assert = require('chai').assert;
-const expect = require('chai').expect;
+const app = require('../../app');
 
 // route test dependencies
-const request = require('supertest');
-const routes = require('./user.routes');
-const express = require('express');
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use('/', routes);
+const request = require('supertest')(app);
+const { encrypedPassword, checkPassword } = require('../auth/auth');
 
 // model test dependencies
 const User = require('./user.model');
 const faker = require('faker');
 
-// mock database
-const { connectMockDatabase, disconnectMockDatabase } = require('../../util/mockDatabase');
+// memory database
+const database = require('../../util/memoryDatabase');
 
+beforeAll(async () => { database.connect() });
 
-describe.skip('user model', () => {
+afterAll(async () => { database.disconnect() });
+
+describe('user model', () => {
     
     it('should be invalid if first name is empty', () => {
         let newUser = new User();
 
         newUser.validate(err => {
-            expect(err.errors.firstName).to.exist;
+            expect(err.errors.firstName).toBeTruthy();
         })
     })
 
@@ -32,7 +29,7 @@ describe.skip('user model', () => {
         let newUser = new User();
 
         newUser.validate(err => {
-            expect(err.errors.lastName).to.exist;
+            expect(err.errors.lastName).toBeTruthy();
         })
     })
 
@@ -40,7 +37,7 @@ describe.skip('user model', () => {
         let newUser = new User();
 
         newUser.validate(err => {
-            expect(err.errors.email).to.exist;
+            expect(err.errors.email).toBeTruthy();
         })
     })
 
@@ -48,7 +45,7 @@ describe.skip('user model', () => {
         let newUser = new User();
 
         newUser.validate(err => {
-            expect(err.errors.password).to.exist;
+            expect(err.errors.password).toBeTruthy();
         })
     })
 
@@ -59,41 +56,112 @@ describe.skip('user model', () => {
             email: 'johnsmith@email.com'
         })
 
-        assert.equal(newUser.fullName, `${newUser.firstName} ${newUser.lastName}`);
+        expect(newUser.fullName).toBe(`${newUser.firstName} ${newUser.lastName}`);
     })
 
-})
+    it('should be created when required parameters provided', async () => {
+        let newUser = new User({
+            firstName: 'John',
+            lastName: 'Smith',
+            email: 'johnsmith@email.com',
+            password: 'password'
+        })
 
-describe('user routes', () => {
+        await newUser.save();
 
-    before(async function() {connectMockDatabase()});
-    after(async function() {disconnectMockDatabase()});
+        const foundUser = await User.findOne({ email: 'johnsmith@email.com' });
 
-    describe('', () => {
+        expect(foundUser.password).toEqual(newUser.password);
 
-        let newUser = {
+    })
+
+});
+
+describe('user routes & controllers', () => {
+
+    it('POST request to register returns status 400 and errors if validation errors', async () => {
+        
+        const newUser = {
+            firstName: '',
+            lastName: '',
+            email: 'abc',
+            password: ''
+        }
+
+        const response = await request
+            .post('/user/register')
+            .send(newUser);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors[0].param).toBe('firstName')
+        expect(response.body.errors[1].param).toBe('lastName')
+        expect(response.body.errors[2].param).toBe('email')
+        expect(response.body.errors[3].param).toBe('password')
+        
+    })
+
+    it('POST request to register with valid input to return status code 200 and message', async () => {
+        
+        const newUser = {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
             password: faker.internet.password()
         }
 
-        it('POST request for register', async () => {
-            
-            const response = await request(app)
-                .post('/register')
-                .set('Accept', 'application/json')
-                .send(newUser);
- 
-            expect(response.statusCode).to.equal(201);
-            expect(response.body).to.have.string('New user successfully registered');
+        const response = await request
+            .post('/user/register')
+            .send(newUser);
+        
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toBe('New user successfully registered');
 
-        }),
-    
-        it('POST request to login', () => {
-            
-        })
+    }),
 
+    it('POST request to register with valid input saves new user to database', async () => {
+        
+        const newUser = {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        }
+
+        await request
+            .post('/user/register')
+            .send(newUser);
+        
+        const savedUser = await User.findOne({ email: newUser.email.toLowerCase() });
+
+        expect(savedUser).toBeTruthy();
+        expect(savedUser.firstName).toBe(newUser.firstName);
+        expect(savedUser.lastName).toBe(newUser.lastName);
+
+    })
+
+    it('POST request to register with valid input saves encrypted password to database', async () => {
+
+        const newUser = {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        }
+
+        await request
+            .post('/user/register')
+            .send(newUser);
+
+        const savedUser = await User.findOne({ email: newUser.email.toLowerCase() });
+
+        const match = await checkPassword(newUser.password, savedUser.password);
+
+        expect(match).toBeTruthy();
+
+    })
+
+    it.skip('POST request to login', () => {
+        
     })
 
 });
