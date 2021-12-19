@@ -1,16 +1,10 @@
-const expect = require('chai').expect
 const request = require('supertest');
-const express = require('express');
-const indexRoutes = require('./index.route');
-
-const server = express();
-
-server.use('/', indexRoutes);
+const app = require('../../app');
 
 describe('index routes', () => {
 
     it('GET request for index', async () => {
-        const response = await request(server).get('/');
+        const response = await request(app).get('/');
         expect(response.statusCode).to.equal(200);
     });
 

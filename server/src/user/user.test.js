@@ -1,14 +1,7 @@
-const assert = require('chai').assert;
-const expect = require('chai').expect;
+const app = require('../../app');
 
 // route test dependencies
 const request = require('supertest');
-const routes = require('./user.routes');
-const express = require('express');
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use('/', routes);
 
 // model test dependencies
 const User = require('./user.model');
