@@ -10,7 +10,6 @@ const faker = require('faker');
 // mock database
 const { connectMockDatabase, disconnectMockDatabase } = require('../../util/mockDatabase');
 
-
 describe.skip('user model', () => {
     
     it('should be invalid if first name is empty', () => {
@@ -59,34 +58,27 @@ describe.skip('user model', () => {
 
 describe('user routes', () => {
 
-    before(async function() {connectMockDatabase()});
-    after(async function() {disconnectMockDatabase()});
+    let newUser = {
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password()
+    }
 
-    describe('', () => {
+    it('POST request for register', async () => {
+        
+        const response = await request(app)
+            .post('/register')
+            .set('Accept', 'application/json')
+            .send(newUser);
 
-        let newUser = {
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            email: faker.internet.email(),
-            password: faker.internet.password()
-        }
+        expect(response.statusCode).to.equal(201);
+        expect(response.body).to.have.string('New user successfully registered');
 
-        it('POST request for register', async () => {
-            
-            const response = await request(app)
-                .post('/register')
-                .set('Accept', 'application/json')
-                .send(newUser);
- 
-            expect(response.statusCode).to.equal(201);
-            expect(response.body).to.have.string('New user successfully registered');
+    }),
 
-        }),
-    
-        it('POST request to login', () => {
-            
-        })
-
+    it('POST request to login', () => {
+        
     })
 
 });
