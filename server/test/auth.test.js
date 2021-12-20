@@ -1,16 +1,16 @@
 const { authenticateToken, authenticateUser } = require('../src/auth/auth');
 
-describe('authenticate user',  () => {
+const User = require('../src/user/user.model');
 
-    it('should return user details if user found with matching credentials', () => {
+// memory database
+const database = require('../util/memoryDatabase');
 
-    })
-    
-    it('should return error if no user found with matching credentials', () => {
+beforeAll(async () => { 
+    await database.connect();
+    await database.seed();
+ });
 
-    })
-
-})
+afterAll(async () => database.disconnect());
 
 describe('authenticate token', () => {
 
@@ -19,6 +19,29 @@ describe('authenticate token', () => {
     })
 
     it('should return an error if token cannot be authenticated', () => {
+
+    })
+
+})
+
+
+describe('authenticate user',  () => {
+
+    it('should return true if user found with matching credentials', async () => {
+
+        const email = 'bwayne@wayne.com'
+        const password = 'batman'
+
+        expect(await authenticateUser(email, password)).toBeTruthy();
+
+    })
+    
+    it('should return false no user found with matching credentials', async () => {
+
+        const email = 'random@email.com'
+        const password = 'password'
+
+        expect(await authenticateUser(email, password)).toBeFalsy();
 
     })
 
