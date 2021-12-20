@@ -12,6 +12,19 @@ beforeAll(async () => {
 
 afterAll(async () => database.disconnect());
 
+describe('create token', () => {
+
+    it('returns a json web token', () => {
+
+        const email = 'example@email.com';
+        const token = createToken(email);
+
+        
+
+    })
+
+})
+
 describe('authenticate token', () => {
 
     it('should return an error if the token is null', () => {
@@ -23,7 +36,6 @@ describe('authenticate token', () => {
     })
 
 })
-
 
 describe('authenticate user',  () => {
 

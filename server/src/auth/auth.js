@@ -26,3 +26,10 @@ exports.authenticateUser = async (email, password) => {
 exports.authenticateToken = () => {
     
 }
+
+exports.createToken = (email) => {
+
+    const token = jwt.sign(email, process.env.TOKEN_SECRET);
+    return token;
+
+}
