@@ -1,6 +1,6 @@
 const User = require('./user.model');
 const { body, validationResult } = require('express-validator');
-const { encryptPassword } = require('../auth/auth');
+const { encryptPassword, checkPassword } = require('../auth/auth');
 
 exports.register = [
     
@@ -38,8 +38,22 @@ exports.register = [
     }
 ]
 
-exports.login = (req, res) => {
-    // authenticate
+exports.login = async (req, res) => {
     
-    // return token
+    const { email, password } = req.body;
+    
+    // authenticate
+    const user = await User.findOne({ email: email });
+    
+    // successful login
+    if (user && await checkPassword(password, user.password)) {
+        return res.status(200).json('successfully logged in');
+    }
+
+    return res.status(401).json('unauthorised');
+    
+}
+
+exports.getUser = (req, res) => {
+
 }

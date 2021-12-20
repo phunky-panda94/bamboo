@@ -53,13 +53,13 @@ function populateUsers(cb) {
 
     async.series([
         (callback) => {
-          createUser(faker.firstName(), faker.lastName(), faker.internet.email(), callback);
+          createUser(faker.name.firstName(), faker.name.lastName(), faker.internet.email(), callback);
         },
         (callback) => {
-            createUser(faker.firstName(), faker.lastName(), faker.internet.email(), callback);
+            createUser(faker.name.firstName(), faker.name.lastName(), faker.internet.email(), callback);
         },
         (callback) => {
-            createUser(faker.firstName(), faker.lastName(), faker.internet.email(), callback);
+            createUser(faker.name.firstName(), faker.name.lastName(), faker.internet.email(), callback);
         }
     ], cb);
 
