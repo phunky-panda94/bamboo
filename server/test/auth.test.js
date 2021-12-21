@@ -1,4 +1,4 @@
-const { authenticateToken, authenticateUser } = require('../src/auth/auth');
+const { authenticateToken, authenticateUser, createToken } = require('../src/auth/auth');
 
 const User = require('../src/user/user.model');
 
@@ -14,12 +14,14 @@ afterAll(async () => database.disconnect());
 
 describe('create token', () => {
 
-    it('returns a json web token', () => {
+    it.only('returns a json web token', () => {
 
         const email = 'example@email.com';
         const token = createToken(email);
 
-        
+        const components = token.split('.');
+
+        expect(components.length).toEqual(3);
 
     })
 
@@ -27,8 +29,10 @@ describe('create token', () => {
 
 describe('authenticate token', () => {
 
-    it('should return an error if the token is null', () => {
+    it('should return an error if the token is undefined', () => {
         
+        
+
     })
 
     it('should return an error if token cannot be authenticated', () => {
