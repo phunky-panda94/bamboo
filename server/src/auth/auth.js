@@ -23,8 +23,10 @@ exports.authenticateUser = async (email, password) => {
 
 }
 
-exports.authenticateToken = () => {
-    
+exports.authenticateToken = (token) => {
+
+    return jwt.verify(token, process.env.TOKEN_SECRET);
+
 }
 
 exports.createToken = (email) => {

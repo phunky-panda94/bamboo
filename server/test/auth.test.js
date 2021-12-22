@@ -1,4 +1,5 @@
 const { authenticateToken, authenticateUser, createToken } = require('../src/auth/auth');
+const { JsonWebTokenError } = require('jsonwebtoken');
 
 const User = require('../src/user/user.model');
 
@@ -14,7 +15,7 @@ afterAll(async () => database.disconnect());
 
 describe('create token', () => {
 
-    it.only('returns a json web token', () => {
+    it('returns a json web token', () => {
 
         const email = 'example@email.com';
         const token = createToken(email);
@@ -31,12 +32,19 @@ describe('authenticate token', () => {
 
     it('should return an error if the token is undefined', () => {
         
-        
-
     })
 
-    it('should return an error if token cannot be authenticated', () => {
+    it.only('should return an error if token cannot be authenticated', () => {
 
+        const token = 'abcd.1234.qwer';
+        
+        try {
+            authenticateToken(token);
+        } catch (err) {
+            expect(err).toEqual(new JsonWebTokenError('invalid token'));
+
+        }
+        
     })
 
 })
