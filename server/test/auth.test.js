@@ -30,21 +30,31 @@ describe('create token', () => {
 
 describe('authenticate token', () => {
 
-    it('should return an error if the token is undefined', () => {
+    it('should return false if the token is undefined', () => {
+      
+        const token = undefined;
+        const valid = authenticateToken(token);
+
+        expect(valid).toBeFalsy();
+
+    })
+
+    it('should return false if token cannot be authenticated', () => {
+
+        const token = 'abcd.1234.qwer';
+        const valid = authenticateToken(token);
+
+        expect(valid).toBeFalsy();
         
     })
 
-    it.only('should return an error if token cannot be authenticated', () => {
+    it('should return true if token is valid', () => {
 
-        const token = 'abcd.1234.qwer';
-        
-        try {
-            authenticateToken(token);
-        } catch (err) {
-            expect(err).toEqual(new JsonWebTokenError('invalid token'));
+        const token = createToken('batman');
+        const valid = authenticateToken(token);
 
-        }
-        
+        expect(valid).toBeTruthy();
+
     })
 
 })

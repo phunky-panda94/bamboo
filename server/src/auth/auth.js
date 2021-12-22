@@ -25,7 +25,10 @@ exports.authenticateUser = async (email, password) => {
 
 exports.authenticateToken = (token) => {
 
-    return jwt.verify(token, process.env.TOKEN_SECRET);
+    return jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
+        if (err) return false;
+        return true
+    });
 
 }
 
