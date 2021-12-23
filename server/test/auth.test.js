@@ -1,10 +1,25 @@
 const { authenticateToken, authenticateUser, createToken } = require('../src/auth/auth');
-const { JsonWebTokenError } = require('jsonwebtoken');
-
 const User = require('../src/user/user.model');
-
+const { response } = require('express');
 // memory database
 const database = require('../util/memoryDatabase');
+
+// mocks
+const mockRequest = (headers, body) => {
+    return {
+        headers: headers,
+        body: body
+    }
+}
+
+const mockResponse = () => {
+    return {
+        status: jest.fn().mockReturnValue({}),
+        json: jest.fn().mockReturnValue({})
+    }
+}
+
+const next = jest.fn();
 
 beforeAll(async () => { 
     await database.connect();
@@ -30,32 +45,44 @@ describe('create token', () => {
 
 describe('authenticate token', () => {
 
-    it('should return false if the token is undefined', () => {
-      
-        const token = undefined;
-        const valid = authenticateToken(token);
-
-        expect(valid).toBeFalsy();
-
-    })
-
-    it('should return false if token cannot be authenticated', () => {
-
-        const token = 'abcd.1234.qwer';
-        const valid = authenticateToken(token);
-
-        expect(valid).toBeFalsy();
+    it('should return error if no token in header', () => {
         
+        const expectedResponse = { error: 'No token in Authorization header' };
+        const req = mockRequest({}, {});
+        const res = mockResponse();
+
+        authenticateToken(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith(expectedResponse);
+
     })
 
-    it('should return true if token is valid', () => {
+    it('should return error if invalid token in header', () => {
 
-        const token = createToken('batman');
-        const valid = authenticateToken(token);
+        const expectedResponse = { error: 'Unauthorized' };
+        const req = mockRequest({ authorization: 'Bearer abc' }, {});
+        const res = mockResponse();
 
-        expect(valid).toBeTruthy();
+        authenticateToken(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith(expectedResponse);
 
     })
+
+    it('should return called next function if token is valid', () => {
+
+        const token = createToken('email');
+        const req = mockRequest({ authorization: `Bearer ${token}` }, {});
+        const res = mockResponse();
+
+        authenticateToken(req, res, next);
+
+        expect(next).toHaveBeenCalled();
+
+    })
+
 
 })
 

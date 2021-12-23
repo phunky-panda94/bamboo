@@ -23,12 +23,33 @@ exports.authenticateUser = async (email, password) => {
 
 }
 
-exports.authenticateToken = (token) => {
+// exports.authenticateToken = (token) => {
 
-    return jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
-        if (err) return false;
-        return true
-    });
+//     return jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
+//         if (err) return false;
+//         return true
+//     });
+
+// }
+
+exports.authenticateToken = (req, res, next) => {
+
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) {
+        res.status(401);
+        return res.json({ error: 'No token in Authorization header' });
+    }
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
+        if (err) {
+            res.status(403);
+            return res.json({ error: 'Unauthorized'});
+        }
+    })
+
+    next();
 
 }
 
