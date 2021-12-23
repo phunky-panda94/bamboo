@@ -13,16 +13,6 @@ exports.checkPassword = async (password, encryptedPassword) => {
     return match;
 }
 
-// exports.authenticateUser = async (email, password) => {
-
-//     const user = await User.findOne({ email: email });
-
-//     if (user && await this.checkPassword(password, user.password)) return true;
-    
-//     return false;
-
-// }
-
 exports.authenticateUser = async (req, res, next) => {
 
     const { email, password } = req.body;
