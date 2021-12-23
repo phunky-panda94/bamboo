@@ -88,21 +88,60 @@ describe('authenticate token', () => {
 
 describe('authenticate user',  () => {
 
-    it('should return true if user found with matching credentials', async () => {
+    it('should call next function if user found with matching credentials', async () => {
 
         const email = 'bwayne@wayne.com'
         const password = 'batman'
 
-        expect(await authenticateUser(email, password)).toBeTruthy();
+        const req = mockRequest({}, {
+            email: email,
+            password: password
+        })
+
+        const res = mockResponse();
+
+        await authenticateUser(req, res, next);
+
+        expect(next).toHaveBeenCalled();
 
     })
     
-    it('should return false no user found with matching credentials', async () => {
+    it('should return error if no user found with matching credentials', async () => {
 
         const email = 'random@email.com'
         const password = 'password'
 
-        expect(await authenticateUser(email, password)).toBeFalsy();
+        const req = mockRequest({},{
+            email: email,
+            password: password
+        })
+
+        const res = mockResponse();
+
+        await authenticateUser(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials'});
+
+    })
+
+    it('should return error if invalid password provided', async () => {
+
+        const email = 'bwayne@wayne.com';
+        const password = 'invalid';
+
+        const req = mockRequest({},{
+            email: email,
+            password: password
+        })
+
+        const res = mockResponse();
+
+        await authenticateUser(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials'});
+
 
     })
 

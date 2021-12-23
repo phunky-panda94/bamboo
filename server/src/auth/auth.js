@@ -13,13 +13,28 @@ exports.checkPassword = async (password, encryptedPassword) => {
     return match;
 }
 
-exports.authenticateUser = async (email, password) => {
+// exports.authenticateUser = async (email, password) => {
+
+//     const user = await User.findOne({ email: email });
+
+//     if (user && await this.checkPassword(password, user.password)) return true;
+    
+//     return false;
+
+// }
+
+exports.authenticateUser = async (req, res, next) => {
+
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email: email });
 
-    if (user && await this.checkPassword(password, user.password)) return true;
-    
-    return false;
+    if (!user || !await this.checkPassword(password, user.password)) {
+        res.status(401);
+        return res.json({ error: 'Invalid credentials'})
+    }
+
+    next();
 
 }
 
