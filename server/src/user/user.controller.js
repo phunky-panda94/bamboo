@@ -39,13 +39,7 @@ exports.register = [
 ]
 
 exports.login = async (req, res) => {
-    
-    const { email, password } = req.body;
-    
-    if (await authenticateUser(email, password)) return res.status(200).json('successfully logged in');
-
-    return res.status(401).json('unauthorised');
-    
+    return res.status(200).json(res.locals.user);
 }
 
 exports.getUser = (req, res) => {

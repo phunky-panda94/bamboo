@@ -11,9 +11,9 @@ const faker = require('faker');
 // memory database
 const database = require('../util/memoryDatabase');
 
-beforeAll(async () => database.connect());
+beforeAll(async () => await database.connect());
 
-afterAll(async () => database.disconnect());
+afterAll(async () => await database.disconnect());
 
 describe('user model', () => {
     
@@ -174,10 +174,15 @@ describe('user routes & controllers', () => {
 
     describe('login', () => {
 
-        beforeAll(async () => database.seed());
+        beforeAll(async () => await database.seed());
 
         it('POST request to login with correct credentials returns status 200', async () => {
-      
+
+            const user = {
+                firstName: 'Bruce',
+                lastName: 'Wayne'
+            }
+
             const response = await request
                 .post('/user/login')
                 .send({
@@ -186,7 +191,7 @@ describe('user routes & controllers', () => {
                 })
 
             expect(response.statusCode).toBe(200);
-            expect(response.body).toBe('successfully logged in');
+            expect(response.body).toEqual(user);
     
         })
 
@@ -200,7 +205,8 @@ describe('user routes & controllers', () => {
                 })
 
             expect(response.statusCode).toBe(401);
-            expect(response.body).toBe('unauthorised');
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('Invalid credentials');
 
         })
     
@@ -214,7 +220,8 @@ describe('user routes & controllers', () => {
                 })
 
             expect(response.statusCode).toBe(401);
-            expect(response.body).toBe('unauthorised');
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('Invalid credentials');
 
         })
 

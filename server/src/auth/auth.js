@@ -16,14 +16,19 @@ exports.checkPassword = async (password, encryptedPassword) => {
 exports.authenticateUser = async (req, res, next) => {
 
     const { email, password } = req.body;
-
+    
     const user = await User.findOne({ email: email });
-
+    
     if (!user || !await this.checkPassword(password, user.password)) {
         res.status(401);
         return res.json({ error: 'Invalid credentials'})
     }
 
+    res.locals.user = { 
+        firstName: user.firstName,
+        lastName: user.lastName
+    };
+   
     next();
 
 }
