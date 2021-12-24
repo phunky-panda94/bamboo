@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const indexRouter = require('./src/index/index.route');
+const indexRouter = require('./src/index/index.routes');
 const userRouter = require('./src/user/user.routes');
 
 const app = express();
