@@ -43,5 +43,5 @@ exports.login = async (req, res) => {
 }
 
 exports.getUser = (req, res) => {
-
+    
 }
