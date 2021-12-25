@@ -82,6 +82,7 @@ describe('post controllers', () => {
         await controller.create(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'post could not be created' })
 
     })
 
@@ -111,6 +112,7 @@ describe('post controllers', () => {
         await controller.get(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ error: 'post not found' })
 
     })
 
@@ -135,10 +137,10 @@ describe('post controllers', () => {
 
     })
 
-    it.only('update should return 400 if error updating the post', async () => {
+    it('update should return 400 if error updating the post', async () => {
 
         const req = mockRequest({
-            post: existingPost._id,
+            post: 'abcd',
             content: ''
         })
 
@@ -147,6 +149,7 @@ describe('post controllers', () => {
         await controller.update(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'post could not be updated' })
 
     })
 
@@ -175,6 +178,7 @@ describe('post controllers', () => {
         await controller.delete(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'post does not exist' })
 
     })
 
