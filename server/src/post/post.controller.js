@@ -30,9 +30,9 @@ exports.get = async (req, res) => {
 
 exports.update = async (req, res) => {
 
-    const { post, updatedContent } = req.body;
+    const { post, content } = req.body;
 
-    Post.updateOne({ _id: post }, { content: updatedContent }, err => {
+    await Post.findByIdAndUpdate(post, { content: content }).catch(err => {
         return res.status(400);
     });
 
@@ -40,6 +40,14 @@ exports.update = async (req, res) => {
 
 }
 
-exports.delete = async () => {
+exports.delete = async (req, res) => {
+
+    const { post } = req.body
+
+    await Post.findByIdAndDelete(post).catch(err => {
+        return res.status(400);
+    });
+
+    return res.status(202);
 
 } 

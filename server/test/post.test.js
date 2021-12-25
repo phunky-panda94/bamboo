@@ -116,12 +116,11 @@ describe('post controllers', () => {
 
     it('update should update the post in datebase and return status 204', async () => {
 
-        
         const updatedContent = "I'm Batman";
         
         const req = mockRequest({
             post: existingPost._id,
-            updatedContent: updatedContent
+            content: updatedContent
         });
 
         const res = mockResponse();
@@ -136,7 +135,46 @@ describe('post controllers', () => {
 
     })
 
+    it.only('update should return 400 if error updating the post', async () => {
+
+        const req = mockRequest({
+            post: existingPost._id,
+            content: ''
+        })
+
+        const res = mockResponse();
+
+        await controller.update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+
+    })
+
     it('delete should remove the post from the database and return status 202', async () => {
+
+        const req = mockRequest({
+            post: existingPost._id
+        })
+
+        const res = mockResponse();
+
+        await controller.delete(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(202);
+
+    })
+
+    it('delete should return 400 if error deleting the post', async () => {
+
+        const req = mockRequest({
+            post: ''
+        })
+
+        const res = mockResponse();
+
+        await controller.delete(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
 
     })
 
