@@ -5,26 +5,38 @@ exports.create = async (req, res) => {
 
     const { user, content } = req.body;
 
-    const author = await User.findOne({ _id: user });
-
-    const post = new Post({
-        author: author,
+    const post = await Post.create({
+        author: user,
         content: content
-    })
-
-    post.save(err => {
+    }).catch(err => {
         return res.status(400);
-    })
+    });
+    
+    return res.status(201).json({ post: post._id });
+    
+}
 
-    return res.status(201);
+exports.get = async (req, res) => {
+
+    const { post } = req.body;
+
+    const foundPost = await Post.findById(post).catch(err => {
+        return res.status(404);
+    });
+
+    return res.status(200).json(foundPost);
 
 }
 
-exports.get = async () => {
+exports.update = async (req, res) => {
 
-}
+    const { post, updatedContent } = req.body;
 
-exports.update = async () => {
+    Post.updateOne({ _id: post }, { content: updatedContent }, err => {
+        return res.status(400);
+    });
+
+    return res.status(204);
 
 }
 

@@ -3,6 +3,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const faker = require('faker');
 const User = require('../src/user/user.model');
+const Post = require('../src/post/post.model');
 const { encryptPassword } = require('../src/auth/auth');
 
 let database;
@@ -31,5 +32,12 @@ exports.seed = async () => {
     });
 
     await user.save();
+
+    const post = new Post({
+        author: user._id,
+        content: "this is a placeholder"
+    })
+
+    await post.save();
 
 }
