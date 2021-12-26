@@ -39,7 +39,7 @@ exports.register = [
 ]
 
 exports.login = async (req, res) => {
-    return res.status(200).json(res.locals.user);
+    return res.status(200);
 }
 
 exports.getUser = (req, res) => {

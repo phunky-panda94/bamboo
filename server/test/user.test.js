@@ -191,7 +191,7 @@ describe('user routes & controllers', () => {
                 })
 
             expect(response.statusCode).toBe(200);
-            expect(response.body).toEqual(user);
+            expect(response.body).toEqual({ token: expect.anything(), user: user });
     
         })
 
