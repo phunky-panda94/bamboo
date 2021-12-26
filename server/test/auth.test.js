@@ -13,8 +13,7 @@ const mockRequest = (headers, body) => {
 
 const mockResponse = () => {
     return {
-        locals: {},
-        status: jest.fn().mockReturnValue({}),
+        status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnValue({})
     }
 }
@@ -88,7 +87,7 @@ describe('authenticate token', () => {
 
 describe('authenticate user',  () => {
 
-    it.only('should add user to locals and call next function if user found with matching credentials', async () => {
+    it('should add user and token and call next function if user found with matching credentials', async () => {
 
         const email = 'bwayne@wayne.com'
         const password = 'batman'
@@ -107,7 +106,8 @@ describe('authenticate user',  () => {
 
         await authenticateUser(req, res, next);
 
-        expect(res.locals.user).toEqual(user)
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ user: { firstName: user.firstName, lastName: user.lastName }, token: expect.anything() })
         expect(next).toHaveBeenCalled();
 
     })

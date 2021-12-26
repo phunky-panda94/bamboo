@@ -20,15 +20,19 @@ exports.authenticateUser = async (req, res, next) => {
     const user = await User.findOne({ email: email });
     
     if (!user || !await this.checkPassword(password, user.password)) {
-        res.status(401);
-        return res.json({ error: 'Invalid credentials'})
+        return res.status(401).json({ error: 'Invalid credentials'})
     }
 
-    res.locals.user = { 
-        firstName: user.firstName,
-        lastName: user.lastName
-    };
-   
+    const token = this.createToken(email);
+
+    res.status(200).json({
+        user: {
+            firstName: user.firstName,
+            lastName: user.lastName
+        },
+        token: token
+    })
+
     next();
 
 }
@@ -39,14 +43,12 @@ exports.authenticateToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (token == null) {
-        res.status(401);
-        return res.json({ error: 'No token in Authorization header' });
+        return res.status(401).json({ error: 'No token in Authorization header' });
     }
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
         if (err) {
-            res.status(403);
-            return res.json({ error: 'Unauthorized'});
+            return res.status(403).json({ error: 'Unauthorized'});
         }
     })
 
