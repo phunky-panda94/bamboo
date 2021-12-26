@@ -1,6 +1,9 @@
 const Post = require('../src/post/post.model');
 const User = require('../src/user/user.model');
 const controller = require('../src/post/post.controller');
+const auth = require('../src/middleware/auth');
+
+jest.spyOn(auth, 'authenticateToken');
 
 const app = require('../app');
 const request = require('supertest')(app);
@@ -204,10 +207,10 @@ describe('post routes', () => {
 
     it.only('POST request to create post authenticates token and calls create method of post controller', async () => {
 
-        const response = await request
+        await request
             .post('/api/posts/')
 
-        expect(response.statusCode).toBe(201);
+        expect(auth.authenticateToken).toHaveBeenCalled();
 
     })
 
