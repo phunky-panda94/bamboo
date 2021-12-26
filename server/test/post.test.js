@@ -1,7 +1,9 @@
 const Post = require('../src/post/post.model');
 const User = require('../src/user/user.model');
 const controller = require('../src/post/post.controller');
-const { ObjectId } = require('mongoose');
+
+const app = require('../app');
+const request = require('supertest')(app);
 
 // mocks
 const mockRequest = (body) => {
@@ -17,6 +19,7 @@ const mockResponse = () => {
     return res;
 }
 
+// setup
 const database = require('../util/memoryDatabase');
 
 let user;
@@ -28,6 +31,7 @@ beforeAll(async () => {
     user = await User.findOne({ email: 'bwayne@wayne.com' });
     existingPost = await Post.findOne({ author: user._id, content: 'this is a placeholder' });
 });
+
 afterAll(async() => await database.disconnect());
 
 describe('post model', () => {
@@ -88,9 +92,9 @@ describe('post controllers', () => {
 
     it('get should return the post from the database and return status 200', async () => {
     
-        const req = mockRequest({
-            post: existingPost._id
-        })
+        const req = {
+            params: { post: existingPost._id }
+        }
 
         const res = mockResponse();
 
@@ -103,9 +107,9 @@ describe('post controllers', () => {
 
     it('get should return 404 if post not found in database', async () => {
 
-        const req = mockRequest({
-            post: '1234'
-        })
+        const req = {
+            params: { post: '1234' }
+        }
 
         const res = mockResponse();
 
@@ -116,14 +120,26 @@ describe('post controllers', () => {
 
     })
 
+    it('getAll should return all posts from database and status 200', async () => {
+
+        const req = mockRequest({})
+        const res = mockResponse();
+
+        await controller.getAll(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ posts: expect.anything() });
+
+    });
+
     it('update should update the post in datebase and return status 204', async () => {
 
         const updatedContent = "I'm Batman";
         
-        const req = mockRequest({
-            post: existingPost._id,
-            content: updatedContent
-        });
+        const req = {
+            params: { post: existingPost._id },
+            body: { content: updatedContent }
+        };
 
         const res = mockResponse();
 
@@ -139,10 +155,10 @@ describe('post controllers', () => {
 
     it('update should return 400 if error updating the post', async () => {
 
-        const req = mockRequest({
-            post: 'abcd',
-            content: ''
-        })
+        const req = {
+            params: { post: 'abcd' },
+            body: { content: '' }
+        };
 
         const res = mockResponse();
 
@@ -155,9 +171,9 @@ describe('post controllers', () => {
 
     it('delete should remove the post from the database and return status 202', async () => {
 
-        const req = mockRequest({
-            post: existingPost._id
-        })
+        const req = {
+            params: { post: existingPost._id }
+        }
 
         const res = mockResponse();
 
@@ -169,9 +185,9 @@ describe('post controllers', () => {
 
     it('delete should return 400 if error deleting the post', async () => {
 
-        const req = mockRequest({
-            post: ''
-        })
+        const req = {
+            params: { post: 'abcd' }
+        }
 
         const res = mockResponse();
 
@@ -179,6 +195,35 @@ describe('post controllers', () => {
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({ error: 'post does not exist' })
+
+    })
+
+})
+
+describe('post routes', () => {
+
+    it.only('POST request to create post authenticates token and calls create method of post controller', async () => {
+
+        const response = await request
+            .post('/api/posts/')
+
+        expect(response.statusCode).toBe(201);
+
+    })
+
+    it('GET request for all posts calls getAll method of post controller', () => {
+
+    })
+
+    it('GET request for a post calls get method of post controller', () => {
+
+    })
+
+    it('PUT request for a post calls put method of post controller', () => {
+
+    })
+
+    it('DELETE request for a post calls delete methof of post controller', () => {
 
     })
 

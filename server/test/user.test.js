@@ -2,7 +2,7 @@ const app = require('../app');
 
 // route test dependencies
 const request = require('supertest')(app);
-const { checkPassword } = require('../src/auth/auth');
+const { checkPassword } = require('../src/middleware/auth');
 
 // model test dependencies
 const User = require('../src/user/user.model');
@@ -91,7 +91,7 @@ describe('user routes & controllers', () => {
             }
     
             const response = await request
-                .post('/user/register')
+                .post('/api/user/register')
                 .send(newUser);
     
             expect(response.statusCode).toBe(400);
@@ -112,7 +112,7 @@ describe('user routes & controllers', () => {
             }
     
             const response = await request
-                .post('/user/register')
+                .post('/api/user/register')
                 .send(newUser);
             
             expect(response.statusCode).toBe(201);
@@ -130,7 +130,7 @@ describe('user routes & controllers', () => {
             }
     
             await request
-                .post('/user/register')
+                .post('/api/user/register')
                 .send(newUser);
             
             const savedUser = await User.findOne({ 
@@ -155,7 +155,7 @@ describe('user routes & controllers', () => {
             }
     
             await request
-                .post('/user/register')
+                .post('/api/user/register')
                 .send(newUser);
     
             const savedUser = await User.findOne({ 
@@ -184,7 +184,7 @@ describe('user routes & controllers', () => {
             }
 
             const response = await request
-                .post('/user/login')
+                .post('/api/user/login')
                 .send({
                     email: 'bwayne@wayne.com',
                     password: 'batman'
@@ -198,7 +198,7 @@ describe('user routes & controllers', () => {
         it('POST request to login with incorrect credentials returns status 401', async () => {
 
             const response = await request
-                .post('/user/login')
+                .post('/api/user/login')
                 .send({
                     email: 'random@email.com',
                     password: 'password'
@@ -213,7 +213,7 @@ describe('user routes & controllers', () => {
         it('POST request to login with incorrect password returns status 401', async () => {
 
             const response = await request
-                .post('/user/login')
+                .post('/api/user/login')
                 .send({
                     email: 'bwayne@wayne.com',
                     password: 'password'

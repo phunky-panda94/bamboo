@@ -4,7 +4,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const faker = require('faker');
 const User = require('../src/user/user.model');
 const Post = require('../src/post/post.model');
-const { encryptPassword } = require('../src/auth/auth');
+const { createToken, encryptPassword } = require('../src/middleware/auth');
 
 let database;
 

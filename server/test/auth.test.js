@@ -1,6 +1,5 @@
-const { authenticateToken, authenticateUser, createToken } = require('../src/auth/auth');
+const { authenticateToken, authenticateUser, createToken } = require('../src/middleware/auth');
 const User = require('../src/user/user.model');
-const { response } = require('express');
 // memory database
 const database = require('../util/memoryDatabase');
 

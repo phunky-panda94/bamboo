@@ -1,6 +1,6 @@
 const User = require('./user.model');
 const { body, validationResult } = require('express-validator');
-const { authenticateUser, encryptPassword, checkPassword } = require('../auth/auth');
+const { encryptPassword } = require('../middleware/auth');
 
 exports.register = [
     

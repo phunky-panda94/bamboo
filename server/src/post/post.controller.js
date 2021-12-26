@@ -9,7 +9,6 @@ exports.create = async (req, res) => {
         author: user,
         content: content
     }).catch(err => {
-        console.log(err);
         return res.status(400).json({ error: 'post could not be created' });
     });
     
@@ -19,7 +18,7 @@ exports.create = async (req, res) => {
 
 exports.get = async (req, res) => {
 
-    const { post } = req.body;
+    const { post } = req.params;
 
     const foundPost = await Post.findById(post).catch(err => {
         return res.status(404).json({ error: 'post not found' });
@@ -29,9 +28,20 @@ exports.get = async (req, res) => {
 
 }
 
+exports.getAll = async (req, res) => {
+
+    const posts = await Post.find({}).catch(err => {
+        return res.status(400).json({ error: 'error retrieving posts' })
+    })
+
+    return res.status(200).json({ posts: posts })
+
+}
+
 exports.update = async (req, res) => {
 
-    const { post, content } = req.body;
+    const { post } = req.params
+    const { content } = req.body;
 
     await Post.findByIdAndUpdate(post, { content: content }, { runValidators: true }).catch(err => {
         return res.status(400).json({ error: 'post could not be updated' });
@@ -43,7 +53,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
 
-    const { post } = req.body
+    const { post } = req.params
 
     await Post.findByIdAndDelete(post).catch(err => {
         return res.status(400).json({ error: 'post does not exist' });
