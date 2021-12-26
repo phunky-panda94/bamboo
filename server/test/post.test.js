@@ -1,12 +1,6 @@
 const Post = require('../src/post/post.model');
 const User = require('../src/user/user.model');
 const controller = require('../src/post/post.controller');
-const auth = require('../src/middleware/auth');
-
-jest.spyOn(auth, 'authenticateToken');
-
-const app = require('../app');
-const request = require('supertest')(app);
 
 // mocks
 const mockRequest = (body) => {
@@ -205,16 +199,37 @@ describe('post controllers', () => {
 
 describe('post routes', () => {
 
+    let app;
+    let request;
+    let mockController;
+    let mockAuth;
+
+    beforeAll(() => {
+        mockController = require('../src/post/post.controller');
+        mockAuth = require('../src/middleware/auth');
+
+        jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'getAll').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
+
+        app = require('../app');
+        request = require('supertest')(app);
+    })
+
     it.only('POST request to create post authenticates token and calls create method of post controller', async () => {
 
-        await request
-            .post('/api/posts/')
+        await request.post('/api/posts/');
 
-        expect(auth.authenticateToken).toHaveBeenCalled();
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.create).toHaveBeenCalled();
 
     })
 
-    it('GET request for all posts calls getAll method of post controller', () => {
+    it.only('GET request for all posts calls getAll method of post controller', async () => {
+
+        await request.get('/api/posts/');
+
+        expect(mockController.getAll).toHaveBeenCalled();
 
     })
 
