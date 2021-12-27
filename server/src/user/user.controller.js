@@ -36,11 +36,9 @@ exports.validate = [
 
         const errors = validationResult(req);
 
-    // return status 400 if validations errors exist
-    if (!errors.isEmpty()) return res.status(400).json(errors);
+        if (!errors.isEmpty()) return res.status(400).json(errors);
 
         next();
-
     }
 
 ]

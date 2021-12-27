@@ -1,19 +1,3 @@
-// route test dependencies
-const { checkPassword } = require('../src/middleware/auth');
-
-// model test dependencies
-const User = require('../src/user/user.model');
-const faker = require('faker');
-
-// mocks
-const mockResponse = () => {
-    return {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn().mockReturnThis()
-    }
-}
-
-// memory database
 const database = require('../util/memoryDatabase');
 
 beforeAll(async () => await database.connect());
@@ -21,7 +5,9 @@ beforeAll(async () => await database.connect());
 afterAll(async () => await database.disconnect());
 
 describe('user model', () => {
-    
+
+    const User = require('../src/user/user.model');
+
     it('should be invalid if first name is empty', () => {
         let newUser = new User();
 
@@ -85,41 +71,47 @@ describe('user model', () => {
 describe('user controller', () => {
 
     const controller = require('../src/user/user.controller');
+    const faker = require('faker')
+
     const mockAuth = require('../src/middleware/auth');
+    jest.spyOn(mockAuth, 'encryptPassword').mockImplementation((password) => { console.log('called'); return password });
 
-    jest.spyOn(auth, 'encryptPassword').mockImplementation(() => { return 'encrypted password' })
+    const mockUser = require('../src/user/user.model');
+    jest.spyOn(mockUser.prototype, 'save').mockReturnValue();
 
-    describe.skip('validate', () => {
+    const mockResponse = () => {
+        return {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis()
+        }
+    }
 
-        it('POST request to register returns status 400 and errors if validation errors', async () => {
-        
-            const newUser = {
-                firstName: '',
-                lastName: '',
-                email: 'abc',
-                password: ''
-            }
+    const next = jest.fn().mockReturnValue();
 
-            const req = { 
-                body: newUser
-            }
+    it('validate returns status 400 and validation errors if invalid input', async () => {
 
-            const res = mockResponse();
+        const newUser = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: ''
+        }
 
-            await controller.register(req, res);
-    
-            expect(res.status).toBe(400);
-            expect(res.body.errors[0].param).toBe('firstName')
-            expect(res.body.errors[1].param).toBe('lastName')
-            expect(res.body.errors[2].param).toBe('email')
-            expect(res.body.errors[3].param).toBe('password')
-            
-        })
+        const req = {
+            body: newUser
+        }
+
+        const res = mockResponse();
+
+        await controller.validate(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ errors: expect.anything() });
 
     })
 
-    it('register with return status 200 and message', async () => {
-        
+    it.only('register calls encryptPassword and save before returning status 201 if no errors', async () => {
+
         const newUser = {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
@@ -134,27 +126,22 @@ describe('user controller', () => {
         const res = mockResponse();
 
         await controller.register(req, res);
-        
-        expect(res.status).toHaveBeenCalledWith(201);
+
         expect(mockAuth.encryptPassword).toHaveBeenCalled();
+        expect(mockUser.prototype.save).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
 
     }),
 
     it('login returns status 200', async () => {
 
-        const user = {
-            firstName: 'Bruce',
-            lastName: 'Wayne'
-        }
+        const req = {}
 
-        const response = await request
-            .post('/api/user/login')
-            .send({
-                email: 'bwayne@wayne.com',
-                password: 'batman'
-            })
+        const res = mockResponse();
 
-        expect(response.statusCode).toBe(200);
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
 
     })
 
