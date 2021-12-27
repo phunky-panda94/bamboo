@@ -1,12 +1,17 @@
-const app = require('../app');
-
 // route test dependencies
-const request = require('supertest')(app);
 const { checkPassword } = require('../src/middleware/auth');
 
 // model test dependencies
 const User = require('../src/user/user.model');
 const faker = require('faker');
+
+// mocks
+const mockResponse = () => {
+    return {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockReturnThis()
+    }
+}
 
 // memory database
 const database = require('../util/memoryDatabase');
@@ -77,9 +82,14 @@ describe('user model', () => {
 
 });
 
-describe('user routes & controllers', () => {
+describe('user controller', () => {
 
-    describe('register', () => {
+    const controller = require('../src/user/user.controller');
+    const mockAuth = require('../src/middleware/auth');
+
+    jest.spyOn(auth, 'encryptPassword').mockImplementation(() => { return 'encrypted password' })
+
+    describe.skip('validate', () => {
 
         it('POST request to register returns status 400 and errors if validation errors', async () => {
         
@@ -89,144 +99,112 @@ describe('user routes & controllers', () => {
                 email: 'abc',
                 password: ''
             }
-    
-            const response = await request
-                .post('/api/user/register')
-                .send(newUser);
-    
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors[0].param).toBe('firstName')
-            expect(response.body.errors[1].param).toBe('lastName')
-            expect(response.body.errors[2].param).toBe('email')
-            expect(response.body.errors[3].param).toBe('password')
-            
-        })
-    
-        it('POST request to register with valid input to return status code 200 and message', async () => {
-            
-            const newUser = {
-                firstName: faker.name.firstName(),
-                lastName: faker.name.lastName(),
-                email: faker.internet.email(),
-                password: faker.internet.password()
+
+            const req = { 
+                body: newUser
             }
+
+            const res = mockResponse();
+
+            await controller.register(req, res);
     
-            const response = await request
-                .post('/api/user/register')
-                .send(newUser);
+            expect(res.status).toBe(400);
+            expect(res.body.errors[0].param).toBe('firstName')
+            expect(res.body.errors[1].param).toBe('lastName')
+            expect(res.body.errors[2].param).toBe('email')
+            expect(res.body.errors[3].param).toBe('password')
             
-            expect(response.statusCode).toBe(201);
-            expect(response.body).toBe('New user successfully registered');
-    
-        }),
-    
-        it('POST request to register with valid input saves new user to database', async () => {
-            
-            const newUser = {
-                firstName: faker.name.firstName(),
-                lastName: faker.name.lastName(),
-                email: faker.internet.email(),
-                password: faker.internet.password()
-            }
-    
-            await request
-                .post('/api/user/register')
-                .send(newUser);
-            
-            const savedUser = await User.findOne({ 
-                firstName: newUser.firstName,
-                lastName: newUser.lastName, 
-                email: newUser.email.toLowerCase() 
-            });
-    
-            expect(savedUser).toBeTruthy();
-            expect(savedUser.firstName).toBe(newUser.firstName);
-            expect(savedUser.lastName).toBe(newUser.lastName);
-    
-        })
-    
-        it('POST request to register with valid input saves encrypted password to database', async () => {
-    
-            const newUser = {
-                firstName: faker.name.firstName(),
-                lastName: faker.name.lastName(),
-                email: faker.internet.email(),
-                password: faker.internet.password()
-            }
-    
-            await request
-                .post('/api/user/register')
-                .send(newUser);
-    
-            const savedUser = await User.findOne({ 
-                firstName: newUser.firstName,
-                lastName: newUser.lastName, 
-                email: newUser.email.toLowerCase() 
-            });
-    
-            const match = await checkPassword(newUser.password, savedUser.password);
-    
-            expect(match).toBeTruthy();
-    
         })
 
     })
 
-    describe('login', () => {
+    it('register with return status 200 and message', async () => {
+        
+        const newUser = {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        }
 
-        beforeAll(async () => await database.seed());
+        const req = {
+            body: newUser
+        }
 
-        it('POST request to login with correct credentials returns status 200', async () => {
+        const res = mockResponse();
 
-            const user = {
-                firstName: 'Bruce',
-                lastName: 'Wayne'
-            }
+        await controller.register(req, res);
+        
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(mockAuth.encryptPassword).toHaveBeenCalled();
 
-            const response = await request
-                .post('/api/user/login')
-                .send({
-                    email: 'bwayne@wayne.com',
-                    password: 'batman'
-                })
+    }),
 
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toEqual({ token: expect.anything(), user: user });
-    
-        })
+    it('login returns status 200', async () => {
 
-        it('POST request to login with incorrect credentials returns status 401', async () => {
+        const user = {
+            firstName: 'Bruce',
+            lastName: 'Wayne'
+        }
 
-            const response = await request
-                .post('/api/user/login')
-                .send({
-                    email: 'random@email.com',
-                    password: 'password'
-                })
+        const response = await request
+            .post('/api/user/login')
+            .send({
+                email: 'bwayne@wayne.com',
+                password: 'batman'
+            })
 
-            expect(response.statusCode).toBe(401);
-            expect(response.body.error).toBeTruthy();
-            expect(response.body.error).toBe('Invalid credentials');
-
-        })
-    
-        it('POST request to login with incorrect password returns status 401', async () => {
-
-            const response = await request
-                .post('/api/user/login')
-                .send({
-                    email: 'bwayne@wayne.com',
-                    password: 'password'
-                })
-
-            expect(response.statusCode).toBe(401);
-            expect(response.body.error).toBeTruthy();
-            expect(response.body.error).toBe('Invalid credentials');
-
-        })
+        expect(response.statusCode).toBe(200);
 
     })
 
 });
+
+describe('user routes', () => {
+
+    let app;
+    let request;
+    let mockAuth;
+    let mockController;
+
+    beforeAll(() => {
+        mockAuth = require('../src/middleware/auth');
+        mockController = require('../src/user/user.controller');
+
+        jest.spyOn(mockAuth, 'authenticateUser').mockImplementation((req, res, next) => next());
+        jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
+        // jest.spyOn(mockController, 'register').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'login').mockImplementation((req, res) => res.end());
+
+        app = require('../app');
+        request = require('supertest')(app);
+    })
+
+    it.skip('GET request to /api/user/:id should call authenticateToken and get method of controller', async () => {
+
+        await request.get('/api/user/user123');
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.get).toHaveBeenCalled();
+
+    })
+
+    it.skip('POST request to /api/user/register should call register method of controller', async () => {
+
+        await request.post('/api/user/register');
+
+        expect(mockController.register).toHaveBeenCalled();
+
+    })
+
+    it('POST request to /api/user/login should call login method of controller', async () => {
+
+        await request.post('/api/user/login');
+
+        expect(mockController.login).toHaveBeenCalled();
+
+    })
+
+})
 
 
