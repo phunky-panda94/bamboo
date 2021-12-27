@@ -210,13 +210,16 @@ describe('post routes', () => {
 
         jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'getAll').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'get').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'update').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'delete').mockImplementation((req, res) => res.end()); 
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
 
         app = require('../app');
         request = require('supertest')(app);
     })
 
-    it.only('POST request to create post authenticates token and calls create method of post controller', async () => {
+    it('POST request to create post authenticates token and calls create method of post controller', async () => {
 
         await request.post('/api/posts/');
 
@@ -225,7 +228,7 @@ describe('post routes', () => {
 
     })
 
-    it.only('GET request for all posts calls getAll method of post controller', async () => {
+    it('GET request for all posts calls getAll method of post controller', async () => {
 
         await request.get('/api/posts/');
 
@@ -233,15 +236,29 @@ describe('post routes', () => {
 
     })
 
-    it('GET request for a post calls get method of post controller', () => {
+    it('GET request for a post calls get method of post controller', async () => {
+
+        await request.get('/api/posts/post123');
+
+        expect(mockController.get).toHaveBeenCalled();
 
     })
 
-    it('PUT request for a post calls put method of post controller', () => {
+    it('PUT request for a post calls update method of post controller', async () => {
+
+        await request.put('/api/posts/post123');
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.update).toHaveBeenCalled();
 
     })
 
-    it('DELETE request for a post calls delete methof of post controller', () => {
+    it('DELETE request for a post calls delete method of post controller', async () => {
+
+        await request.delete('/api/posts/post123');
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.delete).toHaveBeenCalled();
 
     })
 
