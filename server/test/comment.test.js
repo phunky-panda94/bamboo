@@ -1,6 +1,6 @@
 describe('comment model', () => {
 
-    const Comment = require('./comment.model');
+    const Comment = require('../src/comment/comment.model');
 
     it('should return error if no user', () => {
 
@@ -48,13 +48,13 @@ describe('comment model', () => {
 
 describe('comment controller', () => {
 
-    const controller = require('./comment.controller');
+    const controller = require('../src/comment/comment.controller');
 
-    const User = require('../user/user.model');
-    const Post = require('../post/post.model');
-    const Comment = require('../comment/comment.model');
+    const User = require('../src/user/user.model');
+    const Post = require('../src/post/post.model');
+    const Comment = require('../src/comment/comment.model');
 
-    const database = require('../../util/memoryDatabase');
+    const database = require('../util/memoryDatabase');
 
     let user;
     let post;
@@ -226,6 +226,7 @@ describe('comment routes', () => {
 
     let app;
     let request;
+    let route;
     let mockController;
     let mockAuth;
 
@@ -240,27 +241,49 @@ describe('comment routes', () => {
         jest.spyOn(mockController, 'delete').mockImplementation((req, res) => res.end()); 
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
 
+        route = '/api/posts/1/comments';
         app = require('../app');
         request = require('supertest')(app);
     })
 
     it('post request to /api/posts/:id/comments calls authenticateToken and create method of controller', async () => {
 
+        await request.post(`${route}/`);
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.create).toHaveBeenCalled();
+
     })
 
     it('get request to /api/posts/:id/comments calls getAll method of controller', async () => {
+
+        await request.get(`${route}/`);
+
+        expect(mockController.getAll).toHaveBeenCalled();
 
     })
 
     it('get request to /api/posts/:id/comments/:id calls get method of controller', async () => {
 
+        await request.get(`${route}/1`);
+
+        expect(mockController.get).toHaveBeenCalled();
+
     })
 
     it('put request to /api/posts/:id/comments/:id calls authenticateToken and update method of controller', async () => {
 
+        await request.put(`${route}/1`);
+
+        expect(mockController.update).toHaveBeenCalled();
+
     })
 
     it('delete request to /api/posts/:id/comments/:id calls authenticateToken and delete method of controller', async () => {
+
+        await request.delete(`${route}/1`);
+
+        expect(mockController.delete).toHaveBeenCalled();
 
     })
 

@@ -12,3 +12,4 @@ router.put('/:id', authenticateToken, commentController.update);
 
 router.delete('/:id', authenticateToken, commentController.delete);
 
+module.exports = router;
