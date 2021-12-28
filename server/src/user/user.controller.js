@@ -7,8 +7,7 @@ exports.register = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
     const encryptedPassword = await encryptPassword(password);
-
-    // create new user -> save to database -> return status 201
+    
     const newUser = new User({
         firstName: firstName,
         lastName: lastName,

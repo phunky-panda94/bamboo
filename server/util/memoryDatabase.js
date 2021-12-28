@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-const faker = require('faker');
 const User = require('../src/user/user.model');
 const Post = require('../src/post/post.model');
+const Comment = require('../src/comment/comment.model');
 const { createToken, encryptPassword } = require('../src/middleware/auth');
 
 let database;
@@ -35,9 +35,15 @@ exports.seed = async () => {
 
     const post = new Post({
         author: user._id,
-        content: "this is a placeholder"
+        content: 'this is a post'
     })
 
     await post.save();
+
+    await Comment.create({
+        user: user._id,
+        post: post._id,
+        content: "this is a comment"
+    })
 
 }
