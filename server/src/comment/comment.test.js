@@ -221,3 +221,47 @@ describe('comment controller', () => {
     })
 
 })
+
+describe('comment routes', () => {
+
+    let app;
+    let request;
+    let mockController;
+    let mockAuth;
+
+    beforeAll(() => {
+        mockController = require('../src/comment/comment.controller');
+        mockAuth = require('../src/middleware/auth');
+
+        jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'getAll').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'get').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'update').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'delete').mockImplementation((req, res) => res.end()); 
+        jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
+
+        app = require('../app');
+        request = require('supertest')(app);
+    })
+
+    it('post request to /api/posts/:id/comments calls authenticateToken and create method of controller', async () => {
+
+    })
+
+    it('get request to /api/posts/:id/comments calls getAll method of controller', async () => {
+
+    })
+
+    it('get request to /api/posts/:id/comments/:id calls get method of controller', async () => {
+
+    })
+
+    it('put request to /api/posts/:id/comments/:id calls authenticateToken and update method of controller', async () => {
+
+    })
+
+    it('delete request to /api/posts/:id/comments/:id calls authenticateToken and delete method of controller', async () => {
+
+    })
+
+})
