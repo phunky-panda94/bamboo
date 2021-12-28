@@ -1,6 +1,6 @@
-const Post = require('../src/post/post.model');
-const User = require('../src/user/user.model');
-const controller = require('../src/post/post.controller');
+const Post = require('../../src/post/post.model');
+const User = require('../../src/user/user.model');
+const controller = require('../../src/post/post.controller');
 
 // mocks
 const mockRequest = (body) => {
@@ -17,7 +17,7 @@ const mockResponse = () => {
 }
 
 // setup
-const database = require('../util/memoryDatabase');
+const database = require('../../util/memoryDatabase');
 
 let user;
 let existingPost;

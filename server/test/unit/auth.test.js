@@ -1,7 +1,7 @@
-const { authenticateToken, authenticateUser, createToken } = require('../src/middleware/auth');
-const User = require('../src/user/user.model');
+const { authenticateToken, authenticateUser, createToken } = require('../../src/middleware/auth');
+const User = require('../../src/user/user.model');
 // memory database
-const database = require('../util/memoryDatabase');
+const database = require('../../util/memoryDatabase');
 
 // mocks
 const mockRequest = (headers, body) => {

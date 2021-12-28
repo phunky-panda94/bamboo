@@ -1,4 +1,4 @@
-const database = require('../util/memoryDatabase');
+const database = require('../../util/memoryDatabase');
 
 beforeAll(async () => await database.connect());
 
@@ -6,7 +6,7 @@ afterAll(async () => await database.disconnect());
 
 describe('user model', () => {
 
-    const User = require('../src/user/user.model');
+    const User = require('../../src/user/user.model');
 
     it('should be invalid if first name is empty', () => {
         let newUser = new User();
@@ -70,13 +70,13 @@ describe('user model', () => {
 
 describe('user controller', () => {
 
-    const controller = require('../src/user/user.controller');
+    const controller = require('../../src/user/user.controller');
     const faker = require('faker')
 
-    const mockAuth = require('../src/middleware/auth');
+    const mockAuth = require('../../src/middleware/auth');
     jest.spyOn(mockAuth, 'encryptPassword').mockImplementation((password) => { console.log('called'); return password });
 
-    const mockUser = require('../src/user/user.model');
+    const mockUser = require('../../src/user/user.model');
     jest.spyOn(mockUser.prototype, 'save').mockReturnValue();
 
     const mockResponse = () => {

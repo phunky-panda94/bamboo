@@ -1,6 +1,6 @@
 describe('comment model', () => {
 
-    const Comment = require('../src/comment/comment.model');
+    const Comment = require('../../src/comment/comment.model');
 
     it('should return error if no user', () => {
 
@@ -48,13 +48,13 @@ describe('comment model', () => {
 
 describe('comment controller', () => {
 
-    const controller = require('../src/comment/comment.controller');
+    const controller = require('../../src/comment/comment.controller');
 
-    const User = require('../src/user/user.model');
-    const Post = require('../src/post/post.model');
-    const Comment = require('../src/comment/comment.model');
+    const User = require('../../src/user/user.model');
+    const Post = require('../../src/post/post.model');
+    const Comment = require('../../src/comment/comment.model');
 
-    const database = require('../util/memoryDatabase');
+    const database = require('../../util/memoryDatabase');
 
     let user;
     let post;
@@ -231,8 +231,8 @@ describe('comment routes', () => {
     let mockAuth;
 
     beforeAll(() => {
-        mockController = require('../src/comment/comment.controller');
-        mockAuth = require('../src/middleware/auth');
+        mockController = require('../../src/comment/comment.controller');
+        mockAuth = require('../../src/middleware/auth');
 
         jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'getAll').mockImplementation((req, res) => res.end());
@@ -242,7 +242,7 @@ describe('comment routes', () => {
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
 
         route = '/api/posts/1/comments';
-        app = require('../app');
+        app = require('../../app');
         request = require('supertest')(app);
     })
 
