@@ -1,6 +1,6 @@
 const database = require('../../util/memoryDatabase');
 
-beforeAll(async () => await database.connect());
+beforeAll(async () => { await database.connect(); await database.seed() });
 
 afterAll(async () => await database.disconnect());
 
@@ -70,9 +70,7 @@ describe('user model', () => {
 
 describe('user controller', () => {
 
-    const mockAuth = require('../../src/middleware/authenticator');
-    mockAuth.encryptPassword = jest.fn().mockReturnValue();
-
+    const User = require('../../src/user/user.model');
     const controller = require('../../src/user/user.controller');
     const faker = require('faker');
 
@@ -100,7 +98,6 @@ describe('user controller', () => {
 
         await controller.register(req, res);
 
-        expect(mockAuth.encryptPassword).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(201);
 
     }),
@@ -117,12 +114,42 @@ describe('user controller', () => {
 
     })
 
+    it('getUser returns status 200 and user details', async () => {
+
+        const user = await User.findOne();
+        const req = { params: { user: user._id } }
+        const res = mockResponse();
+
+        await controller.getUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+            firstName: expect.any(String),
+            lastName: expect.any(String),
+            email: expect.any(String)
+        }));
+
+    })
+
+    it('getUser returns status 404 and message if user not found', async () => {
+
+        const req = { params: { user: '' } }
+        const res = mockResponse();
+
+        await controller.getUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user not found' })
+
+    })
+
 });
 
-describe('user routes', () => {
+describe.skip('user routes', () => {
 
     let app;
     let request;
+    let route;
     let mockAuth;
     let mockController;
 
@@ -134,22 +161,23 @@ describe('user routes', () => {
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
         jest.spyOn(mockController, 'login').mockImplementation((req, res) => res.end());
 
+        route = '/api/user';
         app = require('../app');
         request = require('supertest')(app);
     })
 
-    it.skip('GET request to /api/user/:id should call authenticateToken and get method of controller', async () => {
+    it('GET request to /api/user/:id should call authenticateToken and get method of controller', async () => {
 
-        await request.get('/api/user/user123');
+        await request.get(`${route}/user123`);
 
         expect(mockAuth.authenticateToken).toHaveBeenCalled();
         expect(mockController.get).toHaveBeenCalled();
 
     })
 
-    it.skip('POST request to /api/user/register should call register method of controller', async () => {
+    it('POST request to /api/user/register should call register method of controller', async () => {
 
-        await request.post('/api/user/register');
+        await request.post(`${route}/register`);
 
         expect(mockController.register).toHaveBeenCalled();
 
@@ -157,7 +185,7 @@ describe('user routes', () => {
 
     it('POST request to /api/user/login should call login method of controller', async () => {
 
-        await request.post('/api/user/login');
+        await request.post(`${route}/login`);
 
         expect(mockController.login).toHaveBeenCalled();
 

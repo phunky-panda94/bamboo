@@ -1,17 +1,14 @@
 const User = require('./user.model');
-const { encryptPassword } = require('../middleware/authenticator');
 
 exports.register = async (req, res) => {
         
     const { firstName, lastName, email, password } = req.body;
 
-    const encryptedPassword = await encryptPassword(password);
-    
     const newUser = new User({
         firstName: firstName,
         lastName: lastName,
         email: email,
-        password: encryptedPassword
+        password: password
     })
     
     await newUser.save(err => {
@@ -26,6 +23,14 @@ exports.login = async (req, res) => {
     return res.status(200);
 }
 
-exports.getUser = (req, res) => {
+exports.getUser = async (req, res) => {
     
+    const { user } = req.params;
+
+    const foundUser = await User.findById(user, '-_id firstName lastName email').catch(err => {
+        return res.status(404).json({ error: 'user not found' });
+    });
+
+    return res.status(200).json(foundUser)
+
 }
