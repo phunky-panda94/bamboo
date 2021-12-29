@@ -11,6 +11,7 @@ afterAll(async () => await database.disconnect());
 
 describe('register new user', () => {
 
+    const User = require('../../src/user/user.model');
     const route = '/api/user/register';
 
     it('POST request to /api/user/register with valid input should create user in database and return status 201 and new user id', async () => {
@@ -23,9 +24,11 @@ describe('register new user', () => {
         }
 
         const response = await request.post(route).send(newUser);
+        
+        const savedUser = await User.findOne({ email: newUser.email });
 
         expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty('user');
+        expect(savedUser).toBeTruthy();
 
     })
 

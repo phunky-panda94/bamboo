@@ -85,11 +85,12 @@ describe('user controller', () => {
     const mockResponse = () => {
         return {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn().mockReturnThis()
+            json: jest.fn().mockReturnThis(),
+            end: jest.fn().mockReturnThis()
         }
     }
 
-    it('register saves new user before returning status 201', async () => {
+    it('register calls create method of user and returns status 201 if successfully created', async () => {
 
         const newUser = {
             firstName: faker.name.firstName(),
@@ -98,9 +99,7 @@ describe('user controller', () => {
             password: faker.internet.password()
         }
 
-        const req = {
-            body: newUser
-        }
+        const req = { body: newUser }
 
         const res = mockResponse();
 
@@ -108,21 +107,38 @@ describe('user controller', () => {
 
         expect(res.status).toHaveBeenCalledWith(201);
 
-        const savedUser = await User.findOne({ email: newUser.email });
+    })
 
-        expect(savedUser).toBeTruthy();
+    it('register returns 400 and error message if error creating user', async () => {
 
-    }),
+        const newUser = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: ''
+        }
 
-    it('login returns status 200', async () => {
+        const req = { body: newUser }
+        const res = mockResponse();
 
-        const req = {}
+        await controller.register(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user could not be registered' });
+
+
+    })
+
+    it('login returns status 200 with user details and token', async () => {
+
+        const req = { body: { user: 'user', token: 'token' } }
 
         const res = mockResponse();
 
         await controller.login(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(req.body);
 
     })
 

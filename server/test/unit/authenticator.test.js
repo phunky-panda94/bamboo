@@ -132,8 +132,10 @@ describe('authenticate user',  () => {
 
         await authenticateUser(req, res, next);
 
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ user: { firstName: user.firstName, lastName: user.lastName }, token: expect.anything() })
+        expect(req.body.user).toBeTruthy();
+        expect(req.body.user).toHaveProperty('firstName');
+        expect(req.body.user).toHaveProperty('lastName');
+        expect(req.body.token).toBeTruthy();
         expect(next).toHaveBeenCalled();
 
     })

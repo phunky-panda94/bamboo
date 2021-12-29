@@ -3,11 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../user/user.model');
 
-// exports.encryptPassword = async (password) => {
-//     const encryptedPassword = await bcrypt.hash(password, 10);
-//     return encryptedPassword;
-// }
-
 exports.encryptPassword = async (req, res, next) => {
 
     const { password } = req.body;
@@ -36,13 +31,8 @@ exports.authenticateUser = async (req, res, next) => {
 
     const token = this.createToken(email);
 
-    res.status(200).json({
-        user: {
-            firstName: user.firstName,
-            lastName: user.lastName
-        },
-        token: token
-    })
+    req.body.user = { firstName: user.firstName, lastName: user.lastName };
+    req.body.token = token;
 
     next();
 
