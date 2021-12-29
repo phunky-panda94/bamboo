@@ -109,6 +109,25 @@ describe('user controller', () => {
 
     })
 
+    it.only('register returns 400 and error message if user with same email already exists', async () => {
+
+        const user = {
+            firstName: 'Bruce',
+            lastName: 'Wayne',
+            email: 'bwayne@wayne.com',
+            password: 'batman'
+        }
+
+        const req = { body: user };
+        const res = mockResponse();
+
+        await controller.register(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user already exists' })
+
+    })
+
     it('register returns 400 and error message if error creating user', async () => {
 
         const newUser = {
@@ -223,6 +242,28 @@ describe('user routes', () => {
 
         expect(mockAuth.authenticateUser).toHaveBeenCalled();
         expect(mockController.login).toHaveBeenCalled();
+
+    })
+
+})
+
+describe('user helpers', () => {
+
+    const { userExists } = require('../../src/user/user.helpers');
+
+    it('should return true if user exists', async () => {
+
+        const exists = await userExists('bwayne@wayne.com');
+
+        expect(exists).toBeTruthy();
+
+    })
+
+    it('should return false if user does not exist', async () => {
+
+        const exists = await userExists('unknown@email.com');
+
+        expect(exists).toBeFalsy();
 
     })
 

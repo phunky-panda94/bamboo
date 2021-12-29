@@ -32,6 +32,22 @@ describe('register new user', () => {
 
     })
 
+    it('POST request to /api/user/register with invalid input returns 400 and error message', async () => {
+
+        const newUser = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: ''
+        }
+
+        const response = await request.post(route).send(newUser);
+
+        expect(response.status).toBe(400);
+        expect(response.body.errors).toBeTruthy();
+
+    })
+
 })
 
 describe('login as existing user', () => {

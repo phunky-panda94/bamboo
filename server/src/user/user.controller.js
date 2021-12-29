@@ -1,8 +1,11 @@
 const User = require('./user.model');
+const { userExists } = require('./user.helpers');
 
 exports.register = async (req, res) => {
     
     const { firstName, lastName, email, password } = req.body;
+
+    if (userExists) return res.status(400).json({ error: 'user already exists' });
 
     await User.create({
         firstName: firstName,
