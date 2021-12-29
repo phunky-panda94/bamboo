@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth')
+const { authenticateToken } = require('../middleware/authenticator')
 const postController = require('./post.controller');
 
 router.post('/', authenticateToken, postController.create);

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/authenticator');
 const commentController = require('./comment.controller');
 
 router.post('/', authenticateToken, commentController.create);

@@ -145,7 +145,7 @@ describe('user controller', () => {
 
 });
 
-describe.skip('user routes', () => {
+describe('user routes', () => {
 
     let app;
     let request;
@@ -155,14 +155,19 @@ describe.skip('user routes', () => {
 
     beforeAll(() => {
         mockAuth = require('../../src/middleware/authenticator');
+        mockValidator = require('../../src/middleware/validator');
         mockController = require('../../src/user/user.controller');
-
+        
         jest.spyOn(mockAuth, 'authenticateUser').mockImplementation((req, res, next) => next());
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
         jest.spyOn(mockController, 'login').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'register').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'getUser').mockImplementation((req, res) => res.end());
+
+        mockValidator.validateNewUserDetails = jest.fn().mockImplementation((req, res, next) => next());
 
         route = '/api/user';
-        app = require('../app');
+        app = require('../../app');
         request = require('supertest')(app);
     })
 
@@ -171,7 +176,7 @@ describe.skip('user routes', () => {
         await request.get(`${route}/user123`);
 
         expect(mockAuth.authenticateToken).toHaveBeenCalled();
-        expect(mockController.get).toHaveBeenCalled();
+        expect(mockController.getUser).toHaveBeenCalled();
 
     })
 
@@ -179,6 +184,7 @@ describe.skip('user routes', () => {
 
         await request.post(`${route}/register`);
 
+        expect(mockValidator.validateNewUserDetails).toHaveBeenCalled();
         expect(mockController.register).toHaveBeenCalled();
 
     })
@@ -187,6 +193,7 @@ describe.skip('user routes', () => {
 
         await request.post(`${route}/login`);
 
+        expect(mockAuth.authenticateUser).toHaveBeenCalled();
         expect(mockController.login).toHaveBeenCalled();
 
     })
