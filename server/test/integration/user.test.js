@@ -32,6 +32,23 @@ describe('register new user', () => {
 
     })
 
+    it('POST request to /api/user/register with existing email returns 400 and error message', async () => {
+
+        const newUser = {
+            firstName: 'Bob',
+            lastName: 'Wayne',
+            email: 'bwayne@wayne.com',
+            password: 'batman'
+        }
+
+        const response = await request.post(route).send(newUser);
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('user already exists');
+
+    })
+
     it('POST request to /api/user/register with invalid input returns 400 and error message', async () => {
 
         const newUser = {

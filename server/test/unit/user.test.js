@@ -109,7 +109,7 @@ describe('user controller', () => {
 
     })
 
-    it.only('register returns 400 and error message if user with same email already exists', async () => {
+    it('register returns 400 and error message if user with same email already exists', async () => {
 
         const user = {
             firstName: 'Bruce',
