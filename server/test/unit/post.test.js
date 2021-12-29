@@ -55,18 +55,16 @@ describe('post controllers', () => {
         existingPost = await Post.findOne({ author: user._id, content: 'this is a post' });
     });
 
-    afterAll(async () => await database.disconnect());
+    afterAll(async() => await database.disconnect());
 
     it('create should add post to database and return status 201 and post id', async () => {
         
-        const content = "I'm Batman";
-
-        const req = { 
-            body: {
-                user: user._id,
-                content: content
-            }
+        const body = {
+            user: user._id,
+            content: "I'm Batman"
         }
+
+        const req = { body: body };
 
         const res = mockResponse();
 
@@ -79,13 +77,8 @@ describe('post controllers', () => {
 
     it('create should return 400 if error when saving post', async () => {
 
-        const req = {
-            body: {
-                user: '',
-                content: ''
-            }
-        }
-
+        const body = { user: '', content: '' }
+        const req = { body: body }
         const res = mockResponse();
 
         await controller.create(req, res);
@@ -144,7 +137,7 @@ describe('post controllers', () => {
 
         expect(res.status).toHaveBeenCalledWith(204);
 
-        const updatedPost = Post.findOne({ author: user._id, content: "I'm Batman" });
+        const updatedPost = Post.findById(existingPost._id);
 
         expect(updatedPost).toBeTruthy();
 
