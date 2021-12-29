@@ -1,33 +1,30 @@
-const { authenticateToken, authenticateUser, createToken } = require('../../src/middleware/auth');
-const User = require('../../src/user/user.model');
-// memory database
-const database = require('../../util/memoryDatabase');
+describe('encrypt password', () => {
 
-// mocks
-const mockRequest = (headers, body) => {
-    return {
-        headers: headers,
-        body: body
-    }
-}
+    const { encryptPassword, checkPassword } = require('../../src/middleware/authenticator');
+    const next = jest.fn();
 
-const mockResponse = () => {
-    return {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn().mockReturnValue({})
-    }
-}
+    it('should encrypt password in request body and call next', async () => {
 
-const next = jest.fn();
+        const password = 'abcd';
+        const req = { body: { password: password } };
+        const res = {}
 
-beforeAll(async () => { 
-    await database.connect();
-    await database.seed();
- });
+        await encryptPassword(req, res, next);
 
-afterAll(async () => database.disconnect());
+        expect(req.body.password).not.toBe(password);
+
+        const match = await checkPassword(password, req.body.password);
+
+        expect(match).toBeTruthy();
+        expect(next).toHaveBeenCalled();
+
+    })
+
+})
 
 describe('create token', () => {
+
+    const { createToken } = require('../../src/middleware/authenticator');
 
     it('returns a json web token', () => {
 
@@ -44,10 +41,19 @@ describe('create token', () => {
 
 describe('authenticate token', () => {
 
+    const { authenticateToken, createToken } = require('../../src/middleware/authenticator');
+    const next = jest.fn();
+    const mockResponse = () => {
+        return {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis()
+        }
+    }
+
     it('should return error if no token in header', () => {
         
         const expectedResponse = { error: 'No token in Authorization header' };
-        const req = mockRequest({}, {});
+        const req = { headers: {} }
         const res = mockResponse();
 
         authenticateToken(req, res, next);
@@ -60,7 +66,7 @@ describe('authenticate token', () => {
     it('should return error if invalid token in header', () => {
 
         const expectedResponse = { error: 'Unauthorized' };
-        const req = mockRequest({ authorization: 'Bearer abc' }, {});
+        const req = { headers: { authorization: 'Bearer abc' } };
         const res = mockResponse();
 
         authenticateToken(req, res, next);
@@ -73,7 +79,7 @@ describe('authenticate token', () => {
     it('should return called next function if token is valid', () => {
 
         const token = createToken('email');
-        const req = mockRequest({ authorization: `Bearer ${token}` }, {});
+        const req = { headers: { authorization: `Bearer ${token}` } };
         const res = mockResponse();
 
         authenticateToken(req, res, next);
@@ -87,6 +93,24 @@ describe('authenticate token', () => {
 
 describe('authenticate user',  () => {
 
+    const { authenticateUser } = require('../../src/middleware/authenticator');
+    const next = jest.fn();
+    const mockResponse = () => {
+        return {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnValue({})
+        }
+    }
+
+    const database = require('../../util/memoryDatabase');
+
+    beforeAll(async () => { 
+        await database.connect();
+        await database.seed();
+    });
+
+    afterAll(async () => database.disconnect());
+
     it('should add user and token and call next function if user found with matching credentials', async () => {
 
         const email = 'bwayne@wayne.com'
@@ -97,10 +121,12 @@ describe('authenticate user',  () => {
             lastName: 'Wayne'
         }
 
-        const req = mockRequest({}, {
-            email: email,
-            password: password
-        })
+        const req = { 
+            body: {
+                email: email,
+                password: password
+            }
+        }
 
         const res = mockResponse();
 
@@ -117,10 +143,12 @@ describe('authenticate user',  () => {
         const email = 'random@email.com'
         const password = 'password'
 
-        const req = mockRequest({},{
-            email: email,
-            password: password
-        })
+        const req = {
+            body: {
+                email: email,
+                password: password
+            }
+        }
 
         const res = mockResponse();
 
@@ -136,10 +164,12 @@ describe('authenticate user',  () => {
         const email = 'bwayne@wayne.com';
         const password = 'invalid';
 
-        const req = mockRequest({},{
-            email: email,
-            password: password
-        })
+        const req = {
+            body: {
+                email: email,
+                password: password
+            }
+        }
 
         const res = mockResponse();
 

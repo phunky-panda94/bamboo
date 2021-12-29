@@ -70,14 +70,11 @@ describe('user model', () => {
 
 describe('user controller', () => {
 
+    const mockAuth = require('../../src/middleware/authenticator');
+    mockAuth.encryptPassword = jest.fn().mockReturnValue();
+
     const controller = require('../../src/user/user.controller');
-    const faker = require('faker')
-
-    const mockAuth = require('../../src/middleware/auth');
-    jest.spyOn(mockAuth, 'encryptPassword').mockImplementation((password) => { console.log('called'); return password });
-
-    const mockUser = require('../../src/user/user.model');
-    jest.spyOn(mockUser.prototype, 'save').mockReturnValue();
+    const faker = require('faker');
 
     const mockResponse = () => {
         return {
@@ -86,31 +83,7 @@ describe('user controller', () => {
         }
     }
 
-    const next = jest.fn().mockReturnValue();
-
-    it('validate returns status 400 and validation errors if invalid input', async () => {
-
-        const newUser = {
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: ''
-        }
-
-        const req = {
-            body: newUser
-        }
-
-        const res = mockResponse();
-
-        await controller.validate(req, res, next);
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ errors: expect.anything() });
-
-    })
-
-    it.only('register calls encryptPassword and save before returning status 201 if no errors', async () => {
+    it('register calls encryptPassword and save before returning status 201 if no errors', async () => {
 
         const newUser = {
             firstName: faker.name.firstName(),
@@ -128,7 +101,6 @@ describe('user controller', () => {
         await controller.register(req, res);
 
         expect(mockAuth.encryptPassword).toHaveBeenCalled();
-        expect(mockUser.prototype.save).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(201);
 
     }),
@@ -155,12 +127,11 @@ describe('user routes', () => {
     let mockController;
 
     beforeAll(() => {
-        mockAuth = require('../src/middleware/auth');
-        mockController = require('../src/user/user.controller');
+        mockAuth = require('../../src/middleware/authenticator');
+        mockController = require('../../src/user/user.controller');
 
         jest.spyOn(mockAuth, 'authenticateUser').mockImplementation((req, res, next) => next());
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
-        // jest.spyOn(mockController, 'register').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'login').mockImplementation((req, res) => res.end());
 
         app = require('../app');

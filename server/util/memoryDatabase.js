@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const bcrypt = require('bcryptjs');
 
 const User = require('../src/user/user.model');
 const Post = require('../src/post/post.model');
 const Comment = require('../src/comment/comment.model');
-const { createToken, encryptPassword } = require('../src/middleware/auth');
 
 let database;
 
@@ -22,7 +22,7 @@ exports.disconnect = async () => {
 
 exports.seed = async () => {
 
-    const encryptedPassword = await encryptPassword('batman');
+    const encryptedPassword = await bcrypt.hash('batman', 10);
 
     const user = new User({
         firstName: 'Bruce',

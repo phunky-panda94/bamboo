@@ -232,7 +232,7 @@ describe('comment routes', () => {
 
     beforeAll(() => {
         mockController = require('../../src/comment/comment.controller');
-        mockAuth = require('../../src/middleware/auth');
+        mockAuth = require('../../src/middleware/authenticator');
 
         jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'getAll').mockImplementation((req, res) => res.end());
