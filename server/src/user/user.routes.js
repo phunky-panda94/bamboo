@@ -6,7 +6,7 @@ const { validateNewUserDetails } = require('../middleware/validator');
 
 router.get('/:id', authenticateToken, getUser);
 
-router.post('/register', validateNewUserDetails, register);
+router.post('/register', register);
 
 router.post('/login', authenticateUser, login);
 

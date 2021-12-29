@@ -50,6 +50,14 @@ describe('user model', () => {
         expect(newUser.fullName).toBe(`${newUser.firstName} ${newUser.lastName}`);
     })
 
+    it('virtual url method should return api route', async () => {
+
+        const user = await User.findOne();
+
+        expect(user.url).toBe(`/api/user/${user._id}`);
+
+    })
+
     it('should be created when required parameters provided', async () => {
         let newUser = new User({
             firstName: 'John',
@@ -81,7 +89,7 @@ describe('user controller', () => {
         }
     }
 
-    it('register calls encryptPassword and save before returning status 201 if no errors', async () => {
+    it('register saves new user before returning status 201', async () => {
 
         const newUser = {
             firstName: faker.name.firstName(),
@@ -100,6 +108,10 @@ describe('user controller', () => {
 
         expect(res.status).toHaveBeenCalledWith(201);
 
+        const savedUser = await User.findOne({ email: newUser.email });
+
+        expect(savedUser).toBeTruthy();
+
     }),
 
     it('login returns status 200', async () => {
@@ -117,7 +129,7 @@ describe('user controller', () => {
     it('getUser returns status 200 and user details', async () => {
 
         const user = await User.findOne();
-        const req = { params: { user: user._id } }
+        const req = { params: { id: user._id } }
         const res = mockResponse();
 
         await controller.getUser(req, res);
@@ -133,7 +145,7 @@ describe('user controller', () => {
 
     it('getUser returns status 404 and message if user not found', async () => {
 
-        const req = { params: { user: '' } }
+        const req = { params: { id: '' } }
         const res = mockResponse();
 
         await controller.getUser(req, res);
