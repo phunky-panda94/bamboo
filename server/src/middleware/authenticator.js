@@ -26,7 +26,7 @@ exports.authenticateUser = async (req, res, next) => {
     const user = await User.findOne({ email: email });
     
     if (!user || !await this.checkPassword(password, user.password)) {
-        return res.status(401).json({ error: 'Invalid credentials'})
+        return res.status(401).json({ error: 'invalid credentials'})
     }
 
     const token = this.createToken(email);

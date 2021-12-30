@@ -14,7 +14,7 @@ describe('register new user', () => {
     const User = require('../../src/user/user.model');
     const route = '/api/user/register';
 
-    it('POST request to /api/user/register with valid input should create user in database and return status 201 and new user id', async () => {
+    it('POST request to /api/user/register with valid input creates user in database and return status 201 and new user id', async () => {
 
         const newUser = {
             firstName: 'John',
@@ -71,7 +71,7 @@ describe('login as existing user', () => {
 
     const route = '/api/user/login';
 
-    it('POST request to /api/user/login with valid credentials should return status 200, user details and token', async () => {
+    it('POST request to /api/user/login with valid credentials returns status 200, user details and token', async () => {
 
         const userCredentials = {
             email: 'bwayne@wayne.com',
@@ -83,6 +83,21 @@ describe('login as existing user', () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('user');
         expect(response.body).toHaveProperty('token');
+
+    })
+
+    it('POST request to /api/user/login with invalid credentials returns status 401 and invalid credentials error message', async () => {
+
+        const userCredentials = {
+            email: 'abc@email.com',
+            password: 'password'
+        }
+
+        const response = await request.post(route).send(userCredentials);
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('invalid credentials');
 
     })
 

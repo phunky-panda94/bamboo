@@ -80,7 +80,6 @@ describe('user controller', () => {
 
     const User = require('../../src/user/user.model');
     const controller = require('../../src/user/user.controller');
-    const faker = require('faker');
 
     const mockResponse = () => {
         return {
@@ -93,10 +92,10 @@ describe('user controller', () => {
     it('register calls create method of user and returns status 201 if successfully created', async () => {
 
         const newUser = {
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            email: faker.internet.email(),
-            password: faker.internet.password()
+            firstName: 'James',
+            lastName: 'Bond',
+            email: 'jbond@email.com',
+            password: 'password'
         }
 
         const req = { body: newUser }
@@ -104,8 +103,9 @@ describe('user controller', () => {
         const res = mockResponse();
 
         await controller.register(req, res);
-
+        
         expect(res.status).toHaveBeenCalledWith(201);
+        
 
     })
 

@@ -157,7 +157,7 @@ describe('authenticate user',  () => {
         await authenticateUser(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(401);
-        expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials'});
+        expect(res.json).toHaveBeenCalledWith({ error: 'invalid credentials'});
 
     })
 
@@ -178,7 +178,7 @@ describe('authenticate user',  () => {
         await authenticateUser(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(401);
-        expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials'});
+        expect(res.json).toHaveBeenCalledWith({ error: 'invalid credentials'});
 
 
     })
