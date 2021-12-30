@@ -1,4 +1,5 @@
 const User = require('./user.model');
+const { createToken } = require('../middleware/authenticator');
 const { userExists } = require('./user.helpers');
 
 exports.register = async (req, res) => {
@@ -67,7 +68,59 @@ exports.updateUser = async (req, res) => {
         return res.status(400).json({ error: 'user could not be updated' });
     }
 
-    res.status(202).end();
+    const token = createToken(user.email);
+
+    res.status(204).json({ token: token });
+
+}
+
+exports.updateEmail = async (req, res) => {
+
+    const { email } = req.body;
+    const { id } = req.params;
+    let user;
+
+    try {
+        user = await User.findById(id);
+    } catch (err) {
+        return res.status(404).json({ error: 'user does not exist' });
+    }
+    
+    user.email = email;
+    
+    try {
+        await user.save();
+    } catch {
+        return res.status(400).json({ error: 'user email could not be updated' });
+    }
+
+    const token = createToken(user.email);
+
+    res.status(204).json({ token: token });
+
+}
+
+exports.updatePassword = async (req, res) => {
+
+    const { password } = req.body;
+    const { id } = req.params;
+    let user;
+
+    try {
+        user = await User.findById(id);
+    } catch (err) {
+        return res.status(404).json({ error: 'user does not exist' });
+    }
+    
+    user.password = password;
+    
+    try {
+        await user.save();
+    } catch {
+        return res.status(400).json({ error: 'user password could not be updated' });
+    }
+
+    res.status(204).end();
 
 }
 
@@ -81,6 +134,6 @@ exports.deleteUser = async (req, res) => {
         return res.status(400).json({ error: 'user could not be deleted' });
     }
     
-    res.status(204).end();
+    res.status(202).end();
 
 }

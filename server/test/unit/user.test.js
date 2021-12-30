@@ -80,6 +80,8 @@ describe('user controller', () => {
 
     const User = require('../../src/user/user.model');
     const controller = require('../../src/user/user.controller');
+    const { checkPassword } = require('../../src/middleware/authenticator');
+    const bcrypt = require('bcryptjs');
 
     const mockResponse = () => {
         return {
@@ -194,47 +196,38 @@ describe('user controller', () => {
 
     })
 
-    it('updateUser returns status 202 if user details successfully update', async () => {
+    it('updatePassword returns status 204 and token if user password successfully updated', async () => {
 
         const user = await User.findOne();
-        const updatedDetails = {
-            email: 'new@email.com',
-            password: 'newpassword'
-        }
-
+        const password = await bcrypt.hash('newpassword', 10);
         const req = {
-            body: updatedDetails,
+            body: { password: password },
             params: { id: user._id } 
         }
         const res = mockResponse();
 
-        await controller.updateUser(req, res);
+        await controller.updatePassword(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(202);
+        expect(res.status).toHaveBeenCalledWith(204);
         expect(res.end).toHaveBeenCalled();
 
         const updatedUser = await User.findById(user._id);
-        
-        expect(updatedUser).toBeTruthy();
-        expect(updatedUser.email).toBe('new@email.com');
+        const match = await checkPassword('newpassword', updatedUser.password);
+
+        expect(match).toBeTruthy();
 
     })
 
-    it('updateUser returns status 404 and error message if user does not exist', async () => {
-
-        const updatedDetails = {
-            email: 'new@email.com',
-            password: 'newpassword'
-        }
+    it('updatePassword returns status 404 and error message if user does not exist', async () => {
 
         const req = {
-            body: updatedDetails,
+            body: { password: 'newpassword' },
             params: { id: 'abc' }
         }
 
         const res = mockResponse();
 
-        await controller.updateUser(req, res);
+        await controller.updatePassword(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
         expect(res.status).toHaveBeenCalledTimes(1);
@@ -242,30 +235,80 @@ describe('user controller', () => {
 
     })
     
-    it('updateUser returns status 400 and error message if user details could not be updated', async () => {
+    it('updatePassword returns status 400 and error message if user password could not be updated', async () => {
 
         const user = await User.findOne();
-        const updatedDetails = {
-            email: '',
-            password: ''
-        }
-
         const req = {
-            body: updatedDetails,
+            body: { password: '' },
             params: { id: user._id } 
         }
 
         const res = mockResponse();
 
-        await controller.updateUser(req, res);
+        await controller.updatePassword(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user could not be updated' });
+        expect(res.json).toHaveBeenCalledWith({ error: 'user password could not be updated' });
 
     })
 
-    it('deleteUser returns status 204 if user succesfully deleted', async () => {
+    it('updateEmail returns status 204 and token if user email successfully updated', async () => {
+
+        const user = await User.findOne();
+        const req = {
+            body: { email: 'new@email.com' },
+            params: { id: user._id } 
+        }
+        const res = mockResponse();
+
+        await controller.updateEmail(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.json).toHaveBeenCalledWith({ token: expect.anything() });
+
+        const updatedUser = await User.findById(user._id);
+
+        expect(updatedUser.email).toBe('new@email.com');
+
+    })
+
+    it('updateEmail returns status 404 and error message if user does not exist', async () => {
+
+        const req = {
+            body: { email: 'new@email.com' },
+            params: { id: 'abc' }
+        }
+
+        const res = mockResponse();
+
+        await controller.updateEmail(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
+
+    })
+    
+    it('updateEmail returns status 400 and error message if user email could not be updated', async () => {
+
+        const user = await User.findOne();
+        const req = {
+            body: { email: '' },
+            params: { id: user._id } 
+        }
+
+        const res = mockResponse();
+
+        await controller.updateEmail(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user email could not be updated' });
+
+    })
+
+    it('deleteUser returns status 202 if user succesfully deleted', async () => {
 
         const user = User.findOne();
         const req = { params: { id: user._id } };
@@ -273,7 +316,7 @@ describe('user controller', () => {
 
         await controller.deleteUser(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.status).toHaveBeenCalledWith(202);
         expect(res.end).toHaveBeenCalled();
 
         const deletedUser = await User.findById(user._id);
@@ -312,10 +355,12 @@ describe('user routes', () => {
         
         jest.spyOn(mockAuth, 'authenticateUser').mockImplementation((req, res, next) => next());
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
+        jest.spyOn(mockAuth, 'encryptPassword').mockImplementation((req, res, next) => next());
         jest.spyOn(mockController, 'login').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'register').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'getUser').mockImplementation((req, res) => res.end());
-        jest.spyOn(mockController, 'updateUser').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'updateEmail').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'updatePassword').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'deleteUser').mockImplementation((req, res) => res.end());
 
         mockValidator.validateNewUserDetails = jest.fn().mockImplementation((req, res, next) => next());
@@ -352,12 +397,22 @@ describe('user routes', () => {
 
     })
 
-    it('PUT request to /api/user/:id should call authenticateToken and updateUser method of controller', async () => {
+    it('PUT request to /api/user/:id/email should call authenticateToken and updateEmail method of controller', async () => {
 
-        await request.put(`${route}/user123`);
+        await request.put(`${route}/user123/email`);
 
         expect(mockAuth.authenticateToken).toHaveBeenCalled();
-        expect(mockController.updateUser).toHaveBeenCalled();
+        expect(mockController.updateEmail).toHaveBeenCalled();
+
+    })
+
+    it('PUT request to /api/user/:id/password should call authenticateToken, encryptPassword and updatePassword method of controller', async () => {
+
+        await request.put(`${route}/user123/password`);
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockAuth.encryptPassword).toHaveBeenCalled();
+        expect(mockController.updatePassword).toHaveBeenCalled();
 
     })
 
