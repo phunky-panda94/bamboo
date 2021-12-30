@@ -124,6 +124,7 @@ describe('user controller', () => {
         await controller.register(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'user already exists' })
 
     })
@@ -143,7 +144,7 @@ describe('user controller', () => {
         await controller.register(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).not.toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'user could not be registered' });
 
 
@@ -236,6 +237,7 @@ describe('user controller', () => {
         await controller.updateUser(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
 
     })
@@ -258,7 +260,38 @@ describe('user controller', () => {
         await controller.updateUser(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'user could not be updated' });
+
+    })
+
+    it('deleteUser returns status 204 if user succesfully deleted', async () => {
+
+        const user = User.findOne();
+        const req = { params: { id: user._id } };
+        const res = mockResponse();
+
+        await controller.deleteUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.end).toHaveBeenCalled();
+
+        const deletedUser = await User.findById(user._id);
+
+        expect(deletedUser).toBeFalsy();
+
+    })
+
+    it('deleteUser returns status 400 and error message if user does not exist', async () => {
+
+        const req = { params: { id: 'abc' } };
+        const res = mockResponse();
+
+        await controller.deleteUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user could not be deleted' });
 
     })
 

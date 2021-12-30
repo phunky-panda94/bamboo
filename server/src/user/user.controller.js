@@ -9,14 +9,18 @@ exports.register = async (req, res) => {
         return res.status(400).json({ error: 'user already exists' })
     };
 
-    await User.create({
+    const newUser = {
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: password
-    }).catch(err => {
+    }
+
+    try {
+        await User.create(newUser);
+    } catch (err) {
         return res.status(400).json({ error: 'user could not be registered' });
-    })
+    }
 
     res.status(201).end();
 
@@ -30,33 +34,53 @@ exports.login = async (req, res) => {
 exports.getUser = async (req, res) => {
     
     const { id } = req.params;
+    let user;
 
-    const foundUser = await User.findById(id, 'firstName lastName email').catch(err => { return });
-
-    if (!foundUser) return res.status(404).json({ error: 'user not found' });
+    try {
+        user = await User.findById(id, 'firstName lastName email');
+    } catch {
+        return res.status(404).json({ error: 'user not found' });
+    }
         
-    res.status(200).json(foundUser);
+    res.status(200).json(user);
 
 }
 
 exports.updateUser = async (req, res) => {
 
     const { email, password } = req.body;
-    const { id } = req.params
+    const { id } = req.params;
+    let user;
 
-    const user = await User.findById(id).catch(err => { return });
-    if (!user) return res.status(404).json({ error: 'user does not exist' });
-
+    try {
+        user = await User.findById(id);
+    } catch (err) {
+        return res.status(404).json({ error: 'user does not exist' });
+    }
+    
     user.email = email;
     user.password = password;
     
-    const updatedUser = await user.save().catch(err => { return });
-    if(!updatedUser) return res.status(400).json({ error: 'user could not be updated' });
+    try {
+        await user.save();
+    } catch {
+        return res.status(400).json({ error: 'user could not be updated' });
+    }
 
     res.status(202).end();
 
 }
 
 exports.deleteUser = async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+        await User.findByIdAndDelete(id);
+    } catch (err) {
+        return res.status(400).json({ error: 'user could not be deleted' });
+    }
+    
+    res.status(204).end();
 
 }
