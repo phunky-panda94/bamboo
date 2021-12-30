@@ -43,17 +43,14 @@ exports.authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (token == null) {
+    if (!token) {
         return res.status(401).json({ error: 'no token in Authorization header' });
     }
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
-        if (err) {
-            return res.status(401).json({ error: 'unauthorized'});
-        }
+        if (err) { return res.status(401).json({ error: 'unauthorized' }); };
+        next();
     })
-
-    next();
 
 }
 

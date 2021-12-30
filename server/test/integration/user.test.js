@@ -103,7 +103,7 @@ describe('login as existing user', () => {
 
 })
 
-describe.only('get user details', () => {
+describe('get user details', () => {
 
     const User = require('../../src/user/user.model');
     const { createToken } = require('../../src/middleware/authenticator');
@@ -123,7 +123,7 @@ describe.only('get user details', () => {
 
     })
 
-    it.only('GET request to /api/user/:id returns status 401 and unauthorized message if invalid user token provided', async () => {
+    it('GET request to /api/user/:id returns status 401 and unauthorized message if invalid user token provided', async () => {
 
         const user = await User.findOne();
         const route = user.url;
