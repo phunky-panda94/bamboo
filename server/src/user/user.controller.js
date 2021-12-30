@@ -95,7 +95,7 @@ exports.updateEmail = async (req, res) => {
     }
 
     const token = createToken(user.email);
-
+    
     res.status(204).json({ token: token });
 
 }

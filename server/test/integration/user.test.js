@@ -169,21 +169,17 @@ describe('update user details', () => {
     const User = require('../../src/user/user.model');
     const { createToken } = require('../../src/middleware/authenticator');
 
-    it.only('PUT request to /api/user/:id updates user details in database and returns status 204', async () => {
+    it.only('PUT request to /api/user/:id/email updates user email in database and returns status 204', async () => {
         
         const user = await User.findOne();
         const token = createToken(user.email);
-        const route = user.url;
-        const updatedDetails = {
-            email: 'new@email.com',
-            password: 'newpassword'
-        }
 
-        const response = await request.put(route)
+        const response = await request.put(`${user.url}/email`)
             .set('Authorization', `Bearer ${token}`)
-            .send(updatedDetails);
+            .send({ email: 'new@email.com' });
 
         expect(response.status).toBe(204);
+        expect(response.body.token).toBeTruthy();
 
         const updatedUser = await User.findById(user._id);
 
@@ -192,7 +188,7 @@ describe('update user details', () => {
 
     })
 
-    it('PUT request to /api/user/:id with invalid token returns status 401 and unauthorized message', () => {
+    it('PUT request to /api/user/:id/email with invalid token returns status 401 and unauthorized message', () => {
 
         
 
