@@ -143,6 +143,7 @@ describe('user controller', () => {
         await controller.register(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).not.toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({ error: 'user could not be registered' });
 
 
@@ -186,6 +187,7 @@ describe('user controller', () => {
         await controller.getUser(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).not.toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({ error: 'user not found' })
 
     })

@@ -103,17 +103,17 @@ describe('login as existing user', () => {
 
 })
 
-describe('get user details', () => {
+describe.only('get user details', () => {
 
     const User = require('../../src/user/user.model');
     const { createToken } = require('../../src/middleware/authenticator');
 
-    it('should return status 200 and user details if valid user token provided', async () => {
+    it('GET request to /api/user/:id returns status 200 and user details if valid user token provided', async () => {
 
         const user = await User.findOne();
         const token = createToken(user.email);
-
         const route = user.url;
+
         const response = await request.get(route).set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(200);
@@ -122,5 +122,44 @@ describe('get user details', () => {
         expect(response.body).toHaveProperty('email', 'bwayne@wayne.com');
 
     })
+
+    it.only('GET request to /api/user/:id returns status 401 and unauthorized message if invalid user token provided', async () => {
+
+        const user = await User.findOne();
+        const route = user.url;
+        
+        const response = await request.get(route).set('Authorization', 'Bearer abc');
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('unauthorized');
+
+    })
+
+    it('GET request to /api/user/:id returns status 401 and unauthorized message if no user token provided', async () => {
+
+        const user = await User.findOne();
+        const route = user.url
+
+        const response = await request.get(route);
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('no token in Authorization header');
+
+    })
+
+    // it.skip('GET request to /api/user/:id returns status 404 and user not found error message if user does not exist', async () => {
+
+    //     const route = '/api/user/123';
+    //     const token = createToken('123@email.com');
+
+    //     const response = await request.get(route).set('Authorization', `Bearer ${token}`);
+
+    //     expect(response.status).toBe(404);
+    //     expect(response.body.error).toBeTruthy();
+    //     expect(response.body.error).toBe('user not found');
+
+    // })
 
 })

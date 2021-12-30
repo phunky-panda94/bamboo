@@ -44,12 +44,12 @@ exports.authenticateToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (token == null) {
-        return res.status(401).json({ error: 'No token in Authorization header' });
+        return res.status(401).json({ error: 'no token in Authorization header' });
     }
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
         if (err) {
-            return res.status(403).json({ error: 'Unauthorized'});
+            return res.status(401).json({ error: 'unauthorized'});
         }
     })
 

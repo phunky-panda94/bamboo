@@ -52,7 +52,7 @@ describe('authenticate token', () => {
 
     it('should return error if no token in header', () => {
         
-        const expectedResponse = { error: 'No token in Authorization header' };
+        const expectedResponse = { error: 'no token in Authorization header' };
         const req = { headers: {} }
         const res = mockResponse();
 
@@ -65,13 +65,13 @@ describe('authenticate token', () => {
 
     it('should return error if invalid token in header', () => {
 
-        const expectedResponse = { error: 'Unauthorized' };
+        const expectedResponse = { error: 'unauthorized' };
         const req = { headers: { authorization: 'Bearer abc' } };
         const res = mockResponse();
 
         authenticateToken(req, res, next);
 
-        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith(expectedResponse);
 
     })
