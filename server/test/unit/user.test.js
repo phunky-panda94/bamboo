@@ -187,8 +187,9 @@ describe('user controller', () => {
         await controller.getUser(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).not.toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'user not found' })
+        expect(res.json).toHaveBeenCalledTimes(1);
 
     })
 

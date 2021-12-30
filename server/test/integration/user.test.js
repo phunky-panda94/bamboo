@@ -149,17 +149,17 @@ describe.only('get user details', () => {
 
     })
 
-    // it.skip('GET request to /api/user/:id returns status 404 and user not found error message if user does not exist', async () => {
+    it('GET request to /api/user/:id returns status 404 and user not found error message if user does not exist', async () => {
 
-    //     const route = '/api/user/123';
-    //     const token = createToken('123@email.com');
+        const route = '/api/user/123';
+        const token = createToken('123@email.com');
 
-    //     const response = await request.get(route).set('Authorization', `Bearer ${token}`);
+        const response = await request.get(route).set('Authorization', `Bearer ${token}`);
 
-    //     expect(response.status).toBe(404);
-    //     expect(response.body.error).toBeTruthy();
-    //     expect(response.body.error).toBe('user not found');
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('user not found');
 
-    // })
+    })
 
 })

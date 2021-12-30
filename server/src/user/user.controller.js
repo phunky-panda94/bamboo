@@ -34,7 +34,7 @@ exports.getUser = async (req, res) => {
     const foundUser = await User.findById(id, 'firstName lastName email').catch(err => { return });
 
     if (!foundUser) return res.status(404).json({ error: 'user not found' });
-    
-    res.status(200).json(foundUser)
+        
+    res.status(200).json(foundUser);
 
 }
