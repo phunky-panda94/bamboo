@@ -73,7 +73,8 @@ describe('comment controller', () => {
     const mockResponse = () => {
         return {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn().mockReturnThis()
+            json: jest.fn().mockReturnThis(),
+            end: jest.fn().mockReturnThis()
         }
     }
 
@@ -93,6 +94,7 @@ describe('comment controller', () => {
         await controller.create(req, res);
 
         expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith({ id: expect.anything() });
 
     })
 
@@ -112,13 +114,14 @@ describe('comment controller', () => {
         await controller.create(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be created' });
 
     })
 
     it('get should return status 200 and comment object if comment successfully retrieved', async () => {
 
-        const params = { comment: comment._id }
+        const params = { id: comment._id }
         const req = { params: params }
         const res = mockResponse();
 
@@ -131,13 +134,14 @@ describe('comment controller', () => {
 
     it('get should return status 404 if comment not found', async () => {
 
-        const params = { comment: '' }
+        const params = { id: '' }
         const req = { params: params }
         const res = mockResponse();
 
         await controller.get(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' });
 
     })
@@ -158,13 +162,9 @@ describe('comment controller', () => {
 
     it('update should return status 204 if comment successfully update', async () => {
 
-        const updatedComment = {
-           comment: comment._id,
-           content: 'this is an updated comment'
-        }
-
         const req = {
-            body: updatedComment
+            body: { content: 'this is an updated comment' },
+            params: { id: comment._id }
         }
 
         const res = mockResponse();
@@ -172,18 +172,32 @@ describe('comment controller', () => {
         await controller.update(req, res);
 
         expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.end).toHaveBeenCalled();
+
+    })
+
+    it('update should return status 404 if comment not found', async () => {
+
+        const req = {
+            body: { content: 'this is an updated comment' },
+            params: { id: '' }
+        }
+
+        const res = mockResponse();
+
+        await controller.update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' });
 
     })
 
     it('update should return status 400 if comment could not be updated', async () => {
 
-        const updatedComment = {
-            comment: '',
-            content: 'this is an updated comment'
-        }
-
         const req = {
-            body: updatedComment
+            body: { content: '' },
+            params: { id: comment._id }
         }
 
         const res = mockResponse();
@@ -191,31 +205,34 @@ describe('comment controller', () => {
         await controller.update(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be updated' });
 
     })
 
     it('delete should return status 202 if comment deleted', async () => {
 
-        const params = { comment: comment._id }
+        const params = { id: comment._id }
         const req = { params: params }
         const res = mockResponse();
 
         await controller.delete(req, res);
 
         expect(res.status).toHaveBeenCalledWith(202);
+        expect(res.end).toHaveBeenCalled();
 
     })
 
     it('delete should return status 400 if comment could not be deleted', async () => {
 
-        const params = { comment: '123' }
+        const params = { id: '123' }
         const req = { params: params }
         const res = mockResponse();
 
         await controller.delete(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be deleted' })
 
     })

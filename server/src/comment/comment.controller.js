@@ -4,27 +4,35 @@ exports.create = async (req, res) => {
 
     const { user, post, content } = req.body;
 
-    await Comment.create({
-        user: user,
-        post: post,
-        content: content
-    }).catch(err => {
-        return res.status(400).json({ error: 'comment could not be created'});
-    })
+    let comment;
 
-    return res.status(201);
+    try {
+        comment = await Comment.create({
+            user: user,
+            post: post,
+            content: content
+        });
+    } catch (err) {
+        return res.status(400).json({ error: 'comment could not be created'});
+    }
+
+    res.status(201).json({ id: comment._id });
 
 }
 
 exports.get = async (req, res) => {
 
-    const { comment } = req.params;
+    const { id } = req.params;
 
-    const foundComment = await Comment.findById(comment).catch(err => {
+    let comment;
+
+    try { 
+        comment = await Comment.findById(id);
+    } catch (err) {
         return res.status(404).json({ error: 'comment not found' });
-    });
+    }
 
-    return res.status(200).json(foundComment);
+    res.status(200).json(comment);
 
 }
 
@@ -32,30 +40,45 @@ exports.getAll = async (req, res) => {
 
     const comments = await Comment.find({});
 
-    return res.status(200).json(comments);
+    res.status(200).json(comments);
 
 }
 
 exports.update = async (req, res) => {
 
-    const { comment, content } = req.body;
+    const { id } = req.params
+    const { content } = req.body;
 
-    await Comment.findByIdAndUpdate(comment, { content: content }).catch(err => {
+    let comment;
+
+    try {
+        comment = await Comment.findById(id);
+    } catch (err) {
+        return res.status(404).json({ error: 'comment not found' });
+    }
+
+    comment.content = content;
+
+    try {
+        await comment.save();
+    } catch (err) {
         return res.status(400).json({ error: 'comment could not be updated' });
-    });
+    }
 
-    return res.status(204);
+    res.status(204).end();
 
 }
 
 exports.delete = async (req, res) => {
 
-    const { comment } = req.params;
+    const { id } = req.params;
 
-    await Comment.findByIdAndDelete(comment).catch(err => {
+    try {
+        await Comment.findByIdAndDelete(id)
+    } catch (err) {
         return res.status(400).json({ error: 'comment could not be deleted' })
-    });
+    }
 
-    return res.status(202);
+    res.status(202).end();
     
 }
