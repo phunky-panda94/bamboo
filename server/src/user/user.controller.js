@@ -38,3 +38,25 @@ exports.getUser = async (req, res) => {
     res.status(200).json(foundUser);
 
 }
+
+exports.updateUser = async (req, res) => {
+
+    const { email, password } = req.body;
+    const { id } = req.params
+
+    const user = await User.findById(id).catch(err => { return });
+    if (!user) return res.status(404).json({ error: 'user does not exist' });
+
+    user.email = email;
+    user.password = password;
+    
+    const updatedUser = await user.save().catch(err => { return });
+    if(!updatedUser) return res.status(400).json({ error: 'user could not be updated' });
+
+    res.status(202).end();
+
+}
+
+exports.deleteUser = async (req, res) => {
+
+}

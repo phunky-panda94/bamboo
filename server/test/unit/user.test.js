@@ -181,7 +181,7 @@ describe('user controller', () => {
 
     it('getUser returns status 404 and message if user not found', async () => {
 
-        const req = { params: { id: '' } }
+        const req = { params: { id: 'abc' } }
         const res = mockResponse();
 
         await controller.getUser(req, res);
@@ -190,6 +190,75 @@ describe('user controller', () => {
         expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: 'user not found' })
         expect(res.json).toHaveBeenCalledTimes(1);
+
+    })
+
+    it('updateUser returns status 202 if user details successfully update', async () => {
+
+        const user = await User.findOne();
+        const updatedDetails = {
+            email: 'new@email.com',
+            password: 'newpassword'
+        }
+
+        const req = {
+            body: updatedDetails,
+            params: { id: user._id } 
+        }
+        const res = mockResponse();
+
+        await controller.updateUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(202);
+        expect(res.end).toHaveBeenCalled();
+
+        const updatedUser = await User.findById(user._id);
+        
+        expect(updatedUser).toBeTruthy();
+        expect(updatedUser.email).toBe('new@email.com');
+
+    })
+
+    it('updateUser returns status 404 and error message if user does not exist', async () => {
+
+        const updatedDetails = {
+            email: 'new@email.com',
+            password: 'newpassword'
+        }
+
+        const req = {
+            body: updatedDetails,
+            params: { id: 'abc' }
+        }
+
+        const res = mockResponse();
+
+        await controller.updateUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
+
+    })
+    
+    it('updateUser returns status 400 and error message if user details could not be updated', async () => {
+
+        const user = await User.findOne();
+        const updatedDetails = {
+            email: '',
+            password: ''
+        }
+
+        const req = {
+            body: updatedDetails,
+            params: { id: user._id } 
+        }
+
+        const res = mockResponse();
+
+        await controller.updateUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'user could not be updated' });
 
     })
 
@@ -213,6 +282,8 @@ describe('user routes', () => {
         jest.spyOn(mockController, 'login').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'register').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'getUser').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'updateUser').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'deleteUser').mockImplementation((req, res) => res.end());
 
         mockValidator.validateNewUserDetails = jest.fn().mockImplementation((req, res, next) => next());
 
@@ -239,7 +310,7 @@ describe('user routes', () => {
 
     })
 
-    it('POST request to /api/user/login should call login method of controller', async () => {
+    it('POST request to /api/user/login should call authenticateUser and login method of controller', async () => {
 
         await request.post(`${route}/login`);
 
@@ -248,15 +319,42 @@ describe('user routes', () => {
 
     })
 
+    it('PUT request to /api/user/:id should call authenticateToken and updateUser method of controller', async () => {
+
+        await request.put(`${route}/user123`);
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.updateUser).toHaveBeenCalled();
+
+    })
+
+    it('DELETE request to /api/user/:id should call authenticateToken and deleteUser method of controller', async () => {
+
+        await request.delete(`${route}/user123`);
+
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockController.deleteUser).toHaveBeenCalled();
+
+    })
+
 })
 
 describe('user helpers', () => {
 
+    const User = require('../../src/user/user.model');
+    const faker = require('faker');
     const { userExists } = require('../../src/user/user.helpers');
 
     it('should return true if user exists', async () => {
 
-        const exists = await userExists('bwayne@wayne.com');
+        const user = await User.create({
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        })
+
+        const exists = await userExists(user.email);
 
         expect(exists).toBeTruthy();
 
