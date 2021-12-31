@@ -1,5 +1,4 @@
 const Post = require('./post.model');
-const User = require('../user/user.model');
 
 exports.create = async (req, res) => {
 
