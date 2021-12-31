@@ -78,7 +78,7 @@ describe('authenticate token', () => {
 
     it('should return called next function if token is valid', () => {
 
-        const token = createToken('email');
+        const token = createToken('id');
         const req = { headers: { authorization: `Bearer ${token}` } };
         const res = mockResponse();
 

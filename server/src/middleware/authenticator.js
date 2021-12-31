@@ -29,7 +29,7 @@ exports.authenticateUser = async (req, res, next) => {
         return res.status(401).json({ error: 'invalid credentials'})
     }
 
-    const token = this.createToken(email);
+    const token = this.createToken(JSON.stringify(user._id));
 
     req.body.user = { firstName: user.firstName, lastName: user.lastName };
     req.body.token = token;
@@ -54,7 +54,7 @@ exports.authenticateToken = (req, res, next) => {
 
 }
 
-exports.createToken = (email) => {
-    const token = jwt.sign(email, process.env.TOKEN_SECRET);
+exports.createToken = (id) => {
+    const token = jwt.sign(id, process.env.TOKEN_SECRET);
     return token;
 }

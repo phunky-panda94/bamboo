@@ -266,7 +266,7 @@ describe('user controller', () => {
 
     })
 
-    it('updateEmail returns status 200 and token if user email successfully updated', async () => {
+    it('updateEmail returns status 204 and token if user email successfully updated', async () => {
 
         const user = await User.findOne();
         const req = {
@@ -277,8 +277,7 @@ describe('user controller', () => {
 
         await controller.updateEmail(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ token: expect.anything() });
+        expect(res.status).toHaveBeenCalledWith(204);
 
         const updatedUser = await User.findById(user._id);
 

@@ -1,5 +1,4 @@
 const User = require('./user.model');
-const { createToken } = require('../middleware/authenticator');
 const { userExists } = require('./user.helpers');
 
 exports.register = async (req, res) => {
@@ -68,9 +67,7 @@ exports.updateEmail = async (req, res) => {
         return res.status(400).json({ error: 'user email could not be updated' });
     }
 
-    const token = createToken(user.email);
-    
-    res.status(200).json({ token: token });
+    res.status(204).end();
 
 }
 

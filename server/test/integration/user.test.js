@@ -175,21 +175,20 @@ describe('update user details', () => {
 
     beforeAll(async () => { 
         user = await User.findOne();
-        token = createToken(user.email);
+        token = createToken(JSON.stringify(user._id));
         emailRoute = `${user.url}/email`;
         passwordRoute = `${user.url}/password`;
     })
 
     describe('email', () => {
 
-        it('PUT request to /api/user/:id/email updates user email in database and returns status 200 with new token', async () => {
+        it('PUT request to /api/user/:id/email updates user email in database and returns status 204 with new token', async () => {
             
             const response = await request.put(emailRoute)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ email: 'new@email.com' });
 
-            expect(response.status).toBe(200);
-            expect(response.body.token).toBeTruthy();
+            expect(response.status).toBe(204);
 
             const updatedUser = await User.findById(user._id);
 
