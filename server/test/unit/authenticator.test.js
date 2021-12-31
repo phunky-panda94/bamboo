@@ -76,7 +76,7 @@ describe('authenticate token', () => {
 
     })
 
-    it('should return called next function if token is valid', () => {
+    it('should add user to request and call next function if token is valid', () => {
 
         const token = createToken('id');
         const req = { headers: { authorization: `Bearer ${token}` } };
@@ -84,6 +84,8 @@ describe('authenticate token', () => {
 
         authenticateToken(req, res, next);
 
+        expect(req.user).toBeTruthy();
+        expect(req.user).toBe('id');
         expect(next).toHaveBeenCalled();
 
     })

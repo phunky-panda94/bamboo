@@ -47,8 +47,9 @@ exports.authenticateToken = (req, res, next) => {
         return res.status(401).json({ error: 'no token in Authorization header' });
     }
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err) => {
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, id) => {
         if (err) { return res.status(401).json({ error: 'unauthorized' }); };
+        req.user = id;
         next();
     })
 
