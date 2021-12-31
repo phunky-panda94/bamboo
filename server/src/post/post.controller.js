@@ -2,7 +2,7 @@ const Post = require('./post.model');
 
 exports.create = async (req, res) => {
 
-    const { user, content } = req.body;
+    const { content } = req.body;
     let post;
 
     try { 

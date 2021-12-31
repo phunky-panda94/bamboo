@@ -60,13 +60,8 @@ describe('post controllers', () => {
 
     it('create should add post to database and return status 201 and post id', async () => {
         
-        const body = {
-            user: user._id,
-            content: "I'm Batman"
-        }
-
+        const body = { content: "I'm Batman"}
         const req = { body: body };
-
         const res = mockResponse();
 
         await controller.create(req, res);
@@ -78,7 +73,7 @@ describe('post controllers', () => {
 
     it('create should return 400 if error when saving post', async () => {
 
-        const body = { user: '', content: '' }
+        const body = { content: '' }
         const req = { body: body }
         const res = mockResponse();
 
