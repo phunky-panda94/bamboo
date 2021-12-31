@@ -12,17 +12,20 @@ afterAll(async () => await database.disconnect());
 describe('create post', () => {
 
     const User = require('../../src/user/user.model');
-    const route = '/api/post'
+    const Post = require('../../src/post/post.model');
+    const { createToken } = require('../../src/middleware/authenticator');
+    const route = '/api/posts'
     let user;
+    let token;
 
-    beforeAll(async () => { user = await User.findOne() });
+    beforeAll(async () => { 
+        user = await User.findOne();
+        token = createToken(JSON.stringify(user._id));
+    });
 
-    it('POST request to /api/post creates new post in database and returns status 201 id of new post', async () => {
+    it('POST request to /api/posts creates new post in database and returns status 201 id of new post', async () => {
 
-        const newPost = {
-            author: user._id,
-            content: 'this is a new post'
-        }
+        const newPost = { content: 'this is a new post' }
 
         const response = await request.post(route)
             .set('Authorization', `Bearer ${token}`)
@@ -30,6 +33,23 @@ describe('create post', () => {
 
         expect(response.status).toBe(201);
         expect(response.body.post).toBeTruthy();
+
+        const savedPost = await Post.findById(response.body.post);
+        expect(savedPost).toBeTruthy();
+        expect(savedPost.content).toBe('this is a new post');
+
+    })
+
+    it('POST request to /api/posts returns 400 and error message if post could not be created', async () => {
+
+        const newPost = { content: '' }
+        const response = await request.post(route)
+            .set('Authorization', `Bearer ${token}`)
+            .send(newPost);
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('post could not be created');
 
     })
 
