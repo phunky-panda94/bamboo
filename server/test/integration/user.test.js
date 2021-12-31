@@ -168,33 +168,139 @@ describe('update user details', () => {
 
     const User = require('../../src/user/user.model');
     const { createToken } = require('../../src/middleware/authenticator');
+    let token;
+    let user;
+    let emailRoute;
+    let passwordRoute;
 
-    it.only('PUT request to /api/user/:id/email updates user email in database and returns status 204', async () => {
-        
-        const user = await User.findOne();
-        const token = createToken(user.email);
+    beforeAll(async () => { 
+        user = await User.findOne();
+        token = createToken(user.email);
+        emailRoute = `${user.url}/email`;
+        passwordRoute = `${user.url}/password`;
+    })
 
-        const response = await request.put(`${user.url}/email`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({ email: 'new@email.com' });
+    describe('email', () => {
 
-        expect(response.status).toBe(204);
-        expect(response.body.token).toBeTruthy();
+        it('PUT request to /api/user/:id/email updates user email in database and returns status 200 with new token', async () => {
+            
+            const response = await request.put(emailRoute)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ email: 'new@email.com' });
 
-        const updatedUser = await User.findById(user._id);
+            expect(response.status).toBe(200);
+            expect(response.body.token).toBeTruthy();
 
-        expect(updatedUser).toBeTruthy();
-        expect(updatedUser.email).toBe(updatedDetails.email);
+            const updatedUser = await User.findById(user._id);
+
+            expect(updatedUser).toBeTruthy();
+            expect(updatedUser.email).toBe('new@email.com');
+
+        })
+
+        it('PUT request to /api/user/:id/email with invalid token returns status 401 and unauthorized message', async () => {
+
+            const response = await request.put(emailRoute)
+                .set('Authorization', 'Bearer abc')
+                .send({ email: 'new@email.com' });
+
+            expect(response.status).toBe(401);
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('unauthorized');
+
+        })
+
+        it('PUT request to /api/user/:id/email returns status 404 and error message if user does not exist', async () => {
+
+            const response = await request.put('/api/user/123/email')
+                .set('Authorization', `Bearer ${token}`)
+                .send( { email: 'new@email.com' });
+
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('user does not exist');
+
+        })
+
+        it('PUT request to /api/user/:id/email with invalid email returns status 400 and error message', async () => {
+
+            const response = await request.put(emailRoute)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ email: 'abc' });
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('invalid email address');
+
+        })
+
+        it('PUT request to /api/user:id/email with taken email address returns 400 and error message', async () => {
+
+            const existingUser = await User.create({
+                firstName: 'John',
+                lastName: 'Smith',
+                email: 'taken@email.com',
+                password: 'password'
+            })
+
+            const response = await request.put(emailRoute)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ email: 'taken@email.com' });
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('email address already taken');
+
+        })
 
     })
 
-    it('PUT request to /api/user/:id/email with invalid token returns status 401 and unauthorized message', () => {
+    describe('password', () => {
 
-        
+        it('PUT request to /api/user/:id/password updates user password in database and returns status 204', async () => {
 
-    })
+            const response = await request.put(passwordRoute)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ password: 'newpassword' });
 
-    it('PUT request to /api/user/:id with invalid email or password returns status 400 and validation errors', () => {
+            expect(response.status).toBe(204);
+
+        })
+
+        it('PUT request to /api/user/:id/password with invalid token returns status 401 and unauthorized message', async () => {
+            
+            const response = await request.put(passwordRoute)
+                .set('Authorization', 'Bearer abc')
+                .send({ password: 'newpassword' });
+
+            expect(response.status).toBe(401);
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('unauthorized');
+
+        })
+
+        it('PUT request to /api/user/:id/password returns status 404 if user does not exist', async () => {
+
+            const response = await request.put('/api/user/123/password')
+                .set('Authorization', `Bearer ${token}`)
+                .send({ password: 'newpassword' });
+
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe('user does not exist');
+
+        })
+
+        it('PUT request to /api/user/:id/password with invalid password returns status 400 and error message', async() => {
+
+            const response = await request.put(passwordRoute)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ password: 'abc' });
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBeTruthy();
+            expect(response.body.error).toBe('invalid password');
+
+        })
 
     })
 

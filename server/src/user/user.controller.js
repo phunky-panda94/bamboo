@@ -47,33 +47,6 @@ exports.getUser = async (req, res) => {
 
 }
 
-exports.updateUser = async (req, res) => {
-
-    const { email, password } = req.body;
-    const { id } = req.params;
-    let user;
-
-    try {
-        user = await User.findById(id);
-    } catch (err) {
-        return res.status(404).json({ error: 'user does not exist' });
-    }
-    
-    user.email = email;
-    user.password = password;
-    
-    try {
-        await user.save();
-    } catch {
-        return res.status(400).json({ error: 'user could not be updated' });
-    }
-
-    const token = createToken(user.email);
-
-    res.status(204).json({ token: token });
-
-}
-
 exports.updateEmail = async (req, res) => {
 
     const { email } = req.body;
@@ -85,18 +58,19 @@ exports.updateEmail = async (req, res) => {
     } catch (err) {
         return res.status(404).json({ error: 'user does not exist' });
     }
-    
-    user.email = email;
+
+    if (await User.findOne({ email: email })) return res.status(400).json({ error: 'email address already taken' });
     
     try {
+        user.email = email;
         await user.save();
-    } catch {
+    } catch (err) {
         return res.status(400).json({ error: 'user email could not be updated' });
     }
 
     const token = createToken(user.email);
     
-    res.status(204).json({ token: token });
+    res.status(200).json({ token: token });
 
 }
 
@@ -112,9 +86,8 @@ exports.updatePassword = async (req, res) => {
         return res.status(404).json({ error: 'user does not exist' });
     }
     
-    user.password = password;
-    
     try {
+        user.password = password;
         await user.save();
     } catch {
         return res.status(400).json({ error: 'user password could not be updated' });

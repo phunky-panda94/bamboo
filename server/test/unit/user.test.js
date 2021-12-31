@@ -40,6 +40,19 @@ describe('user model', () => {
         })
     })
 
+    it('should be invalid if password less than 5 characters', () => {
+        let newUser = new User({
+            firstName: 'John',
+            lastName: 'Smith',
+            email: 'email@email.com',
+            password: 'abc'
+        })
+
+        newUser.validate(err => {
+            expect(err.errors.password).toBeTruthy();
+        })
+    })
+
     it('virtual fullname method should return first name and last name', () => {
         let newUser = new User({
             firstName: 'John',
@@ -253,7 +266,7 @@ describe('user controller', () => {
 
     })
 
-    it('updateEmail returns status 204 and token if user email successfully updated', async () => {
+    it('updateEmail returns status 200 and token if user email successfully updated', async () => {
 
         const user = await User.findOne();
         const req = {
@@ -264,7 +277,7 @@ describe('user controller', () => {
 
         await controller.updateEmail(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({ token: expect.anything() });
 
         const updatedUser = await User.findById(user._id);
@@ -290,6 +303,31 @@ describe('user controller', () => {
 
     })
     
+    it('updateEmail returns status 400 and error message if email already taken', async () => {
+
+        const user = await User.findOne();
+        const existingUser = await User.create({
+            firstName: 'John',
+            lastName: 'Smith',
+            email: 'taken@email.com',
+            password: 'password'
+        })
+
+        const req = { 
+            body: { email: existingUser.email },
+            params: { id: user._id }
+        }
+
+        const res = mockResponse();
+
+        await controller.updateEmail(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.json).toHaveBeenCalledWith({ error: 'email address already taken' });
+
+    })
+
     it('updateEmail returns status 400 and error message if user email could not be updated', async () => {
 
         const user = await User.findOne();
@@ -364,6 +402,8 @@ describe('user routes', () => {
         jest.spyOn(mockController, 'deleteUser').mockImplementation((req, res) => res.end());
 
         mockValidator.validateNewUserDetails = jest.fn().mockImplementation((req, res, next) => next());
+        mockValidator.validateEmail = jest.fn().mockImplementation((req, res, next) =>  next());
+        mockValidator.validatePassword = jest.fn().mockImplementation((req, res, next) => next());
 
         route = '/api/user';
         app = require('../../app');
@@ -397,20 +437,22 @@ describe('user routes', () => {
 
     })
 
-    it('PUT request to /api/user/:id/email should call authenticateToken and updateEmail method of controller', async () => {
+    it('PUT request to /api/user/:id/email should call authenticateToken, validateEmail and updateEmail method of controller', async () => {
 
         await request.put(`${route}/user123/email`);
 
         expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockValidator.validateEmail).toHaveBeenCalled();
         expect(mockController.updateEmail).toHaveBeenCalled();
 
     })
 
-    it('PUT request to /api/user/:id/password should call authenticateToken, encryptPassword and updatePassword method of controller', async () => {
+    it('PUT request to /api/user/:id/password should call authenticateToken, validatePassword, encryptPassword and updatePassword method of controller', async () => {
 
         await request.put(`${route}/user123/password`);
 
         expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockValidator.validatePassword).toHaveBeenCalled();
         expect(mockAuth.encryptPassword).toHaveBeenCalled();
         expect(mockController.updatePassword).toHaveBeenCalled();
 
