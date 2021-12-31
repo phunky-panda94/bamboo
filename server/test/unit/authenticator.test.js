@@ -79,13 +79,16 @@ describe('authenticate token', () => {
     it('should add user to request and call next function if token is valid', () => {
 
         const token = createToken('id');
-        const req = { headers: { authorization: `Bearer ${token}` } };
+        const req = { 
+            headers: { authorization: `Bearer ${token}` }, 
+            body: {} 
+        };
         const res = mockResponse();
 
         authenticateToken(req, res, next);
 
-        expect(req.user).toBeTruthy();
-        expect(req.user).toBe('id');
+        expect(req.body.user).toBeTruthy();
+        expect(req.body.user).toBe('id');
         expect(next).toHaveBeenCalled();
 
     })

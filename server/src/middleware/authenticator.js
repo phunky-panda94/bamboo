@@ -49,7 +49,7 @@ exports.authenticateToken = (req, res, next) => {
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err, id) => {
         if (err) { return res.status(401).json({ error: 'unauthorized' }); };
-        req.user = id;
+        req.body.user = id;
         next();
     })
 
