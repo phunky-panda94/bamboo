@@ -1,3 +1,12 @@
+const database = require('../../util/memoryDatabase');
+
+beforeAll(async () => { 
+    await database.connect();
+    await database.seed();
+});
+
+afterAll(async() => await database.disconnect());
+
 describe('post model', () => {
 
     const Post = require('../../src/post/post.model');
@@ -28,6 +37,14 @@ describe('post model', () => {
 
     })
 
+    it('virtual url method should return /api/post/:id', async () => {
+
+        const post = await Post.findOne();
+
+        expect(post.url).toBe(`/api/posts/${post._id}`);
+
+    })
+
 })
 
 describe('post controllers', () => {
@@ -35,6 +52,8 @@ describe('post controllers', () => {
     const Post = require('../../src/post/post.model');
     const User = require('../../src/user/user.model');
     const controller = require('../../src/post/post.controller');
+    let user;
+    let existingPost;
 
     const mockResponse = () => {
         return {
@@ -44,19 +63,10 @@ describe('post controllers', () => {
         }
     }
 
-    const database = require('../../util/memoryDatabase');
-
-    let user;
-    let existingPost;
-
-    beforeAll(async () => { 
-        await database.connect();
-        await database.seed();
+    beforeAll(async () => {
         user = await User.findOne({ email: 'bwayne@wayne.com' });
         existingPost = await Post.findOne({ author: user._id, content: 'this is a post' });
-    });
-
-    afterAll(async() => await database.disconnect());
+    })
 
     it('create should add post to database and return status 201 and post id', async () => {
         
