@@ -308,4 +308,49 @@ describe('update user details', () => {
 
 describe('delete user', () => {
 
+    const User = require('../../src/user/user.model');
+    const { userExists } = require('../../src/user/user.helpers');
+    const { createToken } = require('../../src/middleware/authenticator');
+    let user;
+    let token;
+    let route;
+
+    beforeAll(async () => {
+        user = await User.findOne();
+        token = createToken(user.email);
+        route = user.url;
+    });
+
+    it('DELETE request to /api/user/:id deletes users from database and returns status 202', async () => {
+
+        const response = await request.delete(route)
+            .set('Authorization', `Bearer ${token}`)
+
+        expect(response.status).toBe(202);
+        expect(await userExists(user.email)).toBeFalsy();
+
+    })
+
+    it('DELETE request to /api/user/:id with invalid token return status 401 and unauthorized message', async () => {
+
+        const response = await request.delete(route)
+            .set('Authorization', 'Bearer abc')
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('unauthorized');
+
+    })
+
+    it('DELETE request to /api/user/:id returns status 400 and error message if user could not be deleted', async () => {
+
+        const response = await request.delete('/api/user/123')
+        .set('Authorization', `Bearer ${token}`)
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBeTruthy();
+        expect(response.body.error).toBe('user could not be deleted');
+
+    })
+
 })
