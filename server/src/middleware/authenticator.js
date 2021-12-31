@@ -2,6 +2,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../user/user.model');
+const Post = require('../post/post.model');
 
 exports.encryptPassword = async (req, res, next) => {
 
@@ -52,6 +53,15 @@ exports.authenticateToken = (req, res, next) => {
         req.body.user = id.slice(1,-1);
         next();
     })
+
+}
+
+exports.authenticatePostAuthor = async (req, res, next) => {
+
+    const { user } = req.body;
+    const { id } = req.params
+
+    const post = await Post.findById(id);
 
 }
 

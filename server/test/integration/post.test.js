@@ -145,4 +145,15 @@ describe.only('update post', () => {
 
 describe('delete post', () => {
 
+    it('DELETE request to /api/posts/:id deletes post from database and returns status 202', async () => {
+
+        
+    })
+
+    it('DELETE request to /api/posts/:id returns 401 and unauthorized message if invalid token', () => {
+
+
+
+    })
+
 })
