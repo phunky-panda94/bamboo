@@ -29,7 +29,7 @@ exports.authenticateUser = async (req, res, next) => {
     if (!user || !await this.checkPassword(password, user.password)) {
         return res.status(401).json({ error: 'invalid credentials'})
     }
-
+    
     const token = this.createToken(user._id.toString());
 
     req.body.user = { firstName: user.firstName, lastName: user.lastName };
@@ -50,14 +50,13 @@ exports.authenticateToken = (req, res, next) => {
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err, id) => {
         if (err) { return res.status(401).json({ error: 'unauthorized' }); };
-        req.body.user = id.slice(1,-1);
+        req.body.user = id;
         next();
     })
 
 }
 
 exports.createToken = (id) => {
-    console.log(id)
     const token = jwt.sign(id, process.env.TOKEN_SECRET);
     return token;
 }

@@ -58,7 +58,7 @@ exports.update = async (req, res) => {
     } catch (err) {
         return res.status(404).json({ error: 'post does not exist' });
     }
-
+    
     if (user !== post.author.toString()) {
         return res.status(403).json({ error: 'forbidden' });
     }

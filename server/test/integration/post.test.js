@@ -13,7 +13,7 @@ beforeAll(async () => {
     await database.connect(); 
     await database.seed(); 
     user = await User.findOne();
-    token = createToken(JSON.stringify(user._id));
+    token = createToken(user._id.toString());
     post = await Post.findOne();
 });
 
@@ -91,7 +91,7 @@ describe('get post', () => {
 
 })
 
-describe.only('update post', () => {
+describe('update post', () => {
 
     const Post = require('../../src/post/post.model');
 
@@ -116,6 +116,18 @@ describe.only('update post', () => {
 
         expect(response.status).toBe(401);
         expect(response.body.error).toBe('unauthorized');
+
+    })
+
+    it('PUT request to /api/posts/:id returns 403 and forbidden if user is not post author', async () => {
+
+        const validToken = createToken('abc');
+        const response = await request.put(post.url)
+            .set('Authorization', `Bearer ${validToken}`)
+            .send({ content: 'this is an updated post' });
+
+        expect(response.status).toBe(403);
+        expect(response.body.error).toBe('forbidden');
 
     })
 
@@ -147,12 +159,40 @@ describe('delete post', () => {
 
     it('DELETE request to /api/posts/:id deletes post from database and returns status 202', async () => {
 
+        const response = await request.delete(post.url)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(202);
+        expect(await Post.findById(post._id)).toBeFalsy();
         
     })
 
-    it('DELETE request to /api/posts/:id returns 401 and unauthorized message if invalid token', () => {
+    it('DELETE request to /api/posts/:id returns 401 and error message if no token', async () => {
 
+        const response = await request.delete(post.url);
 
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('no token in Authorization header');
+
+    })
+
+    it('DELETE request to /api/posts/:id returns 401 and unauthorized message if invalid token', async () => {
+
+        const response = await request.delete(post.url)
+            .set('Authorization', 'Bearer abc');
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('unauthorized');
+
+    })
+
+    it('DELETE request to/api/posts/:id returns 400 if post does not exist and cannot be deleted', async () => {
+
+        const response = await request.delete('/api/posts/123')
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('post does not exist');
 
     })
 
