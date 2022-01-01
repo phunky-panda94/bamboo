@@ -81,148 +81,208 @@ describe('comment controller', () => {
         }
     }
 
-    it('create should return status 201 if comment successfully created', async () => {
+    describe('create', () => {
 
-        const req = {
-            params: { postId: post._id },
-            body: { user: user._id, content: 'this is a new comment' }
-        }
-        const res = mockResponse();
+        it('create should return status 201 if comment successfully created', async () => {
 
-        await controller.create(req, res);
+            const req = {
+                params: { postId: post._id },
+                body: { user: user._id, content: 'this is a new comment' }
+            }
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.json).toHaveBeenCalledWith({ id: expect.anything() });
+            await controller.create(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({ id: expect.anything() });
 
-    it('create should return status 400 if error saving new comment to database', async () => {
+        })
 
-        const req = {
-            params: { user: '', postId: '' },
-            body: { content: '' }
-        }
-        const res = mockResponse();
+        it('create should return status 400 if error saving new comment to database', async () => {
 
-        await controller.create(req, res);
+            const req = {
+                params: { user: '', postId: '' },
+                body: { content: '' }
+            }
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be created' });
+            await controller.create(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be created' });
 
-    it('get should return status 200 and comment object if comment successfully retrieved', async () => {
-
-        const req = { params: { commentId: comment._id } }
-        const res = mockResponse();
-
-        await controller.get(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(comment);
+        })
 
     })
 
-    it('get should return status 404 if comment not found', async () => {
+    describe('get', () => {
 
-        const req = { params: { commentId: '' } }
-        const res = mockResponse();
+        it('get should return status 200 and comment object if comment successfully retrieved', async () => {
 
-        await controller.get(req, res);
+            const req = { params: { commentId: comment._id } }
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' });
+            await controller.get(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(comment);
 
-    it('getByPost should return status 200 if comments succesfully retrieved', async () => {
+        })
 
-        const req = { params: { postId: post._id } };
-        const res = mockResponse();
+        it('get should return status 404 if comment not found', async () => {
 
-        const comments = await Comment.find({});
+            const req = { params: { commentId: '' } }
+            const res = mockResponse();
 
-        await controller.getByPost(req, res);
+            await controller.get(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(comments)
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' });
 
-    })
+        })
 
-    it('update should return status 204 if comment successfully update', async () => {
+        it('getByPost should return status 200 if comments succesfully retrieved', async () => {
 
-        const req = {
-            body: { content: 'this is an updated comment' },
-            params: { commentId: comment._id }
-        }
+            const req = { params: { postId: post._id } };
+            const res = mockResponse();
 
-        const res = mockResponse();
+            const comments = await Comment.find({});
 
-        await controller.update(req, res);
+            await controller.getByPost(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(204);
-        expect(res.end).toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(comments)
 
-    })
-
-    it('update should return status 404 if comment not found', async () => {
-
-        const req = {
-            body: { content: 'this is an updated comment' },
-            params: { commentId: '' }
-        }
-
-        const res = mockResponse();
-
-        await controller.update(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' });
+        })
 
     })
 
-    it('update should return status 400 if comment could not be updated', async () => {
+    describe('update', () => {
 
-        const req = {
-            body: { content: '' },
-            params: { commentId: comment._id }
-        }
+        it('update should return status 204 if comment successfully update', async () => {
 
-        const res = mockResponse();
+            const req = {
+                body: { 
+                    content: 'this is an updated comment',
+                    user: user._id.toString()
+                },
+                params: { commentId: comment._id }
+            }
 
-        await controller.update(req, res);
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be updated' });
+            await controller.update(req, res);
 
+            expect(res.status).toHaveBeenCalledWith(204);
+            expect(res.end).toHaveBeenCalled();
+
+        })
+
+        it('update should return status 404 if comment not found', async () => {
+
+            const req = {
+                body: { 
+                    content: 'this is an updated comment',
+                    user: user._id
+                },
+                params: { commentId: '' }
+            }
+
+            const res = mockResponse();
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' });
+
+        })
+
+        it('update should return status 400 if comment could not be updated', async () => {
+
+            const req = {
+                body: { 
+                    content: '',
+                    user: user._id.toString()
+                },
+                params: { commentId: comment._id }
+            }
+
+            const res = mockResponse();
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be updated' });
+
+        })
+
+        it('update should return status 403 and forbidden if user not author of comment', async () => {
+
+            const req = { 
+                params: { commentId: comment._id },
+                body: { user: 'abc' } 
+            }
+            const res = mockResponse();
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(403);
+            expect(res.json).toHaveBeenCalledWith({ error: 'forbidden' });
+
+        })
+    
     })
 
-    it('delete should return status 202 if comment deleted', async () => {
+    describe('delete', () => {
 
-        const req = { params: { commentId: comment._id } }
-        const res = mockResponse();
+        it('delete should return status 403 and forbidden if user if not author of comment', async () => {
 
-        await controller.delete(req, res);
+            const req = { 
+                params: { commentId: comment._id },
+                body: { user: 'abc' } 
+            }
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(202);
-        expect(res.end).toHaveBeenCalled();
+            await controller.delete(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(403);
+            expect(res.json).toHaveBeenCalledWith({ error: 'forbidden' });
 
-    it('delete should return status 400 if comment could not be deleted', async () => {
+        })
 
-        const req = { params: { commentId: '123' } }
-        const res = mockResponse();
+        it('delete should return status 404 if comment could not be deleted', async () => {
 
-        await controller.delete(req, res);
+            const req = { 
+                params: { commentId: '123' },
+                body: { user: user._id.toString() }
+            }
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'comment could not be deleted' })
+            await controller.delete(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({ error: 'comment not found' })
+
+        })
+
+        it('delete should return status 202 if comment deleted', async () => {
+
+            const req = { 
+                params: { commentId: comment._id },
+                body: { user: user._id.toString() } 
+            }
+            const res = mockResponse();
+
+            await controller.delete(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(202);
+            expect(res.end).toHaveBeenCalled();
+
+        })
 
     })
 

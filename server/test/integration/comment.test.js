@@ -130,7 +130,7 @@ describe('update comment', () => {
 
     it('PUT request to /api/posts/:postId/comments/:commentId updates comment in database and returns status 204', async () => {
         
-        const response = await request.put(`${comment.url}`)
+        const response = await request.put(comment.url)
             .set('Authorization', `Bearer ${token}`)
             .send({ content: 'this is an updated comment' });
 
@@ -144,7 +144,7 @@ describe('update comment', () => {
 
     it('PUT request to /api/posts/:postId/comments/:commentId returns 401 unauthorised if invalid token', async () => {
 
-        const response = await request.put(`${comment.url}`)
+        const response = await request.put(comment.url)
             .set('Authorization', 'Bearer abc')
             .send({ content: 'this is an updated comment' });
 
@@ -155,7 +155,7 @@ describe('update comment', () => {
 
     it('PUT request to /api/posts/:postId/comments/:commentId returns 401 unauthorised if no token', async () => {
 
-        const response = await request.put(`${comment.url}`)
+        const response = await request.put(comment.url)
             .send({ content: 'this is an updated comment' });
 
         expect(response.status).toBe(401);
@@ -166,7 +166,7 @@ describe('update comment', () => {
 
         const validToken = createToken('id')
 
-        const response = await request.put(`${comment.url}`)
+        const response = await request.put(comment.url)
             .set('Authorization', `Bearer ${validToken}`)
             .send({ content: 'this is updated comment' });
 
@@ -177,7 +177,7 @@ describe('update comment', () => {
 
     it('PUT request to /api/posts/:postId/comments/:commentId returns 400 if comment could not be updated', async () => {
 
-        const response = await request.put(`${comment.url}`)
+        const response = await request.put(comment.url)
             .set('Authorization', `Bearer ${token}`)
             .send({ content: '' });
 
@@ -201,5 +201,13 @@ describe('update comment', () => {
 })
 
 describe('delete comment', () => {
+
+    it('DELETE request to /api/posts/:postId/comments/:commentId deletes comment from database and returns status 202', async () => {
+
+        const response = await request.delete(comment.url)
+            .set('Authorization')
+
+
+    })
 
 })

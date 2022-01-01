@@ -80,11 +80,22 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
 
     const { commentId } = req.params;
+    const { user } = req.body;
+
+    let comment;
 
     try {
-        await Comment.findByIdAndDelete(commentId)
+        comment = await Comment.findById(commentId)
     } catch (err) {
-        return res.status(400).json({ error: 'comment could not be deleted' })
+        return res.status(404).json({ error: 'comment not found' });
+    }
+
+    if (user !== comment.user.toString()) return res.status(403).json({ error: 'forbidden' });
+
+    try {
+        await Comment.findByIdAndDelete(commentId);
+    } catch (err) { 
+        return res.status(400).json({ error: 'comment could not be deleted' });
     }
 
     res.status(202).end();
