@@ -54,7 +54,7 @@ exports.getByPost = async (req, res) => {
 exports.update = async (req, res) => {
 
     const { commentId } = req.params
-    const { content } = req.body;
+    const { user, content } = req.body;
 
     let comment;
 
@@ -64,9 +64,10 @@ exports.update = async (req, res) => {
         return res.status(404).json({ error: 'comment not found' });
     }
 
-    comment.content = content;
+    if (user !== comment.user.toString()) return res.status(403).json({ error: 'forbidden' });
 
     try {
+        comment.content = content;
         await comment.save();
     } catch (err) {
         return res.status(400).json({ error: 'comment could not be updated' });

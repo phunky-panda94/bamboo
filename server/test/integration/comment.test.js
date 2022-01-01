@@ -126,7 +126,54 @@ describe('get comment', () => {
 
 })
 
-describe('update comment', () => {
+describe.only('update comment', () => {
+
+    it('PUT request to /api/posts/:postId/comments/:commentId updates comment in database and returns status 204', async () => {
+        
+        const response = await request.put(`${comment.url}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ content: 'this is an updated comment' });
+
+        expect(response.status).toBe(204);
+
+        const updatedComment = await Comment.findById(comment._id);
+
+        expect(updatedComment.content).toBe('this is an updated comment');
+
+    })
+
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 401 unauthorised if invalid token', async () => {
+
+        const response = await request.put(`${comment.url}`)
+            .set('Authorization', 'Bearer abc')
+            .send({ content: 'this is an updated comment' });
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('unauthorized');
+
+    })
+
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 401 unauthorised if no token', async () => {
+
+        const response = await request.put(`${comment.url}`)
+            .send({ content: 'this is an updated comment' });
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('no token in Authorization header');
+    })
+
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 403 forbidden if not author of comment', () => {
+
+    })
+
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 400 if comment cannot be updated', () => {
+
+    })
+
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', () => {
+
+    })
+
 
 })
 
