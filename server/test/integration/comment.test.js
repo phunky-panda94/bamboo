@@ -126,7 +126,7 @@ describe('get comment', () => {
 
 })
 
-describe.only('update comment', () => {
+describe('update comment', () => {
 
     it('PUT request to /api/posts/:postId/comments/:commentId updates comment in database and returns status 204', async () => {
         
@@ -162,15 +162,38 @@ describe.only('update comment', () => {
         expect(response.body.error).toBe('no token in Authorization header');
     })
 
-    it('PUT request to /api/posts/:postId/comments/:commentId returns 403 forbidden if not author of comment', () => {
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 403 forbidden if not author of comment', async () => {
+
+        const validToken = createToken('id')
+
+        const response = await request.put(`${comment.url}`)
+            .set('Authorization', `Bearer ${validToken}`)
+            .send({ content: 'this is updated comment' });
+
+        expect(response.status).toBe(403);
+        expect(response.body.error).toBe('forbidden');
 
     })
 
-    it('PUT request to /api/posts/:postId/comments/:commentId returns 400 if comment cannot be updated', () => {
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 400 if comment could not be updated', async () => {
+
+        const response = await request.put(`${comment.url}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ content: '' });
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('comment could not be updated');
 
     })
 
-    it('PUT request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', () => {
+    it('PUT request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
+
+        const response = await request.put(`${post.url}/comments/123`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ content: 'this is an updated comment' });
+
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe('comment not found');
 
     })
 
