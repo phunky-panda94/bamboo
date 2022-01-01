@@ -12,6 +12,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/user', userRouter);
 app.use('/api/posts', postRouter);
-app.use('/api/posts/:id/comments', commentRouter);
+app.use('/api/posts', commentRouter);
 
 module.exports = app;

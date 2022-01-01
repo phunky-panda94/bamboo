@@ -1,6 +1,24 @@
-describe('comment model', () => {
+const database = require('../../util/memoryDatabase');
 
-    const Comment = require('../../src/comment/comment.model');
+const User = require('../../src/user/user.model');
+const Post = require('../../src/post/post.model');
+const Comment = require('../../src/comment/comment.model');
+
+let user;
+let post;
+let comment;
+
+beforeAll(async () => { 
+    await database.connect();
+    await database.seed();
+    user = await User.findOne({ email: 'bwayne@wayne.com' });
+    post = await Post.findOne({ author: user._id, content: 'this is a post' });
+    comment = await Comment.findOne({ content: 'this is a comment' });
+});
+
+afterAll(async() => await database.disconnect());
+
+describe('comment model', () => {
 
     it('should return error if no user', () => {
 
@@ -44,32 +62,17 @@ describe('comment model', () => {
 
     })
 
+    it('virtual url method should return url for comment', () => {
+
+        expect(comment.url).toBe(`/api/posts/${post._id}/comments/${comment._id}`);
+
+    })
+
 })
 
 describe('comment controller', () => {
 
     const controller = require('../../src/comment/comment.controller');
-
-    const User = require('../../src/user/user.model');
-    const Post = require('../../src/post/post.model');
-    const Comment = require('../../src/comment/comment.model');
-
-    const database = require('../../util/memoryDatabase');
-
-    let user;
-    let post;
-    let comment;
-
-    beforeAll(async () => { 
-        await database.connect();
-        await database.seed();
-        user = await User.findOne({ email: 'bwayne@wayne.com' });
-        post = await Post.findOne({ author: user._id, content: 'this is a post' });
-        comment = await Comment.findOne({ content: 'this is a comment' });
-    });
-
-    afterAll(async() => await database.disconnect());
-
     const mockResponse = () => {
         return {
             status: jest.fn().mockReturnThis(),
@@ -80,14 +83,9 @@ describe('comment controller', () => {
 
     it('create should return status 201 if comment successfully created', async () => {
 
-        const newComment = {
-            user: user._id,
-            post: post._id,
-            content: 'this is a new comment' 
-        }
-
         const req = {
-            body: newComment
+            params: { postId: post._id },
+            body: { user: user._id, content: 'this is a new comment' }
         }
         const res = mockResponse();
 
@@ -100,14 +98,9 @@ describe('comment controller', () => {
 
     it('create should return status 400 if error saving new comment to database', async () => {
 
-        const newComment = {
-            user: '',
-            post: '',
-            content: ''
-        }
-
         const req = {
-            body: newComment
+            params: { user: '', postId: '' },
+            body: { content: '' }
         }
         const res = mockResponse();
 
@@ -121,8 +114,7 @@ describe('comment controller', () => {
 
     it('get should return status 200 and comment object if comment successfully retrieved', async () => {
 
-        const params = { id: comment._id }
-        const req = { params: params }
+        const req = { params: { commentId: comment._id } }
         const res = mockResponse();
 
         await controller.get(req, res);
@@ -134,8 +126,7 @@ describe('comment controller', () => {
 
     it('get should return status 404 if comment not found', async () => {
 
-        const params = { id: '' }
-        const req = { params: params }
+        const req = { params: { commentId: '' } }
         const res = mockResponse();
 
         await controller.get(req, res);
@@ -146,14 +137,14 @@ describe('comment controller', () => {
 
     })
 
-    it('getAll should return status 200 if comments succesfully retrieved', async () => {
+    it('getByPost should return status 200 if comments succesfully retrieved', async () => {
 
-        const req = {};
+        const req = { params: { postId: post._id } };
         const res = mockResponse();
 
         const comments = await Comment.find({});
 
-        await controller.getAll(req, res);
+        await controller.getByPost(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(comments)
@@ -164,7 +155,7 @@ describe('comment controller', () => {
 
         const req = {
             body: { content: 'this is an updated comment' },
-            params: { id: comment._id }
+            params: { commentId: comment._id }
         }
 
         const res = mockResponse();
@@ -180,7 +171,7 @@ describe('comment controller', () => {
 
         const req = {
             body: { content: 'this is an updated comment' },
-            params: { id: '' }
+            params: { commentId: '' }
         }
 
         const res = mockResponse();
@@ -197,7 +188,7 @@ describe('comment controller', () => {
 
         const req = {
             body: { content: '' },
-            params: { id: comment._id }
+            params: { commentId: comment._id }
         }
 
         const res = mockResponse();
@@ -212,8 +203,7 @@ describe('comment controller', () => {
 
     it('delete should return status 202 if comment deleted', async () => {
 
-        const params = { id: comment._id }
-        const req = { params: params }
+        const req = { params: { commentId: comment._id } }
         const res = mockResponse();
 
         await controller.delete(req, res);
@@ -225,8 +215,7 @@ describe('comment controller', () => {
 
     it('delete should return status 400 if comment could not be deleted', async () => {
 
-        const params = { id: '123' }
-        const req = { params: params }
+        const req = { params: { commentId: '123' } }
         const res = mockResponse();
 
         await controller.delete(req, res);
@@ -252,7 +241,7 @@ describe('comment routes', () => {
         mockAuth = require('../../src/middleware/authenticator');
 
         jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
-        jest.spyOn(mockController, 'getAll').mockImplementation((req, res) => res.end());
+        jest.spyOn(mockController, 'getByPost').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'get').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'update').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'delete').mockImplementation((req, res) => res.end()); 
@@ -272,11 +261,11 @@ describe('comment routes', () => {
 
     })
 
-    it('get request to /api/posts/:id/comments calls getAll method of controller', async () => {
+    it('get request to /api/posts/:id/comments calls getByPost method of controller', async () => {
 
         await request.get(`${route}/`);
 
-        expect(mockController.getAll).toHaveBeenCalled();
+        expect(mockController.getByPost).toHaveBeenCalled();
 
     })
 

@@ -7,4 +7,8 @@ const CommentSchema = mongoose.Schema({
     date: { type: Date, default: Date.now }
 })
 
+CommentSchema.virtual('url').get(function() {
+    return `/api/posts/${this.post}/comments/${this._id}`;
+})
+
 module.exports = mongoose.model('Comment', CommentSchema);

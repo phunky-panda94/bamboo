@@ -2,14 +2,14 @@ const Comment = require('./comment.model');
 
 exports.create = async (req, res) => {
 
-    const { user, post, content } = req.body;
-
+    const { postId } = req.params
+    const { user, content } = req.body;
     let comment;
 
     try {
         comment = await Comment.create({
             user: user,
-            post: post,
+            post: postId,
             content: content
         });
     } catch (err) {
@@ -22,12 +22,12 @@ exports.create = async (req, res) => {
 
 exports.get = async (req, res) => {
 
-    const { id } = req.params;
+    const { commentId } = req.params;
 
     let comment;
 
     try { 
-        comment = await Comment.findById(id);
+        comment = await Comment.findById(commentId);
     } catch (err) {
         return res.status(404).json({ error: 'comment not found' });
     }
@@ -36,9 +36,16 @@ exports.get = async (req, res) => {
 
 }
 
-exports.getAll = async (req, res) => {
+exports.getByPost = async (req, res) => {
 
-    const comments = await Comment.find({});
+    const { postId } = req.params;
+    let comments;
+
+    try {
+        comments = await Comment.find({ post: postId });
+    } catch (err) {
+        return res.status(404).json({ error: 'post not found' })
+    }
 
     res.status(200).json(comments);
 
@@ -46,13 +53,13 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
 
-    const { id } = req.params
+    const { commentId } = req.params
     const { content } = req.body;
 
     let comment;
 
     try {
-        comment = await Comment.findById(id);
+        comment = await Comment.findById(commentId);
     } catch (err) {
         return res.status(404).json({ error: 'comment not found' });
     }
@@ -71,10 +78,10 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
 
-    const { id } = req.params;
+    const { commentId } = req.params;
 
     try {
-        await Comment.findByIdAndDelete(id)
+        await Comment.findByIdAndDelete(commentId)
     } catch (err) {
         return res.status(400).json({ error: 'comment could not be deleted' })
     }

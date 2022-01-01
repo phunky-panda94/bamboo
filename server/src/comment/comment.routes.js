@@ -2,14 +2,14 @@ const router = require('express').Router();
 const { authenticateToken } = require('../middleware/authenticator');
 const commentController = require('./comment.controller');
 
-router.post('/', authenticateToken, commentController.create);
+router.post('/:postId/comments/', authenticateToken, commentController.create);
 
-router.get('/', commentController.getAll);
+router.get('/:postId/comments/', commentController.getByPost);
 
-router.get('/:id', commentController.get);
+router.get('/:postId/comments/:commentId', commentController.get);
 
-router.put('/:id', authenticateToken, commentController.update);
+router.put('/:postId/comments/:commentId', authenticateToken, commentController.update);
 
-router.delete('/:id', authenticateToken, commentController.delete);
+router.delete('/:postId/comments/:commentId', authenticateToken, commentController.delete);
 
 module.exports = router;
