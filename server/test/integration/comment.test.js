@@ -80,10 +80,48 @@ describe('get comment', () => {
 
     describe('a comment', () => {
 
+        it('GET request to /api/posts/:postId/comments/:commentId for comment returns 200 and comment if it exists', async () => {
+
+            const response = await request.get(`${comment.url}`);
+            
+            expect(response.status).toBe(200);
+            expect(response.body.user).toBe(user._id.toString());
+            expect(response.body.post).toBe(post._id.toString());
+            expect(response.body.content).toBe('this is a comment');
+
+        })
+
+        it('GET request to /api/posts/:postId/comments/:commentId for comment returns 404 and error if it does not exist', async () => {
+
+            const response = await request.get(`${post.url}/comments/123`);
+
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe('comment not found');
+
+        })
+
     })
 
     describe('post comments', () => {
         
+        it('GET request to /api/posts/:postId/comments returns 200 and array of comments', async () => {
+
+            const response = await request.get(`${post.url}/comments`);
+
+            expect(response.status).toBe(200);
+            expect(response.body).toEqual(expect.any(Array));
+
+        })
+
+        it('GET request to /api/posts/:postId/comments returns 404 if post not found', async () => {
+
+            const response = await request.get('/api/posts/123/comments');
+
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe('post not found');
+
+        })
+
     })
 
 })
