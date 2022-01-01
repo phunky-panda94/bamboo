@@ -68,144 +68,184 @@ describe('post controllers', () => {
         existingPost = await Post.findOne({ author: user._id, content: 'this is a post' });
     })
 
-    it('create should add post to database and return status 201 and post id', async () => {
+    describe('create', () => {
+
+        it('create should add post to database and return status 201 and post id', async () => {
+            
+            const body = { user: user._id, content: "I'm Batman"}
+            const req = { body: body };
+            const res = mockResponse();
+
+            await controller.create(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({ post: expect.anything() });
+
+        })
+
+        it('create should return 400 if error when saving post', async () => {
+
+            const body = { user: '', content: '' }
+            const req = { body: body }
+            const res = mockResponse();
+
+            await controller.create(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'post could not be created' })
+
+        })
+
+    })
+
+    describe('get', () => {
+
+        it('get should return the post from the database and return status 200', async () => {
         
-        const body = { user: user._id, content: "I'm Batman"}
-        const req = { body: body };
-        const res = mockResponse();
+            const req = { params: { id: existingPost._id } }
+            const res = mockResponse();
 
-        await controller.create(req, res);
+            await controller.get(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.json).toHaveBeenCalledWith({ post: expect.anything() });
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(existingPost);
 
-    })
+        })
 
-    it('create should return 400 if error when saving post', async () => {
+        it('get should return 404 if post not found in database', async () => {
 
-        const body = { user: '', content: '' }
-        const req = { body: body }
-        const res = mockResponse();
+            const req = { params: { id: '1234' } }
+            const res = mockResponse();
 
-        await controller.create(req, res);
+            await controller.get(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'post could not be created' })
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'post not found' })
 
-    })
+        })
 
-    it('get should return the post from the database and return status 200', async () => {
-    
-        const req = { params: { id: existingPost._id } }
-        const res = mockResponse();
+        it('getAll should return all posts from database and status 200', async () => {
 
-        await controller.get(req, res);
+            const req = {};
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(existingPost);
+            await controller.getAll(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({ posts: expect.anything() });
 
-    it('get should return 404 if post not found in database', async () => {
-
-        const req = { params: { id: '1234' } }
-        const res = mockResponse();
-
-        await controller.get(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'post not found' })
+        });
 
     })
 
-    it('getAll should return all posts from database and status 200', async () => {
+    describe('update', () => {
 
-        const req = {};
-        const res = mockResponse();
+        it('update should update the post in datebase and return status 204', async () => {
 
-        await controller.getAll(req, res);
+            const req = {
+                params: { id: existingPost._id },
+                body: { 
+                    user: user._id.toString(),
+                    content: "I'm Batman" 
+                }
+            };
 
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ posts: expect.anything() });
+            const res = mockResponse();
 
-    });
+            await controller.update(req, res);
 
-    it('update should update the post in datebase and return status 204', async () => {
+            expect(res.status).toHaveBeenCalledWith(204);
 
-        const req = {
-            params: { id: existingPost._id },
-            body: { content: "I'm Batman" }
-        };
+            const updatedPost = Post.findById(existingPost._id);
 
-        const res = mockResponse();
+            expect(updatedPost).toBeTruthy();
 
-        await controller.update(req, res);
+        })
 
-        expect(res.status).toHaveBeenCalledWith(204);
+        it('update should return 403 and forbidden if user not the author of the post', async () => {
 
-        const updatedPost = Post.findById(existingPost._id);
+            const req = {
+                params: { id: existingPost._id },
+                body: { 
+                    user: 'abc',
+                    content: "I'm Batman"
+                }
+            };
+            const res = mockResponse();
 
-        expect(updatedPost).toBeTruthy();
+            await controller.update(req, res);
+
+        })
+
+        it('update should return 404 if post does not exist', async () => {
+
+            const req = {
+                params: { id: 'abcd' },
+                body: { 
+                    user: user._id.toString(),
+                    content: 'abcd' 
+                }
+            };
+
+            const res = mockResponse();
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'post does not exist' })
+
+        })
+
+        it('update should return 400 if error updating the post', async () => {
+
+            const req = {
+                params: { id: existingPost._id },
+                body: { 
+                    user: user._id.toString(),
+                    content: '' 
+                }
+            };
+
+            const res = mockResponse();
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'post could not be updated' })
+
+        })
 
     })
 
-    it('update should return 404 if post does not exist', async () => {
+    describe('delete', () => {
 
-        const req = {
-            params: { id: 'abcd' },
-            body: { content: 'abcd' }
-        };
+        it('delete should remove the post from the database and return status 202', async () => {
 
-        const res = mockResponse();
+            const req = { params: { id: existingPost._id } }
+            const res = mockResponse();
 
-        await controller.update(req, res);
+            await controller.delete(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'post does not exist' })
+            expect(res.status).toHaveBeenCalledWith(202);
 
-    })
+        })
 
-    it('update should return 400 if error updating the post', async () => {
+        it('delete should return 400 if error deleting the post', async () => {
 
-        const req = {
-            params: { id: existingPost._id },
-            body: { content: '' }
-        };
+            const req = { params: { id: 'abcd' } }
+            const res = mockResponse();
 
-        const res = mockResponse();
+            await controller.delete(req, res);
 
-        await controller.update(req, res);
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'post does not exist' })
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'post could not be updated' })
-
-    })
-
-    it('delete should remove the post from the database and return status 202', async () => {
-
-        const req = { params: { id: existingPost._id } }
-        const res = mockResponse();
-
-        await controller.delete(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(202);
-
-    })
-
-    it('delete should return 400 if error deleting the post', async () => {
-
-        const req = { params: { id: 'abcd' } }
-        const res = mockResponse();
-
-        await controller.delete(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'post does not exist' })
+        })
 
     })
 

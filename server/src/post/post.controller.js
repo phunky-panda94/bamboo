@@ -50,7 +50,7 @@ exports.getAll = async (req, res) => {
 exports.update = async (req, res) => {
 
     const { id } = req.params
-    const { content } = req.body;
+    const { user, content } = req.body;
     let post;
 
     try {
@@ -59,9 +59,12 @@ exports.update = async (req, res) => {
         return res.status(404).json({ error: 'post does not exist' });
     }
 
-    post.content = content;
+    if (user !== post.author.toString()) {
+        return res.status(403).json({ error: 'forbidden' });
+    }
 
     try {
+        post.content = content;
         await post.save();
     } catch (err) {
         return res.status(400).json({ error: 'post could not be updated' });

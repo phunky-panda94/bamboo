@@ -96,35 +96,6 @@ describe('authenticate token', () => {
 
 })
 
-describe('authenticate post author', () => {
-
-    const User = require('../../src/user/user.model');
-    const { authenticatePostAuthor, createToken } = require('../../src/middleware/authenticator');
-    const next = jest.fn();
-    const mockResponse = () => {
-        return {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn().mockReturnThis()
-        }
-    }
-
-    it('should add user to request body and call next if token matches post author id', async () => {
-
-        const user = await User.findOne();
-        const token = createToken(user._id.toString());
-        const req = { headers: { authorization: token }, body: {} };
-        const res = mockResponse();
-
-        authenticatePostAuthor(req, res, next);
-
-        expect(req.body.user).toBeTruthy();
-        expect(req.body.user).toBe(user._id.toString().splice(1,-1));
-        expect(next).toHaveBeenCalled();
-
-    })
-
-})
-
 describe('authenticate user',  () => {
 
     const { authenticateUser } = require('../../src/middleware/authenticator');

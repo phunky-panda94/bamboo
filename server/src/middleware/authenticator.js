@@ -56,15 +56,6 @@ exports.authenticateToken = (req, res, next) => {
 
 }
 
-exports.authenticatePostAuthor = async (req, res, next) => {
-
-    const { user } = req.body;
-    const { id } = req.params
-
-    const post = await Post.findById(id);
-
-}
-
 exports.createToken = (id) => {
     console.log(id)
     const token = jwt.sign(id, process.env.TOKEN_SECRET);
