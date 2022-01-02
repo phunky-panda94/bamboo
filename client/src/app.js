@@ -1,9 +1,17 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './navbar/Navbar';
+
 function App() {
     return (
-        <div>
-            <h1>bloghouse</h1>
-        </div>
-    )
+        <BrowserRouter>
+            <Navbar />
+            <Routes>
+                <Route exact path="/" />
+                <Route path="/posts" />
+                <Route path="/profile"/>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
