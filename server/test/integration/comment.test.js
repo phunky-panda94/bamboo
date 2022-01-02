@@ -200,13 +200,55 @@ describe('update comment', () => {
 
 })
 
-describe('delete comment', () => {
+describe.only('delete comment', () => {
+
+    it('DElETE request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
+
+        const response = await request.delete(`${post.url}/comments/123`)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe('comment not found');
+    })
+
+    it('DELETE request to /api/posts/:postId/comments/:commentId returns 403 and forbidden if not author of comment', async () => {
+
+        const validToken = createToken('id');
+
+        const response = await request.delete(comment.url)
+            .set('Authorization', `Bearer ${validToken}`)
+
+        expect(response.status).toBe(403);
+        expect(response.body.error).toBe('forbidden');
+
+    })
+
+    it('DELETE request to /api/posts/:postId/comments/:commentId returns 401 and error message if no token', async () => {
+
+        const response = await request.delete(comment.url)
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('no token in Authorization header')
+
+    })
+
+    it('DELETE request to /api/posts/:postId/comments/:commentsId returns 401 and unauthorized if invalid token', async () => {
+
+        const response = await request.delete(comment.url)
+            .set('Authorization', 'Bearer abc')
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('unauthorized');
+
+    })
 
     it('DELETE request to /api/posts/:postId/comments/:commentId deletes comment from database and returns status 202', async () => {
 
         const response = await request.delete(comment.url)
-            .set('Authorization')
+            .set('Authorization', `Bearer ${token}`)
 
+        expect(response.status).toBe(202);
+        expect(await Comment.findById(comment._id)).toBeFalsy();
 
     })
 

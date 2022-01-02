@@ -89,7 +89,7 @@ exports.delete = async (req, res) => {
     } catch (err) {
         return res.status(404).json({ error: 'comment not found' });
     }
-
+    
     if (user !== comment.user.toString()) return res.status(403).json({ error: 'forbidden' });
 
     try {
