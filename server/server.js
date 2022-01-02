@@ -3,7 +3,7 @@ const app = require('./app');
 const mongoose = require('mongoose');
 const port = process.env.PORT || 8000;
 
-mongoose.connect(`${process.env.DATABASE}/bloghouse`).catch(error => console.log('[ERROR] Unable to connect to database'));
+mongoose.connect(process.env.DATABASE).catch(error => console.log('[ERROR] Unable to connect to database'));
 const database = mongoose.connection;
 
 database.on('error', console.error.bind(console, '[ERROR] Unable to connect to database'));

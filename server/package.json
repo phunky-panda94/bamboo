@@ -19,6 +19,7 @@
         "mongoose": "^6.1.1"
     },
     "devDependencies": {
+        "async": "^3.2.2",
         "faker": "^5.5.3",
         "jest": "^27.4.5",
         "mongodb-memory-server": "^8.0.4",
