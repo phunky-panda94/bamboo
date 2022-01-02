@@ -1,12 +1,17 @@
 const database = require('../../util/memoryDatabase');
+const User = require('../../src/user/user.model');
 
-beforeAll(async () => { await database.connect(); await database.seed() });
+let user;
+
+beforeAll(async () => { 
+    await database.connect(); 
+    await database.seed();
+    user = await User.findOne(); 
+});
 
 afterAll(async () => await database.disconnect());
 
 describe('user model', () => {
-
-    const User = require('../../src/user/user.model');
 
     it('should be invalid if first name is empty', () => {
         let newUser = new User();
@@ -65,25 +70,20 @@ describe('user model', () => {
 
     it('virtual url method should return api route', async () => {
 
-        const user = await User.findOne();
-
         expect(user.url).toBe(`/api/user/${user._id}`);
 
     })
 
     it('should be created when required parameters provided', async () => {
-        let newUser = new User({
+        
+        const newUser = await User.create({
             firstName: 'John',
             lastName: 'Smith',
             email: 'johnsmith@email.com',
             password: 'password'
         })
 
-        await newUser.save();
-
-        const foundUser = await User.findOne({ email: 'johnsmith@email.com' });
-
-        expect(foundUser.password).toEqual(newUser.password);
+        expect(await User.findById(newUser._id)).toBeTruthy();
 
     })
 
@@ -91,7 +91,6 @@ describe('user model', () => {
 
 describe('user controller', () => {
 
-    const User = require('../../src/user/user.model');
     const controller = require('../../src/user/user.controller');
     const { checkPassword } = require('../../src/middleware/authenticator');
     const bcrypt = require('bcryptjs');
@@ -180,7 +179,6 @@ describe('user controller', () => {
 
     it('getUser returns status 200 and user details', async () => {
 
-        const user = await User.findOne();
         const req = { params: { id: user._id } }
         const res = mockResponse();
 
@@ -211,7 +209,6 @@ describe('user controller', () => {
 
     it('updatePassword returns status 204 and token if user password successfully updated', async () => {
 
-        const user = await User.findOne();
         const password = await bcrypt.hash('newpassword', 10);
         const req = {
             body: { password: password },
@@ -250,7 +247,6 @@ describe('user controller', () => {
     
     it('updatePassword returns status 400 and error message if user password could not be updated', async () => {
 
-        const user = await User.findOne();
         const req = {
             body: { password: '' },
             params: { id: user._id } 
@@ -268,7 +264,6 @@ describe('user controller', () => {
 
     it('updateEmail returns status 204 and token if user email successfully updated', async () => {
 
-        const user = await User.findOne();
         const req = {
             body: { email: 'new@email.com' },
             params: { id: user._id } 
@@ -304,7 +299,6 @@ describe('user controller', () => {
     
     it('updateEmail returns status 400 and error message if email already taken', async () => {
 
-        const user = await User.findOne();
         const existingUser = await User.create({
             firstName: 'John',
             lastName: 'Smith',
@@ -329,7 +323,6 @@ describe('user controller', () => {
 
     it('updateEmail returns status 400 and error message if user email could not be updated', async () => {
 
-        const user = await User.findOne();
         const req = {
             body: { email: '' },
             params: { id: user._id } 
@@ -347,7 +340,6 @@ describe('user controller', () => {
 
     it('deleteUser returns status 202 if user succesfully deleted', async () => {
 
-        const user = User.findOne();
         const req = { params: { id: user._id } };
         const res = mockResponse();
 
@@ -470,7 +462,6 @@ describe('user routes', () => {
 
 describe('user helpers', () => {
 
-    const User = require('../../src/user/user.model');
     const faker = require('faker');
     const { userExists } = require('../../src/user/user.helpers');
 
