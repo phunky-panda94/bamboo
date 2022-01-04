@@ -1,0 +1,42 @@
+.post {
+    border-radius: 10px;
+    max-height: 500px;
+    margin: 25px;
+    width: 70vw;
+}
+
+.post-votes {
+    border-radius: 10px 0 0 10px;
+    padding-top: 10px;
+    width: 10%;
+}
+
+.vote-btn {
+    background-color: transparent;
+    border: 1px solid black;
+    text-align: center;
+    text-decoration: none;
+}
+
+.post-content {
+    padding: 10px;
+    width: 90%;
+}
+
+.post-details {
+
+}
+
+a {
+    margin-right: 30px;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+
+.post-btns {
+
+}
+

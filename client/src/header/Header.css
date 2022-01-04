@@ -7,7 +7,7 @@
     padding: 7px;
     text-align: center;
     text-decoration: none;
-    min-width: calc(100vw * 0.06);
+    min-width: 6vw;
 }
 
 .navbar-btn:nth-child(2):hover {
@@ -33,7 +33,7 @@ div > button:last-child {
     height: 4vh;
     padding-top: 5px;
     padding-bottom: 5px;
-    position: fixed;
+    position: sticky;
     width: 100vw;
 }
 

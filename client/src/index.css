@@ -107,6 +107,10 @@ body {
     align-items: center;
 }
 
+.flex-ac-c {
+    align-content: center;
+}
+
 .flex-jc-c {
     justify-content: center;
 }
