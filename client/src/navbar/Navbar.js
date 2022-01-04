@@ -1,25 +1,19 @@
-import { Link } from 'react-router-dom';
+import './Navbar.css';
 
 function Navbar() {
     return (
-        <div>
-            <div>
-                <ul>
-                    <li>
-                        <Link to="/">Home</Link>
-                    </li>
-                    <li>
-                        <Link to="/posts">Posts</Link>
-                    </li>
-                </ul>
+        <header className="bg-light-black navbar flex flex-jc-sb flex-ai-c">
+            <a className="flex flex-ai-c" href="/">
+                <img alt="panda" src="/logo.png" className="logo"></img>
+            </a>
+            <div className="flex flex-ai-c">
+                <button className="dark-green navbar-btn">Log In</button>
+                <button className="bg-dark-green white navbar-btn">Sign Up</button>
+                <button className="profile">
+                    <span className="white material-icons-outlined">person</span>
+                </button>
             </div>
-            <div>
-                <Link to="/profile">
-                    <img></img>
-                </Link>
-                <Link to="/">Logout</Link>
-            </div>
-        </div>
+        </header>
     )
 }
 

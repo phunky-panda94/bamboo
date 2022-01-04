@@ -1,0 +1,45 @@
+.navbar-btn {
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 550;
+    padding: 7px;
+    text-align: center;
+    text-decoration: none;
+    min-width: calc(100vw * 0.06);
+}
+
+button + button {
+    margin-left: 10px;
+}
+
+div > button:last-child {
+    margin-right: 10px;
+}
+
+.logo {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+}
+
+.navbar {
+    height: 4vh;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100vw;
+}
+
+.profile {
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.profile:hover {
+    border: 2px solid #acaca7;
+}
