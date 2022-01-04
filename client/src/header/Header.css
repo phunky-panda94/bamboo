@@ -10,6 +10,10 @@
     min-width: calc(100vw * 0.06);
 }
 
+.navbar-btn:nth-child(2):hover {
+    background-color: #80b24b;
+}
+
 button + button {
     margin-left: 10px;
 }
