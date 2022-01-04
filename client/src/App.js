@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './navbar/Navbar';
+import Header from './header/Header';
 
 function App() {
     return (
         <Router>
-            <Navbar />
+            <Header />
             <Routes>
                 <Route exact path="/" />
                 <Route path="/posts" />
