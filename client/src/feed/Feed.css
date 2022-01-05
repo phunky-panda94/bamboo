@@ -1,0 +1,13 @@
+.feed {
+    width: 75%;
+}
+
+.feed > .post {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.feed:first-child, .feed:last-child{
+    margin-top: 10px;
+}
+

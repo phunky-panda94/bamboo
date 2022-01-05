@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './header/Header';
-import Post from './post/Post';
+import Feed from './feed/Feed';
 
 function App() {
     return (
         <Router>
             <Header/>
-            <Post/>
+            <Feed/>
             {/* <Routes>
                 <Route exact path="/" />
                 <Route path="/posts" />
