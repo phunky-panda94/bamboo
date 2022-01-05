@@ -27,7 +27,7 @@
     width: 100%;
 }
 
-a {
+.post-btns > a {
     margin-right: 30px;
 }
 

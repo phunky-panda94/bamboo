@@ -1,0 +1,61 @@
+.modal {
+    background-color: rgba(0,0,0,0.4);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.form {
+    border-radius: 5px;
+    height: 65vh;
+    width: 55vw;
+}
+
+.form-field-group {
+    margin-top: 25px;
+    margin-left: 25px;
+    width: 35%;
+}
+
+.form-field {
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.field {
+    font-size: 14px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 100%;
+}
+
+img {
+    height: 65vh;
+}
+
+button {
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 550;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+}
+
+.close {
+    cursor: pointer;
+    font-weight: 500;
+    transform: scale(2.5);
+    float: right;
+}
+
+.close:hover {
+    color: #848484;
+}
