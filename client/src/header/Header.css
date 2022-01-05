@@ -22,11 +22,19 @@ div > button:last-child {
     margin-right: 10px;
 }
 
+.home {
+    cursor: pointer;
+}
+
+.brand {
+    height: 35px;
+    width: 110px;
+}
+
 .logo {
     border-radius: 50%;
     height: 40px;
     width: 40px;
-    cursor: pointer;
 }
 
 .navbar {
