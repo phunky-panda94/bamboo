@@ -2,23 +2,34 @@ import './Post.css';
 
 function Post() {
     return (
-        <div className="border bg-white post flex">
+        <div className="bg-white post flex">
             <div className="bg-light-grey post-votes flex flex-col flex-ai-c">
                 <button className="vote-btn material-icons-outlined">thumb_up</button>
                 12
                 <button className="vote-btn material-icons-outlined">thumb_down</button>
             </div>
-            <div className="post-content flex flex-col">
-                <div className="post-details flex flex-jc-sb">
-                    <span>Posted by Author</span>
-                    <span>Time elapsed</span>
+            <div className="post-content flex flex-col flex-jc-sb">
+                <div className="post-details">
+                    <div className="dark-grey flex flex-jc-sb">
+                        <span>posted by <a className="author" href="/">Author</a></span>
+                        <span>8 hours ago</span>
+                    </div>
+                    <h3>Title</h3>
+                    <p>This is a post</p>
                 </div>
-                <h3>Title</h3>
-                <p>This is a post</p>
-                <div className="post-btns">
-                    <a className="material-icons-outlined">comment</a>
-                    <a className="material-icons-outlined">share</a>
-                    <a className="material-icons-outlined">bookmark_border</a>
+                <div className="post-btns flex flex-row">
+                    <a className="flex flex-row flex-ai-c">
+                        <span>Comment</span>
+                        <span className="material-icons-outlined">comment</span>
+                    </a>
+                    <a className="flex flex-row flex-ai-c">
+                        <span>Share</span>
+                        <span className="material-icons-outlined">share</span>
+                    </a>
+                    <a className="flex flex-row flex-ai-c">
+                        <span>Save</span>
+                        <span className="material-icons-outlined">bookmark_border</span>
+                    </a>
                 </div>
             </div>
         </div>
