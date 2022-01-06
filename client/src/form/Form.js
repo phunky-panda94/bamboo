@@ -23,11 +23,11 @@ function Form(props) {
                             <button className="bg-dark-green white btn" type="submit">{type === 'Login' ? 'Log In': 'Register'}</button>
                             {type === 'Login' ? 
                                 <span className="small-font">
-                                    Forgot your <a className="dark-green">username</a> or <a className="dark-green">password</a>?
+                                    Forgot your <a className="dark-green" href="/">username</a> or <a className="dark-green" href="/">password</a>?
                                 </span>
                             :
                                 <span className="small-font">
-                                    Already a panda? <a className="dark-green">Log in</a>
+                                    Already a panda? <a className="dark-green" href="/">Log in</a>
                                 </span> 
                             }                 
                         </form>

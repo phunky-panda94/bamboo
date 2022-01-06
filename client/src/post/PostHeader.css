@@ -1,0 +1,15 @@
+.post-header {
+    position: sticky;
+    top: 5.25vh;
+    width: 90%;
+    margin-bottom: 25px;
+}
+
+.post-header-close {
+    font-size: 40px;
+    margin-right: 10px;
+}
+
+.post-header-close:hover {
+    cursor: pointer;
+}

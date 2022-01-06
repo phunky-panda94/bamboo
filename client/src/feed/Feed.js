@@ -1,15 +1,13 @@
 import './Feed.css';
-import Post from '../post/Post';
+import PostCard from '../post/PostCard';
 
 function Feed() {
     return (
         <div className="flex flex-jc-c">
             <div className="feed flex flex-col flex-ai-c">
-                <Post/>
-                <Post/>
-                <Post/>
-                <Post/>
-                <Post/>
+                <PostCard/>
+                <PostCard/>
+                <PostCard/>
             </div>
         </div>
     )
