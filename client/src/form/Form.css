@@ -32,17 +32,17 @@
 
 .field {
     box-sizing: border-box;
-    font-size: 14px;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    font-size: 15px;
+    padding: 15px;
     width: 100%;
 }
 
-img {
+.banner {
+    width: 10vw;
     height: 65vh;
 }
 
-button {
+.btn {
     border: none;
     border-radius: 1rem;
     cursor: pointer;
@@ -55,13 +55,23 @@ button {
     width: 100%;
 }
 
+.btn:hover {
+    background-color: #80b24b;
+}
+
 .close {
+    position: fixed;
+    width: 45vw;
+    z-index: 2;
+}
+
+.close-btn {
     cursor: pointer;
     font-weight: 500;
     font-size: 40px;
     margin-right: 10px;
 }
 
-.close:hover {
+.close-btn:hover {
     color: #848484;
 }

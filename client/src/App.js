@@ -7,7 +7,7 @@ function App() {
     return (
         <Router>
             <Header/>
-            <Form />
+            <Form type="Register"/>
             <Feed/>
             {/* <Routes>
                 <Route exact path="/" />
