@@ -128,3 +128,7 @@ body {
 .flex-jc-sb {
     justify-content: space-between;
 }
+
+.flex-jc-fe {
+    justify-content: flex-end;
+}

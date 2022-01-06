@@ -1,5 +1,6 @@
 .modal {
     background-color: rgba(0,0,0,0.4);
+    display: none;
     height: 100%;
     width: 100%;
     position: fixed;
@@ -15,18 +16,22 @@
     width: 55vw;
 }
 
-.form-field-group {
-    margin-top: 25px;
-    margin-left: 25px;
-    width: 35%;
-}
-
-.form-field {
-    margin-bottom: 5px;
+.form-container {
+    height: 100%;
     width: 100%;
 }
 
+.form-field {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.form-field-group {
+    width: 50%;
+}
+
 .field {
+    box-sizing: border-box;
     font-size: 14px;
     padding-top: 15px;
     padding-bottom: 15px;
@@ -44,6 +49,7 @@ button {
     font-size: 14px;
     font-weight: 550;
     padding: 10px;
+    margin-bottom: 10px;
     text-align: center;
     text-decoration: none;
     width: 100%;
@@ -52,8 +58,8 @@ button {
 .close {
     cursor: pointer;
     font-weight: 500;
-    transform: scale(2.5);
-    float: right;
+    font-size: 40px;
+    margin-right: 10px;
 }
 
 .close:hover {
