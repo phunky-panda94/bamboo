@@ -5,13 +5,13 @@ function PostCard() {
         <div className="bg-white post-card flex">
             <div className="bg-light-grey post-votes flex flex-col flex-ai-c">
                 <button className="vote-btn material-icons-outlined">thumb_up</button>
-                12
+                <span>12</span>
                 <button className="vote-btn material-icons-outlined">thumb_down</button>
             </div>
             <div className="post-content flex flex-col flex-jc-sb">
                 <div className="post-details">
                     <div className="dark-grey flex flex-jc-sb">
-                        <span>posted by <a className="author" href="/">Author</a></span>
+                        <span>Posted by <a className="author" href="/">Author</a></span>
                         <span>8 hours ago</span>
                     </div>
                     <h3>Title</h3>
