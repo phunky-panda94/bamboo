@@ -1,7 +1,10 @@
 import './PostCard.css';
 import { Link } from 'react-router-dom';
 
-function PostCard() {
+function PostCard(props) {
+
+    const { author, content, date } = props;
+
     return (
         <Link to="/post/123">
             <div className="bg-white post-card flex">
@@ -13,11 +16,11 @@ function PostCard() {
                 <div className="post-content flex flex-col flex-jc-sb">
                     <div className="post-details">
                         <div className="dark-grey flex flex-jc-sb">
-                            <span>Posted by <a className="author" href="/">Author</a></span>
-                            <span>8 hours ago</span>
+                            <span>Posted by <a className="author" href="/">{author}</a></span>
+                            <span>{date}</span>
                         </div>
                         <h3>Title</h3>
-                        <p>This is a post</p>
+                        <p>{content}</p>
                     </div>
                     <div className="post-btns flex flex-row">
                         <a className="flex flex-row flex-ai-c" href="/">

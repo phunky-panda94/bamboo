@@ -40,12 +40,6 @@ function Post() {
                     </div>
                 </div>
             </div>
-            <Comment />
-            <Comment />
-            <Comment />
-            <Comment />
-            <Comment />
-            <Comment />
         </div>
         
     )

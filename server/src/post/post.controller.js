@@ -24,7 +24,7 @@ exports.get = async (req, res) => {
     let post;
 
     try {
-        post = await Post.findById(id);
+        post = await Post.findById(id).populate('author', 'firstName lastName');
     } catch (err) {
         return res.status(404).json({ error: 'post not found' });
     }
@@ -38,8 +38,9 @@ exports.getAll = async (req, res) => {
     let posts;
 
     try {
-        posts = await Post.find({})
+        posts = await Post.find({}).populate('author', 'firstName lastName');
     } catch (err) {
+        console.log(err)
         return res.status(400).json({ error: 'error retrieving posts' })
     }
 
