@@ -64,8 +64,7 @@ describe('get post', () => {
         const response = await request.get('/api/posts');
         
         expect(response.status).toBe(200);
-        expect(response.body.posts).toBeTruthy();
-        expect(response.body.posts[0].content).toBe('this is a post');
+        expect(response.body[0].content).toBe('this is a post');
 
     })
 

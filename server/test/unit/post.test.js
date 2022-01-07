@@ -134,7 +134,7 @@ describe('post controllers', () => {
             await controller.getAll(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ posts: expect.anything() });
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
 
         });
 
