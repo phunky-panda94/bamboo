@@ -11,7 +11,7 @@ function PostHeader() {
             </div>
             <h3>Title</h3>
             <div className="post-header-close flex flex-ai-c">
-                <span>&times;</span>
+                <a href="/">&times;</a>
             </div>
         </div>
     )

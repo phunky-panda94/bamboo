@@ -8,6 +8,7 @@ function Feed() {
                 <PostCard/>
                 <PostCard/>
                 <PostCard/>
+                <PostCard/>
             </div>
         </div>
     )

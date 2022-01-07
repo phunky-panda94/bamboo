@@ -2,12 +2,16 @@
     width: 75%;
 }
 
-.feed > .post {
+.post-card {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.feed:first-child, .feed:last-child{
-    margin-top: 10px;
+.feed:first-child {
+    margin-top: 15px;
+}
+
+.feed:last-child {
+    margin-bottom: 15px;   
 }
 

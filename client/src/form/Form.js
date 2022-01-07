@@ -3,7 +3,7 @@ import Field from './Field';
 
 function Form(props) {
 
-    const { type } = props
+    const { toggleForm, type } = props
 
     return (
         <div className="modal flex flex-jc-c flex-ai-c">
@@ -13,14 +13,14 @@ function Form(props) {
                 </div>
                 <div className="form-container flex flex-col">
                     <div className ="close flex flex-jc-fe">
-                        <span className="grey close-btn">&times;</span>
+                        <span className="grey close-btn" onClick={() => toggleForm()}>&times;</span>
                     </div>
                     <div className="form-container flex flex-jc-c flex-ai-c">
                         <form className="form-field-group flex flex-col">
                             <h3>{type}</h3>
                             <Field name="email" label="Email"/>
                             <Field name="password" label="Password" />
-                            <button className="bg-dark-green white btn" type="submit">{type === 'Login' ? 'Log In': 'Register'}</button>
+                            <button className="bg-dark-green white btn" type="submit">{type === 'Login' ? 'Log In': 'Sign Up'}</button>
                             {type === 'Login' ? 
                                 <span className="small-font">
                                     Forgot your <a className="dark-green" href="/">username</a> or <a className="dark-green" href="/">password</a>?
