@@ -21,7 +21,6 @@ function App() {
         
             const response = await fetch(api, { mode: 'cors' });
             const posts = await response.json();
-            console.log(posts);
             setPosts(posts);
         }
         fetchPosts();
@@ -33,7 +32,7 @@ function App() {
             {displayForm && <Form type={formType} toggleForm={toggleForm}/>}
             <Routes>
                 <Route path="/" element={<Feed posts={posts}/>} />
-                <Route path="/post/:id" element={<Post />} />
+                <Route path="/posts/:slug" element={<Post />} />
             </Routes>
         </Router>
     );

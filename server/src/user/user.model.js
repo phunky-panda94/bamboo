@@ -20,8 +20,6 @@ const UserSchema = new mongoose.Schema({
         minLength: 5,
         required: true
     }
-}, {
-    toJSON: { virtuals: true }
 })
 
 UserSchema.virtual('fullName').get(function() {

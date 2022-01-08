@@ -25,7 +25,7 @@ exports.get = async (req, res) => {
     let post;
 
     try {
-        post = await Post.findById(id).populate('author', 'fullName');
+        post = await Post.findById(id).populate('author', 'firstName lastName');
     } catch (err) {
         return res.status(404).json({ error: 'post not found' });
     }

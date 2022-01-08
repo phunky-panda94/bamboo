@@ -9,7 +9,18 @@ function Feed(props) {
         <div className="flex flex-jc-c">
             <div className="feed flex flex-col flex-ai-c">
                 {posts && posts.map(post => {
-                    return <PostCard content={post.content} author={`${post.author.firstName} ${post.author.lastName}`} date={post.date}/>
+
+                    let details = {
+                        author: `${post.author.firstName} ${post.author.lastName}`,
+                        content: post.content,
+                        date: post.date,
+                        slug: post.slug,
+                        title: post.title,
+                        votes: post.votes,
+                        url: post.url
+                    }
+
+                    return <PostCard key={post._id} post={details}/>
                 })}
             </div>
         </div>
