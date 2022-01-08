@@ -13,6 +13,11 @@ const PostSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    title: {
+        type: String,
+        maxLength: 25,
+        required: true
     }
 })
 

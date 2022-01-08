@@ -15,7 +15,8 @@ describe('post model', () => {
 
         const newPost = new Post({
             author: '',
-            content: ''
+            content: '',
+            title: ''
         })
 
         newPost.validate(err => {
@@ -28,11 +29,26 @@ describe('post model', () => {
 
         const newPost = new Post({
             author: '',
-            content: ''
+            content: '',
+            title: ''
         })
 
         newPost.validate(err => {
             expect(err.errors.content).toBeTruthy();
+        })
+
+    })
+
+    it('should return error if no title', () => {
+
+        const newPost = new Post({
+            author: '',
+            content: '',
+            title: ''
+        })
+
+        newPost.validate(err => {
+            expect(err.errors.title).toBeTruthy();
         })
 
     })
@@ -72,7 +88,7 @@ describe('post controllers', () => {
 
         it('create should add post to database and return status 201 and post id', async () => {
             
-            const body = { user: user._id, content: "I'm Batman"}
+            const body = { user: user._id, content: "I'm Batman", title: "Who am I?"}
             const req = { body: body };
             const res = mockResponse();
 
@@ -85,7 +101,7 @@ describe('post controllers', () => {
 
         it('create should return 400 if error when saving post', async () => {
 
-            const body = { user: '', content: '' }
+            const body = { user: '', content: '', title: '' }
             const req = { body: body }
             const res = mockResponse();
 
@@ -109,7 +125,7 @@ describe('post controllers', () => {
             await controller.get(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(existingPost);
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
 
         })
 

@@ -35,7 +35,8 @@ exports.seed = async () => {
 
     const post = new Post({
         author: user._id,
-        content: 'this is a post'
+        content: 'this is a post',
+        title: 'this is the title'
     })
 
     await post.save();

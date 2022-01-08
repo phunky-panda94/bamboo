@@ -2,13 +2,14 @@ const Post = require('./post.model');
 
 exports.create = async (req, res) => {
 
-    const { user, content } = req.body;
+    const { user, content, title } = req.body;
     let post;
 
     try { 
         post = await Post.create({
             author: user,
-            content: content
+            content: content,
+            title: title
         })
     } catch (err) {
         return res.status(400).json({ error: 'post could not be created' });
@@ -24,7 +25,7 @@ exports.get = async (req, res) => {
     let post;
 
     try {
-        post = await Post.findById(id).populate('author', 'firstName lastName');
+        post = await Post.findById(id).populate('author', 'fullName');
     } catch (err) {
         return res.status(404).json({ error: 'post not found' });
     }
