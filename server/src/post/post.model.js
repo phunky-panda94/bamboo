@@ -18,11 +18,19 @@ const PostSchema = new mongoose.Schema({
         type: String,
         maxLength: 25,
         required: true
+    },
+    votes: {
+        type: Number,
+        default: 0
     }
 })
 
 PostSchema.virtual('url').get(function() {
     return `/api/posts/${this._id}`;
+})
+
+PostSchema.virtual('slug').get(function() {
+    return this.title.toLowerCase().replaceAll(' ', '-');
 })
 
 module.exports = mongoose.model('Post', PostSchema);

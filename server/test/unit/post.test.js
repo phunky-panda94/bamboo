@@ -61,6 +61,14 @@ describe('post model', () => {
 
     })
 
+    it('virtual slug method should return title as slug', async () => {
+
+        const post = await Post.findOne();
+
+        expect(post.slug).toBe('this-is-the-title');
+
+    })
+
 })
 
 describe('post controllers', () => {

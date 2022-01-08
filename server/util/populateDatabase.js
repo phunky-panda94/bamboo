@@ -48,22 +48,23 @@ async function createUser(firstName, lastName, email, password, callback) {
 
 }
   
-function createPost(author, content, callback) {
+function createPost(author, content, title, callback) {
 
     let post = new Post({
         author: author._id,
-        content: content
+        content: content,
+        title: title
     })
 
     post.save((err) => {
 
         if (err) {
-            console.log(`[ERROR] Error creating post: ${author.fullName} - ${post.content.length}`);
+            console.log(`[ERROR] Error creating post: ${author.fullName} - ${post.title}`);
             callback(err, null);
             return;
         }
 
-        console.log(`[INFO] New post created: ${author.fullName} - ${post.content.length}`);
+        console.log(`[INFO] New post created: ${author.fullName} - ${post.title}`);
         posts.push(post);
         callback(null, post);
 
@@ -111,7 +112,7 @@ function populatePosts(callback) {
     let posts = [];
 
     for (let i = 0; i < 10; i++) {
-        posts.push(function(callback) { createPost(users[getRandomIndex(users)], faker.lorem.paragraph(), callback) });
+        posts.push(function(callback) { createPost(users[getRandomIndex(users)], faker.lorem.paragraph(), faker.lorem.words() ,callback) });
     }
 
     async.parallel(posts, callback);
