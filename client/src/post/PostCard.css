@@ -41,7 +41,9 @@
 .post-btn {
     background-color: transparent;
     border: 1px solid transparent;
+    color: inherit;
     cursor: pointer;
+    font-size: 16px;
     margin-right: 10px;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -51,10 +53,6 @@
     border: 1px solid #acaca7;
     border-radius: 5px;
     background-color: #e5e8e1;
-}
-
-a:hover {
-    cursor: pointer;
 }
 
 .author {

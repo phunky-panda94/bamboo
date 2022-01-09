@@ -9,7 +9,7 @@ function PostHeader(props) {
         <div className="bg-light-grey post-header flex flex-jc-sb flex-ai-c">
             <div className="bg-light-grey flex flex-row flex-ai-c">
                 <button className="vote-btn material-icons-outlined">thumb_up</button>
-                {votes}
+                <span>{votes}</span>
                 <button className="vote-btn material-icons-outlined">thumb_down</button>
             </div>
             <h3>{title}</h3>

@@ -1,4 +1,5 @@
 import './Post.css';
+import { getTimeElapsed } from '../util/helpers';
 
 function Post(props) {
 
@@ -18,14 +19,14 @@ function Post(props) {
                             <span>Posted by <a className="author" href="/">
                                 {author}</a>
                             </span>
-                            <span>{date}</span>
+                            <span>{getTimeElapsed(date, Date.now())}</span>
                         </div>
                         <h3>{title}</h3>
                         <p>{content}</p>
                     </div>
                     <div className="flex flex-row">
                         <a className="post-btn flex flex-row flex-ai-c" href="/">
-                            <span>Comment</span>
+                            <span>Comments</span>
                             <span className="material-icons-outlined">comment</span>
                         </a>
                         <a className="post-btn flex flex-row flex-ai-c" href="/">
