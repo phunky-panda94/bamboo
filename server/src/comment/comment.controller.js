@@ -27,7 +27,7 @@ exports.get = async (req, res) => {
     let comment;
 
     try { 
-        comment = await Comment.findById(commentId);
+        comment = await Comment.findById(commentId).populate('user', 'firstName lastName');
     } catch (err) {
         return res.status(404).json({ error: 'comment not found' });
     }
@@ -42,7 +42,7 @@ exports.getByPost = async (req, res) => {
     let comments;
 
     try {
-        comments = await Comment.find({ post: postId });
+        comments = await Comment.find({ post: postId }).populate('user', 'firstName lastName');
     } catch (err) {
         return res.status(404).json({ error: 'post not found' })
     }

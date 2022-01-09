@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './header/Header';
 import Feed from './feed/Feed';
 import Form from './form/Form';
-import Post from './post/Post';
+import Thread from './thread/Thread';
 
 function App() {
 
@@ -32,7 +32,7 @@ function App() {
             {displayForm && <Form type={formType} toggleForm={toggleForm}/>}
             <Routes>
                 <Route path="/" element={<Feed posts={posts}/>} />
-                <Route path="/posts/:slug" element={<Post />} />
+                <Route path="/posts/:id" element={<Thread />} />
             </Routes>
         </Router>
     );

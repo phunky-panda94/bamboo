@@ -126,7 +126,7 @@ describe('comment controller', () => {
             await controller.get(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(comment);
+            expect(res.json).toHaveBeenCalledWith(expect.any(Object));
 
         })
 
@@ -153,7 +153,7 @@ describe('comment controller', () => {
             await controller.getByPost(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(comments)
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
 
         })
 

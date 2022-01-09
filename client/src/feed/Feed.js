@@ -11,13 +11,12 @@ function Feed(props) {
                 {posts && posts.map(post => {
 
                     let details = {
+                        id: post._id,
                         author: `${post.author.firstName} ${post.author.lastName}`,
                         content: post.content,
                         date: post.date,
-                        slug: post.slug,
                         title: post.title,
-                        votes: post.votes,
-                        url: post.url
+                        votes: post.votes
                     }
 
                     return <PostCard key={post._id} post={details}/>
