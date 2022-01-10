@@ -1,4 +1,5 @@
 import './Comment.css';
+import { getTimeElapsed } from '../util/helpers';
 
 function Comment(props) {
 
@@ -12,7 +13,7 @@ function Comment(props) {
             <div className="bg-white comment">
                 <div className="dark-grey flex flex-jc-sb">
                     <span>{user}</span>
-                    <span>{date}</span>
+                    <span>{getTimeElapsed(date, Date.now())}</span>
                 </div>
                 <div>
                     <p>{content}</p>
