@@ -16,7 +16,7 @@ const PostSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        maxLength: 25,
+        maxLength: 50,
         required: true
     },
     votes: {

@@ -77,7 +77,8 @@ function createComment(user, post, content, callback) {
     let comment = new Comment({
         user: user._id,
         post: post._id,
-        content: content
+        content: content,
+        date: post.date + (1000 * 60)
     })
 
     comment.save((err) => {
