@@ -5,6 +5,28 @@ function Form(props) {
 
     const { toggleForm, type } = props
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+    
+        let details = {
+            email: event.target.elements['email'].value,
+            password: event.target.elements['password'].value
+        }
+        console.log(details)
+        let api = 'http://localhost:8000/api/user/';
+        type == 'Login' ? api += 'login' : api += 'register'; 
+        console.log(api);
+        const response = await fetch(api, 
+            { 
+                method: 'post',
+                mode: 'cors',
+                body: details
+            }
+        );
+    
+        console.log(response.json());
+    }
+
     return (
         <div className="modal flex flex-jc-c flex-ai-c">
             <div className="bg-white form flex flex-row">
@@ -16,10 +38,16 @@ function Form(props) {
                         <span className="grey close-btn" onClick={() => toggleForm()}>&times;</span>
                     </div>
                     <div className="form-container flex flex-jc-c flex-ai-c">
-                        <form className="form-field-group flex flex-col">
+                        <form className="form-field-group flex flex-col" onSubmit={handleSubmit}>
                             <h3>{type}</h3>
-                            <Field name="email" label="Email"/>
-                            <Field name="password" label="Password" />
+                            {type == 'Sign Up' &&
+                                <>
+                                <Field name="firstName" label="Given Name"/>
+                                <Field name="lastName" label="Surname"/>
+                                </>
+                            }
+                            <Field name="email" type="text" label="Email"/>
+                            <Field name="password" type="password" label="Password" />
                             <button className="bg-dark-green white btn" type="submit">{type === 'Login' ? 'Log In': 'Sign Up'}</button>
                             {type === 'Login' ? 
                                 <span className="small-font">

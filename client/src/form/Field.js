@@ -2,12 +2,12 @@ import './Form.css';
 
 function Field(props) {
 
-    const { name, label } = props
+    const { name, label, type } = props
 
     return (
         <div className="form-field">
-            <label for={name}/>
-            <input name={name} type="text" placeholder={label} className="field"/>
+            <label htmlFor={name}/>
+            <input name={name} type={type} placeholder={label} className="field"/>
         </div>
     )   
 }

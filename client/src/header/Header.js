@@ -1,8 +1,10 @@
 import './Header.css';
+import { useState } from 'react';
 
 function Header(props) {
 
     const { setFormType, toggleForm } = props
+    const [loggedIn, setLoggedIn] = useState(false);
     
     const handleClick = (formType) => {
         setFormType(formType);
@@ -16,8 +18,8 @@ function Header(props) {
                 <img alt="bamboo" src="/bamboo.png" className="brand"></img>
             </a>
             <div className="flex flex-ai-c">
-                <button className="bg-white dark-green header-btn" onClick={() => handleClick('Login')}>Log In</button>
-                <button className="bg-dark-green white header-btn" onClick={() => handleClick('Sign Up')}>Sign Up</button>
+            {!loggedIn && <button className="bg-white dark-green header-btn" onClick={() => handleClick('Login')}>Log In</button>}
+            {!loggedIn && <button className="bg-dark-green white header-btn" onClick={() => handleClick('Sign Up')}>Sign Up</button>}
                 <button className="profile">
                     <span className="white material-icons-outlined">person</span>
                 </button>

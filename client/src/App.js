@@ -29,7 +29,7 @@ function App() {
     return (
         <Router>
             <Header setFormType={setFormType} toggleForm={toggleForm} />
-            {displayForm && <Form type={formType} toggleForm={toggleForm}/>}
+            {displayForm && <Form type={formType} toggleForm={toggleForm} />}
             <Routes>
                 <Route path="/" element={<Feed posts={posts}/>} />
                 <Route path="/posts/:id" element={<Thread />} />

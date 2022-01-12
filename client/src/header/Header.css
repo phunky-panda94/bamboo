@@ -8,6 +8,11 @@
     text-align: center;
     text-decoration: none;
     min-width: 6vw;
+    width: 8vw;
+}
+
+.header-btn:first-child:hover {
+    background-color: hsl(89, 41%, 80%);
 }
 
 .header-btn:nth-child(2):hover {
