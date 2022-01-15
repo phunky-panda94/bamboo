@@ -6,7 +6,7 @@ const { validateEmail, validatePassword, validateNewUserDetails } = require('../
 
 router.get('/:id', authenticateToken, getUser);
 
-router.post('/register', validateNewUserDetails, register);
+router.post('/register', validateNewUserDetails, encryptPassword, register);
 
 router.post('/login', authenticateUser, login);
 

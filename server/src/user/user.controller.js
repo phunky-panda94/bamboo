@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
         email: email,
         password: password
     }
-
+    
     try {
         await User.create(newUser);
     } catch (err) {

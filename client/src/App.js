@@ -10,6 +10,8 @@ function App() {
     const [displayForm, setDisplayForm] = useState(false);
     const [formType, setFormType] = useState();
     const [posts, setPosts] = useState();
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [user, setUser] = useState();
 
     const toggleForm = () => {
         displayForm ? setDisplayForm(false) : setDisplayForm(true);
@@ -28,8 +30,8 @@ function App() {
 
     return (
         <Router>
-            <Header setFormType={setFormType} toggleForm={toggleForm} />
-            {displayForm && <Form type={formType} toggleForm={toggleForm} />}
+            <Header setFormType={setFormType} toggleForm={toggleForm} loggedIn={loggedIn} user={user}/>
+            {displayForm && <Form type={formType} setLoggedIn={setLoggedIn} toggleForm={toggleForm} setUser={setUser}/>}
             <Routes>
                 <Route path="/" element={<Feed posts={posts}/>} />
                 <Route path="/posts/:id" element={<Thread />} />

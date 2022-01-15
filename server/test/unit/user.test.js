@@ -415,6 +415,7 @@ describe('user routes', () => {
         await request.post(`${route}/register`);
 
         expect(mockValidator.validateNewUserDetails).toHaveBeenCalled();
+        expect(mockAuth.encryptPassword).toHaveBeenCalled();
         expect(mockController.register).toHaveBeenCalled();
 
     })
