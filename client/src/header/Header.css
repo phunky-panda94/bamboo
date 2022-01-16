@@ -15,16 +15,16 @@
     background-color: hsl(89, 41%, 80%);
 }
 
+.header-btn:nth-child(2) {
+    margin-right: 10px;
+}
+
 .header-btn:nth-child(2):hover {
     background-color: #80b24b;
 }
 
-button + button {
+.header-btn + .header-btn {
     margin-left: 10px;
-}
-
-div > button:last-child {
-    margin-right: 10px;
 }
 
 .home {
@@ -51,6 +51,10 @@ div > button:last-child {
     width: 100vw;
 }
 
+.name {
+    margin-right: 10px;
+}
+
 .profile {
     background-color: transparent;
     border: 2px solid transparent;
@@ -61,4 +65,27 @@ div > button:last-child {
 
 .profile:hover {
     border: 2px solid #acaca7;
+}
+
+.profile-menu {
+    position: fixed;
+    top: 5vh;
+    right: 0;
+    width: 100px;
+    z-index: 1;
+}
+
+.profile-menu-btn {
+    background-color: transparent;
+    border: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-menu-btn:hover {
+    background-color: #acaca7;
+    color: #4c4c4c;
 }

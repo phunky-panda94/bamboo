@@ -1,9 +1,11 @@
 import './Form.css';
 import Field from './Field';
+import { useState } from 'react';
 
 function Form(props) {
 
     const { setLoggedIn, setUser, toggleForm, type } = props
+    const [registered, setRegistered] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -38,13 +40,13 @@ function Form(props) {
             }
         );
 
-        if (type === 'Login' && response.status == 200) {
+        if (type === 'Login' && response.status === 200) {
             let data = await response.json();
             setUser(data.user);
             setLoggedIn(true);
             toggleForm();
-        } else if (type === 'Sign Up' && response.status == 201) {
-            
+        } else if (type === 'Sign Up' && response.status === 201) {
+            setRegistered(true);
         }
 
     }
@@ -70,7 +72,10 @@ function Form(props) {
                             }
                             <Field name="email" type="text" label="Email"/>
                             <Field name="password" type="password" label="Password" />
-                            <button className="bg-dark-green white btn" type="submit">{type === 'Login' ? 'Log In': 'Sign Up'}</button>
+                            <button className="bg-dark-green white btn" type="submit">
+                                {!registered && type}
+                                {registered && 'Welcome! Click to login'}
+                            </button>
                             {type === 'Login' ? 
                                 <span className="small-font">
                                     Forgot your <a className="dark-green" href="/">username</a> or <a className="dark-green" href="/">password</a>?

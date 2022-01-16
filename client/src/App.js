@@ -30,7 +30,7 @@ function App() {
 
     return (
         <Router>
-            <Header setFormType={setFormType} toggleForm={toggleForm} loggedIn={loggedIn} user={user}/>
+            <Header setFormType={setFormType} toggleForm={toggleForm} loggedIn={loggedIn} setLoggedIn={setLoggedIn} user={user} setUser={setUser}/>
             {displayForm && <Form type={formType} setLoggedIn={setLoggedIn} toggleForm={toggleForm} setUser={setUser}/>}
             <Routes>
                 <Route path="/" element={<Feed posts={posts}/>} />

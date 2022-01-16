@@ -1,15 +1,28 @@
 import './Header.css';
+import { useState } from 'react'
 
 function Header(props) {
 
-    const { loggedIn, setFormType, toggleForm, user } = props
-    
+    const { loggedIn, setLoggedIn, setFormType, toggleForm, user, setUser } = props
+    const [menu, setMenu] = useState(false);
+
     const handleClick = (formType) => {
         setFormType(formType);
         toggleForm();
     }
 
+    const toggleMenu = () => {
+        menu ? setMenu(false) : setMenu(true);
+    }
+
+    const handleLogout = () => {
+        setLoggedIn(false);
+        setUser();
+        toggleMenu();
+    }
+
     return (
+        <>
         <header className="bg-light-black header flex flex-jc-sb flex-ai-c">
             <a className="home flex flex-ai-c" href="/">
                 <img alt="panda" src="/panda.png" className="logo"></img>
@@ -18,12 +31,19 @@ function Header(props) {
             <div className="flex flex-ai-c">
                 {!loggedIn && <button className="bg-white dark-green header-btn" onClick={() => handleClick('Login')}>Log In</button>}
                 {!loggedIn && <button className="bg-dark-green white header-btn" onClick={() => handleClick('Sign Up')}>Sign Up</button>}
-                {loggedIn && <span className="white">{user.firstName} {user.lastName}</span>}
-                <button className="profile">
+                {loggedIn && <span className="white name">{user.firstName} {user.lastName}</span>}
+                <button className="profile" onClick={() => toggleMenu()}>
                     <span className="white material-icons-outlined">person</span>
                 </button>
             </div>
         </header>
+        {menu && loggedIn && <div class="bg-light-black profile-menu flex flex-jc-c">
+            <button className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb" onClick={() => handleLogout()}>
+                <span className="white material-icons-outlined">logout</span>
+                <span className="small-font">Log Out</span>
+            </button>
+        </div>}
+        </>
     )
 }
 
