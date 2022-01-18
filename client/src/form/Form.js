@@ -6,29 +6,21 @@ function Form(props) {
 
     const { setLoggedIn, setUser, toggleForm, type } = props
     const [registered, setRegistered] = useState(false);
+    const [errors, setErrors] = useState();
+    const [error, setError] = useState();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        type === 'Login' ? await handleLogin(event) : await handleRegister(event);
+    }
 
-        let api;
-        let details;
-
-        if (type === 'Login') {
-            api = 'http://localhost:8000/api/user/login';
-            details = {
-                email: event.target.elements['email'].value,
-                password: event.target.elements['password'].value
-            }
-        } else {
-            api = 'http://localhost:8000/api/user/register';
-            details = {
-                firstName: event.target.elements['firstName'].value,
-                lastName: event.target.elements['lastName'].value,
-                email: event.target.elements['email'].value,
-                password: event.target.elements['password'].value
-            }
+    const handleLogin = async (event) => {
+        const api = 'http://localhost:8000/api/user/login';
+        const details = {
+            email: event.target.elements['email'].value,
+            password: event.target.elements['password'].value
         }
-        
+
         const response = await fetch(api, 
             {
                 method: 'post',
@@ -40,15 +32,56 @@ function Form(props) {
             }
         );
 
-        if (type === 'Login' && response.status === 200) {
-            let data = await response.json();
+        const data = await response.json();
+
+        if (response.status != 200) {
+            setError(data.error);
+        } else {
             setUser(data.user);
             setLoggedIn(true);
             toggleForm();
-        } else if (type === 'Sign Up' && response.status === 201) {
-            setRegistered(true);
+        }
+        
+    }
+
+    const handleRegister = async (event) => { 
+        const api = 'http://localhost:8000/api/user/register';
+        const details = {
+            firstName: event.target.elements['firstName'].value,
+            lastName: event.target.elements['lastName'].value,
+            email: event.target.elements['email'].value,
+            password: event.target.elements['password'].value
         }
 
+        const response = await fetch(api, 
+            {
+                method: 'post',
+                headers: { 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(details)
+            }
+        );
+
+        if (response.status != 201) {
+            let data = await response.json();
+            
+            if (data.errors) {
+                let errorTypes = {}
+                data.errors.forEach(error => {
+                    errorTypes[error.param] = error.msg;
+                })
+                setErrors(errorTypes);
+            } else {
+                setError(data.error)
+            }
+            
+        } else {
+            setRegistered(true);
+            handleLogin(event);
+        }
+        
     }
 
     return (
@@ -64,17 +97,28 @@ function Form(props) {
                     <div className="form-container flex flex-jc-c flex-ai-c">
                         <form className="form-field-group flex flex-col" onSubmit={handleSubmit}>
                             <h3>{type}</h3>
-                            {type === 'Sign Up' &&
+                            {type === 'Sign Up' ?
                                 <>
-                                <Field name="firstName" label="Given Name"/>
-                                <Field name="lastName" label="Surname"/>
+                                    <Field name="firstName" label="Given Name" required={true}/>
+                                    {errors && errors.firstName && <span className="red small-font">{errors.firstName}</span>}
+                                    <Field name="lastName" label="Surname" required={true}/>
+                                    {errors && errors.lastName && <span className="red small-font">{errors.lastName}</span>}
+                                    <Field name="email" type="text" label="Email" required={true}/>
+                                    {errors && errors.email && <span className="red small-font">{errors.email}</span>}
+                                    <Field name="password" type="password" label="Password" required={true}/>
+                                    {errors && errors.password && <span className="red small-font">{errors.password}</span>}
+                                    {error && <span className="red small-font">{error}</span>}
+                                </>
+                            :
+                                <>
+                                    <Field name="email" type="text" label="Email" required={true}/>
+                                    <Field name="password" type="password" label="Password" required={true}/>
+                                    {error && <span className="red small-font">{error}</span>}
                                 </>
                             }
-                            <Field name="email" type="text" label="Email"/>
-                            <Field name="password" type="password" label="Password" />
                             <button className="bg-dark-green white btn" type="submit">
                                 {!registered && type}
-                                {registered && 'Welcome! Click to login'}
+                                {registered && 'Welcome! Logging you in...'}
                             </button>
                             {type === 'Login' ? 
                                 <span className="small-font">

@@ -139,7 +139,7 @@ describe('user controller', () => {
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user already exists' })
+        expect(res.json).toHaveBeenCalledWith({ error: 'Email address already taken' })
 
     })
 

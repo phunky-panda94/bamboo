@@ -37,7 +37,7 @@ function Header(props) {
                 </button>
             </div>
         </header>
-        {menu && loggedIn && <div class="bg-light-black profile-menu flex flex-jc-c">
+        {menu && loggedIn && <div className="bg-light-black profile-menu flex flex-jc-c">
             <button className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb" onClick={() => handleLogout()}>
                 <span className="white material-icons-outlined">logout</span>
                 <span className="small-font">Log Out</span>

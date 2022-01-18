@@ -6,7 +6,7 @@ exports.register = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
     if (await userExists(email)) {
-        return res.status(400).json({ error: 'user already exists' })
+        return res.status(400).json({ error: 'Email address already taken' })
     };
 
     const newUser = {

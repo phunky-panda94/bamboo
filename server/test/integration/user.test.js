@@ -45,7 +45,7 @@ describe('register new user', () => {
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBeTruthy();
-        expect(response.body.error).toBe('user already exists');
+        expect(response.body.error).toBe('Email address already taken');
 
     })
 

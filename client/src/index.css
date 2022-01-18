@@ -104,6 +104,10 @@ a:hover {
     color: #4c843c
 }
 
+.red {
+    color: red;
+}
+
 /* flexbox */
 .flex {
     display: flex;
