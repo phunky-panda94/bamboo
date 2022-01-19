@@ -97,6 +97,7 @@ describe('user controller', () => {
 
     const mockResponse = () => {
         return {
+            cookie: jest.fn().mockReturnThis(),
             status: jest.fn().mockReturnThis(),
             json: jest.fn().mockReturnThis(),
             end: jest.fn().mockReturnThis()
@@ -164,7 +165,7 @@ describe('user controller', () => {
 
     })
 
-    it('login returns status 200 with user details and token', async () => {
+    it('login sets cookie with token and returns status 200 with user details', async () => {
 
         const req = { body: { user: 'user', token: 'token' } }
 
@@ -173,7 +174,8 @@ describe('user controller', () => {
         await controller.login(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(req.body);
+        expect(res.cookie).toHaveBeenCalledWith('token', req.body.token, { httpOnly: true });
+        expect(res.json).toHaveBeenCalledWith({ user: 'user' });
 
     })
 

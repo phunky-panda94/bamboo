@@ -25,10 +25,10 @@ describe('create post', () => {
 
     it('POST request to /api/posts creates new post in database and returns status 201 id of new post', async () => {
 
-        const newPost = { content: 'this is a new post' }
+        const newPost = { content: 'this is a new post', title: 'this is a new post' }
 
         const response = await request.post(route)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send(newPost);
 
         expect(response.status).toBe(201);
@@ -44,7 +44,7 @@ describe('create post', () => {
 
         const newPost = { content: '' }
         const response = await request.post(route)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send(newPost);
 
         expect(response.status).toBe(400);
@@ -56,8 +56,6 @@ describe('create post', () => {
 })
 
 describe('get post', () => {
-
-    const Post = require('../../src/post/post.model');
 
     it('GET request to /api/posts returns all posts in response body and status 200', async () => {
 
@@ -97,7 +95,7 @@ describe('update post', () => {
     it('PUT request to /api/posts/:id updates post in database and returns status 204', async () => {
 
         const response = await request.put(post.url)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: 'this is an updated post' });
 
         expect(response.status).toBe(204);
@@ -110,7 +108,7 @@ describe('update post', () => {
     it('PUT request to /api/posts/:id returns 401 and unauthorized if invalid token provided', async () => {
 
         const response = await request.put(post.url)
-            .set('Authorization', 'Bearer abc')
+            .set('Cookie', ['token=abc'])
             .send({ content: 'this is an updated post' });
 
         expect(response.status).toBe(401);
@@ -122,7 +120,7 @@ describe('update post', () => {
 
         const validToken = createToken('abc');
         const response = await request.put(post.url)
-            .set('Authorization', `Bearer ${validToken}`)
+            .set('Cookie', [`token=${validToken}`]) 
             .send({ content: 'this is an updated post' });
 
         expect(response.status).toBe(403);
@@ -133,7 +131,7 @@ describe('update post', () => {
     it('PUT request to /api/posts/:id returns 404 and error message if post does not exist', async () => {
 
         const response = await request.put('/api/posts/123')
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: 'this is an updated post' });
 
         expect(response.status).toBe(404);
@@ -144,7 +142,7 @@ describe('update post', () => {
     it('PUT request to /api/posts/:id return 400 and error message if post could not be updated', async () => {
 
         const response = await request.put(post.url)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: '' });
 
         expect(response.status).toBe(400);
@@ -159,7 +157,7 @@ describe('delete post', () => {
     it('DELETE request to /api/posts/:id deletes post from database and returns status 202', async () => {
 
         const response = await request.delete(post.url)
-            .set('Authorization', `Bearer ${token}`);
+            .set('Cookie', [`token=${token}`])
 
         expect(response.status).toBe(202);
         expect(await Post.findById(post._id)).toBeFalsy();
@@ -171,14 +169,14 @@ describe('delete post', () => {
         const response = await request.delete(post.url);
 
         expect(response.status).toBe(401);
-        expect(response.body.error).toBe('no token in Authorization header');
+        expect(response.body.error).toBe('no token');
 
     })
 
     it('DELETE request to /api/posts/:id returns 401 and unauthorized message if invalid token', async () => {
 
         const response = await request.delete(post.url)
-            .set('Authorization', 'Bearer abc');
+            .set('Cookie', ['token=abc'])
 
         expect(response.status).toBe(401);
         expect(response.body.error).toBe('unauthorized');
@@ -188,7 +186,7 @@ describe('delete post', () => {
     it('DELETE request to/api/posts/:id returns 400 if post does not exist and cannot be deleted', async () => {
 
         const response = await request.delete('/api/posts/123')
-            .set('Authorization', `Bearer ${token}`);
+            .set('Cookie', [`token=${token}`])
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBe('post does not exist');

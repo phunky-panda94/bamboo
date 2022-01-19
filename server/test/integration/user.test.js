@@ -69,20 +69,22 @@ describe('register new user', () => {
 
 describe('login as existing user', () => {
 
+    const User = require('../../src/user/user.model');
     const route = '/api/user/login';
+    const { createToken } = require('../../src/middleware/authenticator');
 
-    it('POST request to /api/user/login with valid credentials returns status 200, user details and token', async () => {
+    it('POST request to /api/user/login with valid credentials returns status 200, user details and sets cookie with token', async () => {
 
-        const userCredentials = {
-            email: 'bwayne@wayne.com',
-            password: 'batman'
-        }
+        const user = await User.findOne();
+        const token = createToken(user._id.toString());
 
-        const response = await request.post(route).send(userCredentials);
-        
+        const response = await request.post(route).send({ email: 'bwayne@wayne.com', password: 'batman' });
+
+        const expected = [expect.stringContaining(`token=${token}`)]
+
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('user');
-        expect(response.body).toHaveProperty('token');
+        expect(response.header['set-cookie']).toEqual(expect.arrayContaining(expected));
 
     })
 
@@ -111,10 +113,10 @@ describe('get user details', () => {
     it('GET request to /api/user/:id returns status 200 and user details if valid user token provided', async () => {
 
         const user = await User.findOne();
-        const token = createToken(user.email);
+        const token = createToken(user._id.toString());
         const route = user.url;
 
-        const response = await request.get(route).set('Authorization', `Bearer ${token}`);
+        const response = await request.get(route).set('Cookie', [`token=${token}`]);
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('firstName', 'Bruce');
@@ -128,7 +130,7 @@ describe('get user details', () => {
         const user = await User.findOne();
         const route = user.url;
         
-        const response = await request.get(route).set('Authorization', 'Bearer abc');
+        const response = await request.get(route).set('Cookie', [`token=abc`]);
 
         expect(response.status).toBe(401);
         expect(response.body.error).toBeTruthy();
@@ -145,7 +147,7 @@ describe('get user details', () => {
 
         expect(response.status).toBe(401);
         expect(response.body.error).toBeTruthy();
-        expect(response.body.error).toBe('no token in Authorization header');
+        expect(response.body.error).toBe('no token');
 
     })
 
@@ -154,7 +156,7 @@ describe('get user details', () => {
         const route = '/api/user/123';
         const token = createToken('123@email.com');
 
-        const response = await request.get(route).set('Authorization', `Bearer ${token}`);
+        const response = await request.get(route).set('Cookie', [`token=${token}`]);
 
         expect(response.status).toBe(404);
         expect(response.body.error).toBeTruthy();
@@ -185,7 +187,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/email updates user email in database and returns status 204 with new token', async () => {
             
             const response = await request.put(emailRoute)
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send({ email: 'new@email.com' });
 
             expect(response.status).toBe(204);
@@ -200,7 +202,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/email with invalid token returns status 401 and unauthorized message', async () => {
 
             const response = await request.put(emailRoute)
-                .set('Authorization', 'Bearer abc')
+                .set('Cookie', [`token=abc`])
                 .send({ email: 'new@email.com' });
 
             expect(response.status).toBe(401);
@@ -212,7 +214,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/email returns status 404 and error message if user does not exist', async () => {
 
             const response = await request.put('/api/user/123/email')
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send( { email: 'new@email.com' });
 
             expect(response.status).toBe(404);
@@ -224,7 +226,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/email with invalid email returns status 400 and error message', async () => {
 
             const response = await request.put(emailRoute)
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send({ email: 'abc' });
 
             expect(response.status).toBe(400);
@@ -243,7 +245,7 @@ describe('update user details', () => {
             })
 
             const response = await request.put(emailRoute)
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send({ email: 'taken@email.com' });
 
             expect(response.status).toBe(400);
@@ -259,7 +261,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/password updates user password in database and returns status 204', async () => {
 
             const response = await request.put(passwordRoute)
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send({ password: 'newpassword' });
 
             expect(response.status).toBe(204);
@@ -269,7 +271,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/password with invalid token returns status 401 and unauthorized message', async () => {
             
             const response = await request.put(passwordRoute)
-                .set('Authorization', 'Bearer abc')
+                .set('Cookie', ['token=abc'])
                 .send({ password: 'newpassword' });
 
             expect(response.status).toBe(401);
@@ -281,7 +283,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/password returns status 404 if user does not exist', async () => {
 
             const response = await request.put('/api/user/123/password')
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send({ password: 'newpassword' });
 
             expect(response.status).toBe(404);
@@ -292,7 +294,7 @@ describe('update user details', () => {
         it('PUT request to /api/user/:id/password with invalid password returns status 400 and error message', async() => {
 
             const response = await request.put(passwordRoute)
-                .set('Authorization', `Bearer ${token}`)
+                .set('Cookie', [`token=${token}`])
                 .send({ password: 'abc' });
 
             expect(response.status).toBe(400);
@@ -323,7 +325,7 @@ describe('delete user', () => {
     it('DELETE request to /api/user/:id deletes users from database and returns status 202', async () => {
 
         const response = await request.delete(route)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
 
         expect(response.status).toBe(202);
         expect(await userExists(user.email)).toBeFalsy();
@@ -333,7 +335,7 @@ describe('delete user', () => {
     it('DELETE request to /api/user/:id with invalid token return status 401 and unauthorized message', async () => {
 
         const response = await request.delete(route)
-            .set('Authorization', 'Bearer abc')
+            .set('Cookie', ['token=abc'])
 
         expect(response.status).toBe(401);
         expect(response.body.error).toBeTruthy();
@@ -344,7 +346,7 @@ describe('delete user', () => {
     it('DELETE request to /api/user/:id returns status 400 and error message if user could not be deleted', async () => {
 
         const response = await request.delete('/api/user/123')
-        .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBeTruthy();

@@ -29,7 +29,7 @@ describe('create comment', () => {
     it('POST request to /api/posts/:postId/comments to create new comment in database and return status 201', async () => {
         
         const response = await request.post(`${post.url}/comments/`)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: 'this is a new comment' });
 
         expect(response.status).toBe(201);
@@ -45,7 +45,7 @@ describe('create comment', () => {
     it('POST request to /api/posts/:postId/comments returns 401 and unauthorized if invalid token', async () => {
 
         const response = await request.post(`${post.url}/comments`)
-            .set('Authorization', 'Bearer abc')
+            .set('Cookie', ['token=abc'])
             .send({ content: 'this is a new comment' });
 
         expect(response.status).toBe(401);
@@ -59,14 +59,14 @@ describe('create comment', () => {
             .send({ content: 'this is a new comment' });
 
         expect(response.status).toBe(401);
-        expect(response.body.error).toBe('no token in Authorization header');
+        expect(response.body.error).toBe('no token');
 
     })
 
     it('POST request to /api/posts/:id/comments returns 400 and error message if comment could not be created', async () => {
 
         const response = await request.post('/api/posts/123/comments')
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: 'this is a new comment' });
 
         expect(response.status).toBe(400);
@@ -85,7 +85,7 @@ describe('get comment', () => {
             const response = await request.get(`${comment.url}`);
             
             expect(response.status).toBe(200);
-            expect(response.body.user).toBe(user._id.toString());
+            expect(response.body.user).toBeTruthy();
             expect(response.body.post).toBe(post._id.toString());
             expect(response.body.content).toBe('this is a comment');
 
@@ -131,7 +131,7 @@ describe('update comment', () => {
     it('PUT request to /api/posts/:postId/comments/:commentId updates comment in database and returns status 204', async () => {
         
         const response = await request.put(comment.url)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: 'this is an updated comment' });
 
         expect(response.status).toBe(204);
@@ -145,7 +145,7 @@ describe('update comment', () => {
     it('PUT request to /api/posts/:postId/comments/:commentId returns 401 unauthorised if invalid token', async () => {
 
         const response = await request.put(comment.url)
-            .set('Authorization', 'Bearer abc')
+            .set('Cookie', ['token=abc'])
             .send({ content: 'this is an updated comment' });
 
         expect(response.status).toBe(401);
@@ -159,7 +159,7 @@ describe('update comment', () => {
             .send({ content: 'this is an updated comment' });
 
         expect(response.status).toBe(401);
-        expect(response.body.error).toBe('no token in Authorization header');
+        expect(response.body.error).toBe('no token');
     })
 
     it('PUT request to /api/posts/:postId/comments/:commentId returns 403 forbidden if not author of comment', async () => {
@@ -167,7 +167,7 @@ describe('update comment', () => {
         const validToken = createToken('id')
 
         const response = await request.put(comment.url)
-            .set('Authorization', `Bearer ${validToken}`)
+            .set('Cookie', [`token=${validToken}`])
             .send({ content: 'this is updated comment' });
 
         expect(response.status).toBe(403);
@@ -178,7 +178,7 @@ describe('update comment', () => {
     it('PUT request to /api/posts/:postId/comments/:commentId returns 400 if comment could not be updated', async () => {
 
         const response = await request.put(comment.url)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: '' });
 
         expect(response.status).toBe(400);
@@ -189,7 +189,7 @@ describe('update comment', () => {
     it('PUT request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
 
         const response = await request.put(`${post.url}/comments/123`)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
             .send({ content: 'this is an updated comment' });
 
         expect(response.status).toBe(404);
@@ -200,12 +200,12 @@ describe('update comment', () => {
 
 })
 
-describe.only('delete comment', () => {
+describe('delete comment', () => {
 
     it('DElETE request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
 
         const response = await request.delete(`${post.url}/comments/123`)
-            .set('Authorization', `Bearer ${token}`);
+            .set('Cookie', [`token=${token}`])
 
         expect(response.status).toBe(404);
         expect(response.body.error).toBe('comment not found');
@@ -216,7 +216,7 @@ describe.only('delete comment', () => {
         const validToken = createToken('id');
 
         const response = await request.delete(comment.url)
-            .set('Authorization', `Bearer ${validToken}`)
+            .set('Cookie', [`token=${validToken}`])
 
         expect(response.status).toBe(403);
         expect(response.body.error).toBe('forbidden');
@@ -228,14 +228,14 @@ describe.only('delete comment', () => {
         const response = await request.delete(comment.url)
 
         expect(response.status).toBe(401);
-        expect(response.body.error).toBe('no token in Authorization header')
+        expect(response.body.error).toBe('no token')
 
     })
 
     it('DELETE request to /api/posts/:postId/comments/:commentsId returns 401 and unauthorized if invalid token', async () => {
 
         const response = await request.delete(comment.url)
-            .set('Authorization', 'Bearer abc')
+            .set('Cookie', ['token=abc'])
 
         expect(response.status).toBe(401);
         expect(response.body.error).toBe('unauthorized');
@@ -245,7 +245,7 @@ describe.only('delete comment', () => {
     it('DELETE request to /api/posts/:postId/comments/:commentId deletes comment from database and returns status 202', async () => {
 
         const response = await request.delete(comment.url)
-            .set('Authorization', `Bearer ${token}`)
+            .set('Cookie', [`token=${token}`])
 
         expect(response.status).toBe(202);
         expect(await Comment.findById(comment._id)).toBeFalsy();
