@@ -5,7 +5,7 @@ import CommentBox from '../comment/CommentBox';
 function Post(props) {
 
     const { author, content, date, title, votes } = props.post;
-    const { loggedIn } = props;
+    const { loggedIn, user } = props;
 
     return (
         <div className="post-container flex flex-col flex-ai-c">
@@ -40,7 +40,7 @@ function Post(props) {
                             <span className="material-icons-outlined">bookmark_border</span>
                         </a>
                     </div>
-                    <CommentBox loggedIn={loggedIn}/>
+                    <CommentBox user={user} loggedIn={loggedIn}/>
                     <hr className="line"></hr>
                 </div>
             </div>

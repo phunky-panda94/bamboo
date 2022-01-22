@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 function Thread(props) {
 
-    const { loggedIn } = props;
+    const { user, loggedIn } = props;
     const { id } = useParams();
     const [post, setPost] = useState();
     const [comments, setComments] = useState();
@@ -40,12 +40,12 @@ function Thread(props) {
         }
         fetchComments();
         
-    },[])
+    },[id])
     
     return (
         <div className="post-container flex flex-col flex-ai-c">
             {post && <PostHeader title={post.title} votes={post.votes}/>}
-            {post && <Post loggedIn={loggedIn} post={post}/>}
+            {post && <Post user={user} loggedIn={loggedIn} post={post}/>}
             {comments && comments.map(comment => {
                 let details = {
                     user: `${comment.user.firstName} ${comment.user.lastName}`,

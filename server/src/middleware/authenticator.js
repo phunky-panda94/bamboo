@@ -32,7 +32,7 @@ exports.authenticateUser = async (req, res, next) => {
     
     const token = this.createToken(user._id.toString());
 
-    req.body.user = { firstName: user.firstName, lastName: user.lastName };
+    req.body.user = { id: user._id.toString(), firstName: user.firstName, lastName: user.lastName };
     req.body.token = token;
 
     next();

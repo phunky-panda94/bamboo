@@ -7,7 +7,7 @@ function Comment(props) {
 
     return (
         <div className="bg-white comment-container flex flex-row flex-jc-c">
-            <div className="user-avatar">
+            <div className="user-avatar flex flex-jc-c">
                 <img alt="" src="/panda.png" className="user-avatar-dp"></img>
             </div>
             <div className="bg-white comment">

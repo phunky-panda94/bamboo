@@ -24,6 +24,7 @@ function Form(props) {
         const response = await fetch(api, 
             {
                 method: 'post',
+                credentials: 'include',
                 headers: { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json' 
@@ -34,7 +35,7 @@ function Form(props) {
 
         const data = await response.json();
 
-        if (response.status != 200) {
+        if (response.status !== 200) {
             setError(data.error);
         } else {
             setUser(data.user);
@@ -64,7 +65,7 @@ function Form(props) {
             }
         );
 
-        if (response.status != 201) {
+        if (response.status !== 201) {
             let data = await response.json();
             
             if (data.errors) {

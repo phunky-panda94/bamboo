@@ -299,6 +299,7 @@ describe('comment routes', () => {
     beforeAll(() => {
         mockController = require('../../src/comment/comment.controller');
         mockAuth = require('../../src/middleware/authenticator');
+        mockValidator = require('../../src/middleware/validator');
 
         jest.spyOn(mockController, 'create').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'getByPost').mockImplementation((req, res) => res.end());
@@ -306,6 +307,7 @@ describe('comment routes', () => {
         jest.spyOn(mockController, 'update').mockImplementation((req, res) => res.end());
         jest.spyOn(mockController, 'delete').mockImplementation((req, res) => res.end()); 
         jest.spyOn(mockAuth, 'authenticateToken').mockImplementation((req, res, next) => next());
+        mockValidator.sanitiseComment = jest.fn().mockImplementation((req, res, next) => next());
 
         route = '/api/posts/1/comments';
         app = require('../../app');
@@ -317,6 +319,7 @@ describe('comment routes', () => {
         await request.post(`${route}/`);
 
         expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockValidator.sanitiseComment).toHaveBeenCalled();
         expect(mockController.create).toHaveBeenCalled();
 
     })
@@ -341,6 +344,8 @@ describe('comment routes', () => {
 
         await request.put(`${route}/1`);
 
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
+        expect(mockValidator.sanitiseComment).toHaveBeenCalled();
         expect(mockController.update).toHaveBeenCalled();
 
     })
@@ -349,6 +354,7 @@ describe('comment routes', () => {
 
         await request.delete(`${route}/1`);
 
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
         expect(mockController.delete).toHaveBeenCalled();
 
     })

@@ -31,6 +31,11 @@ exports.validatePassword = [
 
 ]
 
+exports.sanitiseComment = [
+    body('comment').trim().escape(),
+    (req, res, next) => next()
+]
+
 exports.handleErrors = (req, res, next) => {
 
     const errors = validationResult(req);
