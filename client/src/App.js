@@ -12,6 +12,7 @@ function App() {
     const [posts, setPosts] = useState();
     const [loggedIn, setLoggedIn] = useState(false);
     const [user, setUser] = useState();
+    const token = localStorage.getItem('token');
 
     const toggleForm = () => {
         displayForm ? setDisplayForm(false) : setDisplayForm(true);
@@ -26,6 +27,22 @@ function App() {
             setPosts(posts);
         }
         fetchPosts();
+
+        async function login() {
+            let api = "http://localhost:8000/api/user";
+
+            const response = await fetch(api, { 
+                headers: { authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            setUser(data);
+            setLoggedIn(true);
+        }
+
+        if (token) {
+            login();
+        }
+
     }, [])
 
     return (

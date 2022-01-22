@@ -33,7 +33,7 @@ exports.login = async (req, res) => {
 
 exports.getUser = async (req, res) => {
     
-    const { id } = req.params;
+    const id = req.body.user;
     let user;
 
     try {

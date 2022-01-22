@@ -4,7 +4,7 @@ const { getUser, login, register, updateEmail, updatePassword, deleteUser } = re
 const { authenticateToken, authenticateUser, encryptPassword } = require('../middleware/authenticator');
 const { validateEmail, validatePassword, validateNewUserDetails } = require('../middleware/validator');
 
-router.get('/:id', authenticateToken, getUser);
+router.get('/', authenticateToken, getUser);
 
 router.post('/register', validateNewUserDetails, encryptPassword, register);
 

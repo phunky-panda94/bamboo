@@ -24,7 +24,6 @@ function Form(props) {
         const response = await fetch(api, 
             {
                 method: 'post',
-                credentials: 'include',
                 headers: { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json' 
@@ -34,12 +33,14 @@ function Form(props) {
         );
 
         const data = await response.json();
+        const { error, user, token } = data;
 
         if (response.status !== 200) {
-            setError(data.error);
+            setError(error);
         } else {
-            setUser(data.user);
+            setUser(user);
             setLoggedIn(true);
+            localStorage.setItem('token', token);
             toggleForm();
         }
         
