@@ -50,10 +50,10 @@ describe('authenticate token', () => {
         }
     }
 
-    it('should return error if no token', () => {
+    it('should return error if no token in header', () => {
         
-        const expectedResponse = { error: 'no token' };
-        const req = { cookies: {} }
+        const expectedResponse = { error: 'no token in Authorization header' };
+        const req = { headers: {} }
         const res = mockResponse();
 
         authenticateToken(req, res, next);
@@ -63,10 +63,10 @@ describe('authenticate token', () => {
 
     })
 
-    it('should return error if invalid token', () => {
+    it('should return error if invalid token in header', () => {
 
         const expectedResponse = { error: 'unauthorized' };
-        const req = { cookies: { token: 'abc' } };
+        const req = { headers: { authorization: 'Bearer abc' } };
         const res = mockResponse();
 
         authenticateToken(req, res, next);
@@ -80,7 +80,7 @@ describe('authenticate token', () => {
 
         const token = createToken('id');
         const req = { 
-            cookies: { token: token }, 
+            headers: { authorization: `Bearer ${token}` }, 
             body: {} 
         };
         const res = mockResponse();

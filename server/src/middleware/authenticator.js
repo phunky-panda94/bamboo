@@ -41,10 +41,11 @@ exports.authenticateUser = async (req, res, next) => {
 
 exports.authenticateToken = (req, res, next) => {
 
-    const token = req.cookies.token;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ error: 'no token' });
+        return res.status(401).json({ error: 'no token in Authorization header' });
     }
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err, id) => {
