@@ -34,7 +34,7 @@ function App() {
             {displayForm && <Form type={formType} setLoggedIn={setLoggedIn} toggleForm={toggleForm} setUser={setUser}/>}
             <Routes>
                 <Route path="/" element={<Feed posts={posts}/>} />
-                <Route path="/posts/:id" element={<Thread />} />
+                <Route path="/posts/:id" element={<Thread loggedIn={loggedIn}/>} />
             </Routes>
         </Router>
     );

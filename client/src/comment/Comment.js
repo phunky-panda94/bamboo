@@ -8,11 +8,11 @@ function Comment(props) {
     return (
         <div className="bg-white comment-container flex flex-row flex-jc-c">
             <div className="user-avatar">
-                <img alt=""></img>
+                <img alt="" src="/panda.png" className="user-avatar-dp"></img>
             </div>
             <div className="bg-white comment">
                 <div className="dark-grey flex flex-jc-sb">
-                    <span>{user}</span>
+                    <a href="#" className="user">{user}</a>
                     <span>{getTimeElapsed(date, Date.now())}</span>
                 </div>
                 <div>

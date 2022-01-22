@@ -16,10 +16,37 @@
     cursor: pointer;
 }
 
+.comment-box {
+    border: 1px solid #acaca7;
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+}
+
+.comment-area {
+    border: none;
+    box-shadow: none;
+    min-height: 100px;
+    outline: none;
+    resize: vertical;
+    width: 100%;
+}
+
 .comment-container {
     width: 60vw;
 }
 
+.user {
+    text-decoration: underline;
+}
+
 .user-avatar {
     width: 5%;
+}
+
+.user-avatar-dp {
+    border: 1px solid #acaca7;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
 }
