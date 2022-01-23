@@ -32,7 +32,7 @@ exports.validatePassword = [
 ]
 
 exports.sanitiseComment = [
-    body('comment').trim().escape(),
+    body('content').trim().escape(),
     (req, res, next) => next()
 ]
 

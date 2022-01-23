@@ -16,7 +16,7 @@ exports.create = async (req, res) => {
         return res.status(400).json({ error: 'comment could not be created'});
     }
 
-    res.status(201).json({ id: comment._id });
+    res.status(201).json({ comment });
 
 }
 

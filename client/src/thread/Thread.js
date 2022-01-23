@@ -40,12 +40,12 @@ function Thread(props) {
         }
         fetchComments();
         
-    },[id])
+    },[id, comments])
     
     return (
         <div className="post-container flex flex-col flex-ai-c">
             {post && <PostHeader title={post.title} votes={post.votes}/>}
-            {post && <Post user={user} loggedIn={loggedIn} post={post}/>}
+            {post && <Post user={user} loggedIn={loggedIn} post={post} comments={comments} setComments={setComments}/>}
             {comments && comments.map(comment => {
                 let details = {
                     user: `${comment.user.firstName} ${comment.user.lastName}`,
