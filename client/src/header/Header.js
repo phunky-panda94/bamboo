@@ -1,9 +1,11 @@
 import './Header.css';
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function Header(props) {
 
     const { loggedIn, setLoggedIn, setFormType, toggleForm, user, setUser } = props
+    const navigate = useNavigate();
     const [menu, setMenu] = useState(false);
 
     const handleClick = (formType) => {
@@ -17,8 +19,10 @@ function Header(props) {
 
     const handleLogout = () => {
         setLoggedIn(false);
+        localStorage.removeItem('token');
         setUser();
         toggleMenu();
+        navigate('/');
     }
 
     return (
@@ -38,7 +42,7 @@ function Header(props) {
             </div>
         </header>
         {menu && loggedIn && <div className="bg-light-black profile-menu flex flex-jc-c">
-            <button className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb" onClick={() => handleLogout()}>
+            <button className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb" onClick={handleLogout}>
                 <span className="white material-icons-outlined">logout</span>
                 <span className="small-font">Log Out</span>
             </button>
