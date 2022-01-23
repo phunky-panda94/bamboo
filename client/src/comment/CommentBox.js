@@ -1,16 +1,15 @@
 import './Comment.css';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function CommentBox(props) {
 
     const { loggedIn, user } = props;
     const { id } = useParams();
-    const commentBox = useRef();
     const [comment, setComment] = useState('');
 
-    const handleChange = () => {
-        setComment(commentBox.current.value);
+    const handleChange = (event) => {
+        setComment(event.target.value);
     }
 
     const handleSubmit = async (event) => {
@@ -38,7 +37,6 @@ function CommentBox(props) {
         const response = await fetch(api, details);
 
         if (response.status === 201) {
-            commentBox.current.value = '';
             setComment('');
         }
 
@@ -49,8 +47,7 @@ function CommentBox(props) {
             {!loggedIn && <span className="grey">Log in or signup to leave a comment</span>}
             {loggedIn && 
                 <form onSubmit={handleSubmit}>
-                    <textarea ref={commentBox} className="medium-font comment-area" placeholder="Leave a comment" value={comment} onChange={handleChange}>
-                    </textarea>
+                    <textarea className="medium-font comment-area" placeholder="Leave a comment" value={comment} onChange={handleChange} />
                     <button className="bg-dark-green white btn submit-comment-btn" type="submit" disabled={comment.length === 0}>Comment</button>
                 </form>
             }
