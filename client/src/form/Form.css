@@ -24,7 +24,7 @@
     width: 100%;
 }
 
-.form-field:not(:last-child) {
+.form-field:not():last-child {
     margin-bottom: 5px;
 }
 
@@ -33,7 +33,6 @@
 }
 
 .field {
-    box-sizing: border-box;
     font-size: 15px;
     padding: 15px;
     width: 100%;

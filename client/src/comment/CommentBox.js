@@ -47,8 +47,8 @@ function CommentBox(props) {
             {!loggedIn && <span className="grey">Log in or signup to leave a comment</span>}
             {loggedIn && 
                 <form onSubmit={handleSubmit}>
-                    <textarea className="medium-font comment-area" placeholder="Leave a comment" value={comment} onChange={handleChange} />
-                    <button className="bg-dark-green white btn submit-comment-btn" type="submit" disabled={comment.length === 0}>Comment</button>
+                    <textarea className="medium-font text-area" placeholder="Leave a comment" value={comment} onChange={handleChange} />
+                    <button className="bg-dark-green white btn submit-btn" type="submit" disabled={comment.length === 0}>Comment</button>
                 </form>
             }
         </div>

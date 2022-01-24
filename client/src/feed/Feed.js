@@ -1,13 +1,15 @@
 import './Feed.css';
 import PostCard from '../post/PostCard';
+import NewPostBox from '../post/NewPostBox';
 
 function Feed(props) {
 
-    const { posts } = props;
+    const { loggedIn, posts, title, setTitle } = props;
 
     return (
         <div className="flex flex-jc-c">
             <div className="feed flex flex-col flex-ai-c">
+                {loggedIn && <NewPostBox title={title} setTitle={setTitle}/>}
                 {posts && posts.map(post => {
 
                     let details = {

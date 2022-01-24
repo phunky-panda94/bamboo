@@ -4,6 +4,7 @@ import Header from './header/Header';
 import Feed from './feed/Feed';
 import Form from './form/Form';
 import Thread from './thread/Thread';
+import NewPost from './post/NewPost';
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
     const [posts, setPosts] = useState();
     const [loggedIn, setLoggedIn] = useState(false);
     const [user, setUser] = useState();
+    const [title, setTitle] = useState('');
     const token = localStorage.getItem('token');
 
     const toggleForm = () => {
@@ -43,14 +45,15 @@ function App() {
             login();
         }
 
-    }, [])
+    }, [token, posts])
 
     return (
         <Router>
             <Header setFormType={setFormType} toggleForm={toggleForm} loggedIn={loggedIn} setLoggedIn={setLoggedIn} user={user} setUser={setUser}/>
             {displayForm && <Form type={formType} setLoggedIn={setLoggedIn} toggleForm={toggleForm} setUser={setUser}/>}
             <Routes>
-                <Route path="/" element={<Feed posts={posts}/>} />
+                <Route path="/" element={<Feed loggedIn={loggedIn} title={title} setTitle={setTitle} posts={posts}/>} />
+                <Route path="/create-post" element={<NewPost title={title} setTitle={setTitle} user={user}/>} />
                 <Route path="/posts/:id" element={<Thread user={user} loggedIn={loggedIn}/>} />
             </Routes>
         </Router>

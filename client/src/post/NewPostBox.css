@@ -1,0 +1,29 @@
+.new-post-box {
+    border: 2px solid #2c2c2c;
+    border-radius: 10px;
+    width: 60vw;
+}
+
+.new-post-input {
+    font-size: 15px;
+    padding: 10px;
+    width: 100%;
+}
+
+.new-post-btn {
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 550;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 7px;
+    text-align: center;
+    text-decoration: none;
+    width: 10vw;
+}
+
+.new-post-btn:hover {
+    background-color: #80b24b;
+}
