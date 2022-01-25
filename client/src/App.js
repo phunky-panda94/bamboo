@@ -5,6 +5,7 @@ import Feed from './feed/Feed';
 import Form from './form/Form';
 import Thread from './thread/Thread';
 import NewPost from './post/NewPost';
+import Profile from './profile/Profile';
 
 function App() {
 
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/" element={<Feed loggedIn={loggedIn} title={title} setTitle={setTitle} posts={posts}/>} />
                 <Route path="/create-post" element={<NewPost title={title} setTitle={setTitle} user={user}/>} />
                 <Route path="/posts/:id" element={<Thread user={user} loggedIn={loggedIn}/>} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </Router>
     );
