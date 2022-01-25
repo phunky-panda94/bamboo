@@ -36,6 +36,15 @@
     width: 110px;
 }
 
+.home {
+    cursor: pointer;
+}
+
+.brand {
+    height: 35px;
+    width: 110px;
+}
+
 .logo {
     border-radius: 50%;
     height: 35px;
