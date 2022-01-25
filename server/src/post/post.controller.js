@@ -39,7 +39,9 @@ exports.getAll = async (req, res) => {
     let posts;
 
     try {
-        posts = await Post.find({}).populate('author', 'firstName lastName');
+        posts = await Post.find({})
+            .populate('author', 'firstName lastName')
+            .sort({ date: 'desc' });
     } catch (err) {
         console.log(err)
         return res.status(400).json({ error: 'error retrieving posts' })

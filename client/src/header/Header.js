@@ -42,6 +42,10 @@ function Header(props) {
             </div>
         </header>
         {menu && loggedIn && <div className="bg-light-black profile-menu flex flex-jc-c">
+            <a href={`/user/${user._id}`} className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb">
+                <span className="white material-icons-outlined">account_circle</span>
+                <span className="small-font">Profile</span>
+            </a>
             <button className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb" onClick={handleLogout}>
                 <span className="white material-icons-outlined">logout</span>
                 <span className="small-font">Log Out</span>
