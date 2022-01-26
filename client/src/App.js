@@ -30,7 +30,7 @@ function App() {
             setPosts(data);
         }
         fetchPosts();
-
+        
         async function fetchUser() {
             let api = "http://localhost:8000/api/user";
 
@@ -54,7 +54,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Feed loggedIn={loggedIn} title={title} setTitle={setTitle} posts={posts}/>} />
                 <Route path="/profile" element={<Profile user={user}/>} />
-                <Route path="/create-post" element={<NewPost title={title} setTitle={setTitle} user={user}/>} />
+                <Route path="/create-post" element={<NewPost setPosts={setPosts} title={title} setTitle={setTitle} user={user}/>} />
                 <Route path="/posts/:id" element={<Thread user={user} loggedIn={loggedIn}/>} />
                 
             </Routes>

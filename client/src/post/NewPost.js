@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 function NewPost(props) {
 
-    const { title, setTitle, user } = props;
+    const { setPosts, title, setTitle, user } = props;
     const navigate = useNavigate();
     const [content, setContent] = useState('');
     const token = localStorage.getItem('token');
@@ -46,6 +46,13 @@ function NewPost(props) {
 
         if (response.status === 201) {
             setTitle('');
+
+            let api = "http://localhost:8000/api/posts";
+        
+            const response = await fetch(api, { mode: 'cors' });
+            const data = await response.json();
+            setPosts(data);
+
             navigate('/');
         }
 
