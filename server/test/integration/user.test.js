@@ -1,10 +1,13 @@
 const app = require('../../app');
 const request = require('supertest')(app);
 const database = require('../../util/memoryDatabase');
+const User = require('../../src/user/user.model');
+let user;
 
 beforeAll(async () => { 
     await database.connect(); 
-    await database.seed(); 
+    await database.seed();
+    user = await User.findOne(); 
 });
 
 afterAll(async () => await database.disconnect());
@@ -105,15 +108,12 @@ describe('login as existing user', () => {
 
 describe('get user details', () => {
 
-    const User = require('../../src/user/user.model');
     const { createToken } = require('../../src/middleware/authenticator');
+    const route = '/api/user/';
 
-    it('GET request to /api/user/:id returns status 200 and user details if valid user token provided', async () => {
-
-        const user = await User.findOne();
-        const token = createToken(user.email);
-        const route = user.url;
-
+    it('GET request to /api/user/ returns status 200 and user details if valid user token provided', async () => {
+        
+        const token = createToken(user._id.toString());
         const response = await request.get(route).set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(200);
@@ -123,11 +123,8 @@ describe('get user details', () => {
 
     })
 
-    it('GET request to /api/user/:id returns status 401 and unauthorized message if invalid user token provided', async () => {
+    it('GET request to /api/user/ returns status 401 and unauthorized message if invalid user token provided', async () => {
 
-        const user = await User.findOne();
-        const route = user.url;
-        
         const response = await request.get(route).set('Authorization', 'Bearer abc');
 
         expect(response.status).toBe(401);
@@ -136,10 +133,7 @@ describe('get user details', () => {
 
     })
 
-    it('GET request to /api/user/:id returns status 401 and unauthorized message if no user token provided', async () => {
-
-        const user = await User.findOne();
-        const route = user.url
+    it('GET request to /api/user/ returns status 401 and unauthorized message if no user token provided', async () => {
 
         const response = await request.get(route);
 
@@ -149,10 +143,9 @@ describe('get user details', () => {
 
     })
 
-    it('GET request to /api/user/:id returns status 404 and user not found error message if user does not exist', async () => {
+    it('GET request to /api/user/ returns status 404 and user not found error message if user does not exist', async () => {
 
-        const route = '/api/user/123';
-        const token = createToken('123@email.com');
+        const token = createToken('abc');
 
         const response = await request.get(route).set('Authorization', `Bearer ${token}`);
 
@@ -164,17 +157,38 @@ describe('get user details', () => {
 
 })
 
+describe('get user posts', () => {
+
+    it('GET request to /api/user/:id/posts returns status 200 and posts', async () => {
+
+        const route = `${user.url}/posts`;
+        const response = await request.get(route);
+        
+        expect(response.status).toBe(200);
+        expect(response.body[0].content).toBe('this is a post');
+
+    })
+
+    it('GET request to /api/user/:id/posts returns status 404 and error if user does not exist', async () => {
+
+        const route = '/api/user/abc/posts';
+        const response = await request.get(route);
+
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe('user posts cannot be retrieved');
+
+    })
+
+})
+
 describe('update user details', () => {
 
-    const User = require('../../src/user/user.model');
     const { createToken } = require('../../src/middleware/authenticator');
     let token;
-    let user;
     let emailRoute;
     let passwordRoute;
 
     beforeAll(async () => { 
-        user = await User.findOne();
         token = createToken(JSON.stringify(user._id));
         emailRoute = `${user.url}/email`;
         passwordRoute = `${user.url}/password`;
@@ -235,7 +249,7 @@ describe('update user details', () => {
 
         it('PUT request to /api/user:id/email with taken email address returns 400 and error message', async () => {
 
-            const existingUser = await User.create({
+            await User.create({
                 firstName: 'John',
                 lastName: 'Smith',
                 email: 'taken@email.com',
@@ -307,15 +321,12 @@ describe('update user details', () => {
 
 describe('delete user', () => {
 
-    const User = require('../../src/user/user.model');
     const { userExists } = require('../../src/user/user.helpers');
     const { createToken } = require('../../src/middleware/authenticator');
-    let user;
     let token;
     let route;
 
     beforeAll(async () => {
-        user = await User.findOne();
         token = createToken(user.email);
         route = user.url;
     });

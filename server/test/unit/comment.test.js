@@ -94,7 +94,7 @@ describe('comment controller', () => {
             await controller.create(req, res);
 
             expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith({ id: expect.anything() });
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
 
         })
 

@@ -103,267 +103,307 @@ describe('user controller', () => {
         }
     }
 
-    it('register calls create method of user and returns status 201 if successfully created', async () => {
+    describe('register', () => {
 
-        const newUser = {
-            firstName: 'James',
-            lastName: 'Bond',
-            email: 'jbond@email.com',
-            password: 'password'
-        }
+        it('register calls create method of user and returns status 201 if successfully created', async () => {
 
-        const req = { body: newUser }
+            const newUser = {
+                firstName: 'James',
+                lastName: 'Bond',
+                email: 'jbond@email.com',
+                password: 'password'
+            }
 
-        const res = mockResponse();
+            const req = { body: newUser }
 
-        await controller.register(req, res);
-        
-        expect(res.status).toHaveBeenCalledWith(201);
-        
+            const res = mockResponse();
 
-    })
+            await controller.register(req, res);
+            
+            expect(res.status).toHaveBeenCalledWith(201);
+            
 
-    it('register returns 400 and error message if user with same email already exists', async () => {
-
-        const user = {
-            firstName: 'Bruce',
-            lastName: 'Wayne',
-            email: 'bwayne@wayne.com',
-            password: 'batman'
-        }
-
-        const req = { body: user };
-        const res = mockResponse();
-
-        await controller.register(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'Email address already taken' })
-
-    })
-
-    it('register returns 400 and error message if error creating user', async () => {
-
-        const newUser = {
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: ''
-        }
-
-        const req = { body: newUser }
-        const res = mockResponse();
-
-        await controller.register(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user could not be registered' });
-
-
-    })
-
-    it('login returns status 200 with user details and token', async () => {
-
-        const req = { body: { user: 'user', token: 'token' } }
-
-        const res = mockResponse();
-
-        await controller.login(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(req.body);
-
-    })
-
-    it('getUser returns status 200 and user details', async () => {
-
-        const req = { params: { id: user._id } }
-        const res = mockResponse();
-
-        await controller.getUser(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-            firstName: expect.any(String),
-            lastName: expect.any(String),
-            email: expect.any(String)
-        }));
-
-    })
-
-    it('getUser returns status 404 and message if user not found', async () => {
-
-        const req = { params: { id: 'abc' } }
-        const res = mockResponse();
-
-        await controller.getUser(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user not found' })
-        expect(res.json).toHaveBeenCalledTimes(1);
-
-    })
-
-    it('updatePassword returns status 204 and token if user password successfully updated', async () => {
-
-        const password = await bcrypt.hash('newpassword', 10);
-        const req = {
-            body: { password: password },
-            params: { id: user._id } 
-        }
-        const res = mockResponse();
-
-        await controller.updatePassword(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(204);
-        expect(res.end).toHaveBeenCalled();
-
-        const updatedUser = await User.findById(user._id);
-        const match = await checkPassword('newpassword', updatedUser.password);
-
-        expect(match).toBeTruthy();
-
-    })
-
-    it('updatePassword returns status 404 and error message if user does not exist', async () => {
-
-        const req = {
-            body: { password: 'newpassword' },
-            params: { id: 'abc' }
-        }
-
-        const res = mockResponse();
-
-        await controller.updatePassword(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
-
-    })
-    
-    it('updatePassword returns status 400 and error message if user password could not be updated', async () => {
-
-        const req = {
-            body: { password: '' },
-            params: { id: user._id } 
-        }
-
-        const res = mockResponse();
-
-        await controller.updatePassword(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user password could not be updated' });
-
-    })
-
-    it('updateEmail returns status 204 and token if user email successfully updated', async () => {
-
-        const req = {
-            body: { email: 'new@email.com' },
-            params: { id: user._id } 
-        }
-        const res = mockResponse();
-
-        await controller.updateEmail(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(204);
-
-        const updatedUser = await User.findById(user._id);
-
-        expect(updatedUser.email).toBe('new@email.com');
-
-    })
-
-    it('updateEmail returns status 404 and error message if user does not exist', async () => {
-
-        const req = {
-            body: { email: 'new@email.com' },
-            params: { id: 'abc' }
-        }
-
-        const res = mockResponse();
-
-        await controller.updateEmail(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
-
-    })
-    
-    it('updateEmail returns status 400 and error message if email already taken', async () => {
-
-        const existingUser = await User.create({
-            firstName: 'John',
-            lastName: 'Smith',
-            email: 'taken@email.com',
-            password: 'password'
         })
 
-        const req = { 
-            body: { email: existingUser.email },
-            params: { id: user._id }
-        }
+        it('register returns 400 and error message if user with same email already exists', async () => {
 
-        const res = mockResponse();
+            const user = {
+                firstName: 'Bruce',
+                lastName: 'Wayne',
+                email: 'bwayne@wayne.com',
+                password: 'batman'
+            }
 
-        await controller.updateEmail(req, res);
+            const req = { body: user };
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'email address already taken' });
+            await controller.register(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Email address already taken' })
 
-    it('updateEmail returns status 400 and error message if user email could not be updated', async () => {
+        })
 
-        const req = {
-            body: { email: '' },
-            params: { id: user._id } 
-        }
+        it('register returns 400 and error message if error creating user', async () => {
 
-        const res = mockResponse();
+            const newUser = {
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: ''
+            }
 
-        await controller.updateEmail(req, res);
+            const req = { body: newUser }
+            const res = mockResponse();
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user email could not be updated' });
+            await controller.register(req, res);
 
-    })
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user could not be registered' });
 
-    it('deleteUser returns status 202 if user succesfully deleted', async () => {
 
-        const req = { params: { id: user._id } };
-        const res = mockResponse();
-
-        await controller.deleteUser(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(202);
-        expect(res.end).toHaveBeenCalled();
-
-        const deletedUser = await User.findById(user._id);
-
-        expect(deletedUser).toBeFalsy();
+        })
 
     })
 
-    it('deleteUser returns status 400 and error message if user does not exist', async () => {
+    describe('login', () => {
 
-        const req = { params: { id: 'abc' } };
-        const res = mockResponse();
+        it('login returns status 200 with user details and token', async () => {
 
-        await controller.deleteUser(req, res);
+            const req = { body: { user: 'user', token: 'token' } }
 
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.status).toHaveBeenCalledTimes(1);
-        expect(res.json).toHaveBeenCalledWith({ error: 'user could not be deleted' });
+            const res = mockResponse();
+
+            await controller.login(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(req.body);
+
+        }) 
+        
+    })
+
+    describe('getUser', () => {
+
+        it('getUser returns status 200 and user details', async () => {
+
+            const req = { body: { user: user._id } }
+            const res = mockResponse();
+
+            await controller.getUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+                firstName: expect.any(String),
+                lastName: expect.any(String),
+                email: expect.any(String)
+            }));
+
+        })
+
+        it('getUser returns status 404 and message if user not found', async () => {
+
+            const req = { body: { user: 'abc' } }
+            const res = mockResponse();
+
+            await controller.getUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user not found' })
+            expect(res.json).toHaveBeenCalledTimes(1);
+
+        })
+
+}   )
+
+    describe('getUserPosts', () => {
+
+        it('getUserPosts returns 200 and posts of user', async () => {
+
+            const req = { params: { id: user._id } };
+            const res = mockResponse();
+
+            await controller.getUserPosts(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
+
+        })
+
+    })
+
+    describe('updatePassword', () => {
+
+        it('updatePassword returns status 204 and token if user password successfully updated', async () => {
+
+            const password = await bcrypt.hash('newpassword', 10);
+            const req = {
+                body: { password: password },
+                params: { id: user._id } 
+            }
+            const res = mockResponse();
+
+            await controller.updatePassword(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(204);
+            expect(res.end).toHaveBeenCalled();
+
+            const updatedUser = await User.findById(user._id);
+            const match = await checkPassword('newpassword', updatedUser.password);
+
+            expect(match).toBeTruthy();
+
+        })
+
+        it('updatePassword returns status 404 and error message if user does not exist', async () => {
+
+            const req = {
+                body: { password: 'newpassword' },
+                params: { id: 'abc' }
+            }
+
+            const res = mockResponse();
+
+            await controller.updatePassword(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
+
+        })
+        
+        it('updatePassword returns status 400 and error message if user password could not be updated', async () => {
+
+            const req = {
+                body: { password: '' },
+                params: { id: user._id } 
+            }
+
+            const res = mockResponse();
+
+            await controller.updatePassword(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user password could not be updated' });
+
+        })
+
+    })
+
+    describe('updateEmail', () => {
+
+        it('updateEmail returns status 204 and token if user email successfully updated', async () => {
+
+            const req = {
+                body: { email: 'new@email.com' },
+                params: { id: user._id } 
+            }
+            const res = mockResponse();
+
+            await controller.updateEmail(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(204);
+
+            const updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.email).toBe('new@email.com');
+
+        })
+
+        it('updateEmail returns status 404 and error message if user does not exist', async () => {
+
+            const req = {
+                body: { email: 'new@email.com' },
+                params: { id: 'abc' }
+            }
+
+            const res = mockResponse();
+
+            await controller.updateEmail(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user does not exist' });
+
+        })
+        
+        it('updateEmail returns status 400 and error message if email already taken', async () => {
+
+            const existingUser = await User.create({
+                firstName: 'John',
+                lastName: 'Smith',
+                email: 'taken@email.com',
+                password: 'password'
+            })
+
+            const req = { 
+                body: { email: existingUser.email },
+                params: { id: user._id }
+            }
+
+            const res = mockResponse();
+
+            await controller.updateEmail(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'email address already taken' });
+
+        })
+
+        it('updateEmail returns status 400 and error message if user email could not be updated', async () => {
+
+            const req = {
+                body: { email: '' },
+                params: { id: user._id } 
+            }
+
+            const res = mockResponse();
+
+            await controller.updateEmail(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user email could not be updated' });
+
+        })
+
+    })
+
+    describe('deleteUser', () => {
+
+        it('deleteUser returns status 202 if user succesfully deleted', async () => {
+
+            const req = { params: { id: user._id } };
+            const res = mockResponse();
+
+            await controller.deleteUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(202);
+            expect(res.end).toHaveBeenCalled();
+
+            const deletedUser = await User.findById(user._id);
+
+            expect(deletedUser).toBeFalsy();
+
+        })
+
+        it('deleteUser returns status 400 and error message if user does not exist', async () => {
+
+            const req = { params: { id: 'abc' } };
+            const res = mockResponse();
+
+            await controller.deleteUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledTimes(1);
+            expect(res.json).toHaveBeenCalledWith({ error: 'user could not be deleted' });
+
+        })
 
     })
 
@@ -401,61 +441,77 @@ describe('user routes', () => {
         request = require('supertest')(app);
     })
 
-    it('GET request to /api/user/:id should call authenticateToken and get method of controller', async () => {
+    describe('GET', () => {
 
-        await request.get(`${route}/user123`);
+        it('GET request to /api/user should call authenticateToken and get method of controller', async () => {
 
-        expect(mockAuth.authenticateToken).toHaveBeenCalled();
-        expect(mockController.getUser).toHaveBeenCalled();
+            await request.get(route);
 
-    })
+            expect(mockAuth.authenticateToken).toHaveBeenCalled();
+            expect(mockController.getUser).toHaveBeenCalled();
 
-    it('POST request to /api/user/register should call register method of controller', async () => {
-
-        await request.post(`${route}/register`);
-
-        expect(mockValidator.validateNewUserDetails).toHaveBeenCalled();
-        expect(mockAuth.encryptPassword).toHaveBeenCalled();
-        expect(mockController.register).toHaveBeenCalled();
+        })
 
     })
 
-    it('POST request to /api/user/login should call authenticateUser and login method of controller', async () => {
+    describe('POST', () => {
 
-        await request.post(`${route}/login`);
+        it('POST request to /api/user/register should call register method of controller', async () => {
 
-        expect(mockAuth.authenticateUser).toHaveBeenCalled();
-        expect(mockController.login).toHaveBeenCalled();
+            await request.post(`${route}/register`);
 
-    })
+            expect(mockValidator.validateNewUserDetails).toHaveBeenCalled();
+            expect(mockAuth.encryptPassword).toHaveBeenCalled();
+            expect(mockController.register).toHaveBeenCalled();
 
-    it('PUT request to /api/user/:id/email should call authenticateToken, validateEmail and updateEmail method of controller', async () => {
+        })
 
-        await request.put(`${route}/user123/email`);
+        it('POST request to /api/user/login should call authenticateUser and login method of controller', async () => {
 
-        expect(mockAuth.authenticateToken).toHaveBeenCalled();
-        expect(mockValidator.validateEmail).toHaveBeenCalled();
-        expect(mockController.updateEmail).toHaveBeenCalled();
+            await request.post(`${route}/login`);
 
-    })
+            expect(mockAuth.authenticateUser).toHaveBeenCalled();
+            expect(mockController.login).toHaveBeenCalled();
 
-    it('PUT request to /api/user/:id/password should call authenticateToken, validatePassword, encryptPassword and updatePassword method of controller', async () => {
-
-        await request.put(`${route}/user123/password`);
-
-        expect(mockAuth.authenticateToken).toHaveBeenCalled();
-        expect(mockValidator.validatePassword).toHaveBeenCalled();
-        expect(mockAuth.encryptPassword).toHaveBeenCalled();
-        expect(mockController.updatePassword).toHaveBeenCalled();
+        })
 
     })
 
-    it('DELETE request to /api/user/:id should call authenticateToken and deleteUser method of controller', async () => {
+    describe('PUT', () => {
 
-        await request.delete(`${route}/user123`);
+        it('PUT request to /api/user/:id/email should call authenticateToken, validateEmail and updateEmail method of controller', async () => {
 
-        expect(mockAuth.authenticateToken).toHaveBeenCalled();
-        expect(mockController.deleteUser).toHaveBeenCalled();
+            await request.put(`${route}/user123/email`);
+
+            expect(mockAuth.authenticateToken).toHaveBeenCalled();
+            expect(mockValidator.validateEmail).toHaveBeenCalled();
+            expect(mockController.updateEmail).toHaveBeenCalled();
+
+        })
+
+        it('PUT request to /api/user/:id/password should call authenticateToken, validatePassword, encryptPassword and updatePassword method of controller', async () => {
+
+            await request.put(`${route}/user123/password`);
+
+            expect(mockAuth.authenticateToken).toHaveBeenCalled();
+            expect(mockValidator.validatePassword).toHaveBeenCalled();
+            expect(mockAuth.encryptPassword).toHaveBeenCalled();
+            expect(mockController.updatePassword).toHaveBeenCalled();
+
+        })
+
+    })
+
+    describe('DELETE', () => {
+
+        it('DELETE request to /api/user/:id should call authenticateToken and deleteUser method of controller', async () => {
+
+            await request.delete(`${route}/user123`);
+
+            expect(mockAuth.authenticateToken).toHaveBeenCalled();
+            expect(mockController.deleteUser).toHaveBeenCalled();
+
+        })
 
     })
 

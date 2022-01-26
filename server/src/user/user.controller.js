@@ -1,4 +1,5 @@
 const User = require('./user.model');
+const Post = require('../post/post.model');
 const { userExists } = require('./user.helpers');
 
 exports.register = async (req, res) => {
@@ -43,6 +44,36 @@ exports.getUser = async (req, res) => {
     }
         
     res.status(200).json(user);
+
+}
+
+exports.getUserById = async (req, res) => {
+
+    const { id } = req.params;
+    let user;
+
+    try {
+        user = await User.findById(id, 'firstName lastName email');
+    } catch {
+        return res.status(404).json({ error: 'user not found' });
+    }
+
+    res.status(200).json(user);
+
+}
+
+exports.getUserPosts = async (req, res) => {
+
+    const { id } = req.params;
+    let posts;
+
+    try {
+        posts = await Post.find({ author: id });
+    } catch {
+        return res.status(404).json({ error: 'user posts cannot be retrieved' })
+    }
+
+    res.status(200).json(posts);
 
 }
 
