@@ -36,17 +36,17 @@ function Header(props) {
                 {!loggedIn && <button className="bg-white dark-green header-btn" onClick={() => handleClick('Login')}>Log In</button>}
                 {!loggedIn && <button className="bg-dark-green white header-btn" onClick={() => handleClick('Sign Up')}>Sign Up</button>}
                 {loggedIn && <span className="white name">{user.firstName} {user.lastName}</span>}
-                <button className="profile" onClick={toggleMenu} disabled={!loggedIn}>
+                <button className="profile-icon" onClick={toggleMenu} disabled={!loggedIn}>
                     <span className="white material-icons-outlined">person</span>
                 </button>
             </div>
         </header>
         {menu && loggedIn && <div className="bg-light-black profile-menu flex flex-col flex-jc-c">
-            <a href="/profile" className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb">
+            <a href="/profile" className="white profile-menu-btn flex flex-row flex-ai-c">
                 <span className="white material-icons-outlined">account_circle</span>
                 <span className="small-font">Profile</span>
             </a>
-            <button className="white profile-menu-btn flex flex-row flex-ai-c flex-jc-sb" onClick={handleLogout}>
+            <button className="white profile-menu-btn flex flex-row flex-ai-c" onClick={handleLogout}>
                 <span className="white material-icons-outlined">logout</span>
                 <span className="small-font">Log Out</span>
             </button>

@@ -29,7 +29,6 @@ function Thread(props) {
             
             setPost(post);
         }
-        fetchPost();
 
         async function fetchComments() {
             let api = `http://localhost:8000/api/posts/${id}/comments`;
@@ -38,9 +37,12 @@ function Thread(props) {
             const comments = await response.json();
             setComments(comments); 
         }
+
+        fetchPost();
         fetchComments();
         
-    },[id, comments])
+    },[id])
+
     
     return (
         <div className="post-container flex flex-col flex-ai-c">

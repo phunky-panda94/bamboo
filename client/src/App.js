@@ -26,12 +26,12 @@ function App() {
             let api = "http://localhost:8000/api/posts";
         
             const response = await fetch(api, { mode: 'cors' });
-            const posts = await response.json();
-            setPosts(posts);
+            const data = await response.json();
+            setPosts(data);
         }
         fetchPosts();
 
-        async function login() {
+        async function fetchUser() {
             let api = "http://localhost:8000/api/user";
 
             const response = await fetch(api, { 
@@ -43,10 +43,9 @@ function App() {
         }
 
         if (token) {
-            login();
+            fetchUser();
         }
-
-    }, [token, posts])
+    }, [token])
 
     return (
         <Router>
@@ -54,9 +53,10 @@ function App() {
             {displayForm && <Form type={formType} setLoggedIn={setLoggedIn} toggleForm={toggleForm} setUser={setUser}/>}
             <Routes>
                 <Route path="/" element={<Feed loggedIn={loggedIn} title={title} setTitle={setTitle} posts={posts}/>} />
+                <Route path="/profile" element={<Profile user={user}/>} />
                 <Route path="/create-post" element={<NewPost title={title} setTitle={setTitle} user={user}/>} />
                 <Route path="/posts/:id" element={<Thread user={user} loggedIn={loggedIn}/>} />
-                <Route path="/profile" element={<Profile />} />
+                
             </Routes>
         </Router>
     );
