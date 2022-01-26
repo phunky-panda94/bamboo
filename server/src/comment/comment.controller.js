@@ -42,7 +42,9 @@ exports.getByPost = async (req, res) => {
     let comments;
 
     try {
-        comments = await Comment.find({ post: postId }).populate('user', 'firstName lastName');
+        comments = await Comment.find({ post: postId })
+            .populate('user', 'firstName lastName')
+            .sort({ date: 'desc' })
     } catch (err) {
         return res.status(404).json({ error: 'post not found' })
     }

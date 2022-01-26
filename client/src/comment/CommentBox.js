@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 function CommentBox(props) {
 
-    const { loggedIn, user } = props;
+    const { setComments, loggedIn, user } = props;
     const { id } = useParams();
     const [comment, setComment] = useState('');
 
@@ -38,6 +38,11 @@ function CommentBox(props) {
 
         if (response.status === 201) {
             setComment('');
+            let api = `http://localhost:8000/api/posts/${id}/comments`;
+
+            const response = await fetch(api, { mode: 'cors' });
+            const comments = await response.json();
+            setComments(comments); 
         }
 
     }
