@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getUser, getUserPosts, login, register, updateEmail, updatePassword, deleteUser } = require('./user.controller');
+const { getUser, getUserById, getUserPosts, login, register, updateEmail, updatePassword, deleteUser } = require('./user.controller');
 const { authenticateToken, authenticateUser, encryptPassword } = require('../middleware/authenticator');
 const { validateEmail, validatePassword, validateNewUserDetails } = require('../middleware/validator');
 
 router.get('/', authenticateToken, getUser);
+
+router.get('/:id', getUserById);
 
 router.get('/:id/posts', getUserPosts);
 

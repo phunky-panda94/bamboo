@@ -68,7 +68,7 @@ exports.getUserPosts = async (req, res) => {
     let posts;
 
     try {
-        posts = await Post.find({ author: id });
+        posts = await Post.find({ author: id }).populate('author', 'firstName lastName');
     } catch {
         return res.status(404).json({ error: 'user posts cannot be retrieved' })
     }
