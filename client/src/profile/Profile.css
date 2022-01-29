@@ -1,11 +1,22 @@
 .profile {
-    width: 70vw;
+    height: 100vh;
+    width: 100vw;
 }
 
-.profile-details {
-    width: 30%;
+.profile-card {
+    border: 2px solid #2c2c2c;
+    border-radius: 10px;
+    height: 20%;
+    margin-top: 10px;
+    padding: 15px;
+    width: 35%;
+}
+
+.profile-container {
+    width: 80vw;
 }
 
 .user-posts {
-    width: 70%;
+    overflow: scroll;
+    width: 60%;
 }

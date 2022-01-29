@@ -56,7 +56,6 @@ function App() {
                 <Route path="/profile" element={<Profile user={user}/>} />
                 <Route path="/create-post" element={<NewPost setPosts={setPosts} title={title} setTitle={setTitle} user={user}/>} />
                 <Route path="/posts/:id" element={<Thread user={user} loggedIn={loggedIn}/>} />
-                
             </Routes>
         </Router>
     );

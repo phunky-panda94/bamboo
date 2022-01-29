@@ -35,7 +35,7 @@ function Header(props) {
             <div className="flex flex-ai-c">
                 {!loggedIn && <button className="bg-white dark-green header-btn" onClick={() => handleClick('Login')}>Log In</button>}
                 {!loggedIn && <button className="bg-dark-green white header-btn" onClick={() => handleClick('Sign Up')}>Sign Up</button>}
-                {loggedIn && <span className="white name">{user.firstName} {user.lastName}</span>}
+                {loggedIn && <a href="/profile" className="white name">{user.firstName} {user.lastName}</a>}
                 <button className="profile-icon" onClick={toggleMenu} disabled={!loggedIn}>
                     <span className="white material-icons-outlined">person</span>
                 </button>
