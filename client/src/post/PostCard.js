@@ -1,13 +1,20 @@
 import './PostCard.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getTimeElapsed } from '../util/helpers';
 
 function PostCard(props) {
 
     const { id, author, content, date, title, votes } = props.post;
+    const navigate = useNavigate();
+
+    const handleClick = (event) => {
+        if (event.target.tagName === 'DIV') {
+            navigate(`/posts/${id}`);
+        }
+    }
 
     return (
-        <div className="bg-white post-card flex">
+        <div className="bg-white post-card flex" onClick={handleClick}>
             <div className="bg-light-grey post-votes flex flex-col flex-ai-c">
                 <button className="vote-btn material-icons-outlined">thumb_up</button>
                 {votes}
