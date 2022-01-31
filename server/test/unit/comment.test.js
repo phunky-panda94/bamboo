@@ -68,6 +68,12 @@ describe('comment model', () => {
 
     })
 
+    it('virtual total votes method should return up votes plus down votes', () => {
+
+        expect(comment.totalVotes).toBe(0);
+
+    });
+
 })
 
 describe('comment controller', () => {
@@ -235,6 +241,42 @@ describe('comment controller', () => {
 
         })
     
+    })
+
+    describe('updateVotes', () => {
+
+        it('up should return 204 if comment up voted', async () => {
+
+            const req = {
+                params: { commentId: comment._id, direction: 'up' },
+                body: { user: user._id.toString() }
+            }
+
+            const res = mockResponse();
+
+            await controller.updateVotes(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(204);
+            expect(res.end).toHaveBeenCalled();
+
+        })
+
+        it('down should return 204 if comment down voted', async () => {
+
+            const req = {
+                params: { commentId: comment._id, direction: 'down' },
+                body: { user: user._id.toString() }
+            }
+
+            const res = mockResponse();
+
+            await controller.updateVotes(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(204);
+            expect(res.end).toHaveBeenCalled();
+
+        })
+
     })
 
     describe('delete', () => {
