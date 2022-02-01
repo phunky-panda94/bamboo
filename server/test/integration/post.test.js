@@ -25,7 +25,11 @@ describe('create post', () => {
 
     it('POST request to /api/posts creates new post in database and returns status 201 id of new post', async () => {
 
-        const newPost = { content: 'this is a new post' }
+        const newPost = { 
+            author: user._id,
+            content: 'this is a new post',
+            title: 'this is the title'
+        }
 
         const response = await request.post(route)
             .set('Authorization', `Bearer ${token}`)
@@ -57,14 +61,12 @@ describe('create post', () => {
 
 describe('get post', () => {
 
-    const Post = require('../../src/post/post.model');
-
     it('GET request to /api/posts returns all posts in response body and status 200', async () => {
 
         const response = await request.get('/api/posts');
         
         expect(response.status).toBe(200);
-        expect(response.body[0].content).toBe('this is a post');
+        expect(response.body.length).toBeGreaterThan(0);
 
     })
 

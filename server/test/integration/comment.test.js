@@ -26,19 +26,14 @@ afterAll(async () => database.disconnect());
 
 describe('create comment', () => {
 
-    it('POST request to /api/posts/:postId/comments to create new comment in database and return status 201', async () => {
+    it.only('POST request to /api/posts/:postId/comments to create new comment in database and return status 201', async () => {
         
         const response = await request.post(`${post.url}/comments/`)
             .set('Authorization', `Bearer ${token}`)
             .send({ content: 'this is a new comment' });
 
         expect(response.status).toBe(201);
-        expect(response.body.id).toBeTruthy();
-
-        const newComment = await Comment.findById(response.body.id);
-
-        expect(newComment).toBeTruthy();
-        expect(newComment.content).toBe('this is a new comment');
+        expect(response.body.content).toBe('this is a new comment');
 
     })
 
@@ -85,7 +80,7 @@ describe('get comment', () => {
             const response = await request.get(`${comment.url}`);
             
             expect(response.status).toBe(200);
-            expect(response.body.user).toBe(user._id.toString());
+            expect(response.body.user._id).toBe(user._id.toString());
             expect(response.body.post).toBe(post._id.toString());
             expect(response.body.content).toBe('this is a comment');
 
@@ -200,7 +195,7 @@ describe('update comment', () => {
 
 })
 
-describe.only('delete comment', () => {
+describe('delete comment', () => {
 
     it('DElETE request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
 
