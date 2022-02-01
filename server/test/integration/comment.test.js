@@ -33,7 +33,12 @@ describe('create comment', () => {
             .send({ content: 'this is a new comment' });
 
         expect(response.status).toBe(201);
-        expect(response.body.comment.content).toBe('this is a new comment');
+        expect(response.body.id).toBeTruthy();
+
+        const newComment = await Comment.findById(response.body.id);
+
+        expect(newComment).toBeTruthy();
+        expect(newComment.content).toBe('this is a new comment');
 
     })
 
@@ -80,7 +85,7 @@ describe('get comment', () => {
             const response = await request.get(`${comment.url}`);
             
             expect(response.status).toBe(200);
-            expect(response.body.user._id).toBe(user._id.toString());
+            expect(response.body.user).toBe(user._id.toString());
             expect(response.body.post).toBe(post._id.toString());
             expect(response.body.content).toBe('this is a comment');
 
@@ -192,35 +197,10 @@ describe('update comment', () => {
 
     })
 
-    it('PUT request to /api/posts/:postId/comments/:commentId/votes/up increases up votes of comment and returns status 204', async () => {
-
-        const response = await request.put(`${comment.url}/votes/up`)
-            .set('Authorization', `Bearer ${token}`);
-
-        expect(response.status).toBe(204);
-        
-        const upVotedComment = await Comment.findById(comment._id);
-
-        expect(upVotedComment.upVotes).toBe(1);
-
-    })
-
-    it('PUT request to /api/posts/:postId/comments/:commentId/votes/down increases down votes of comment and returns status 204', async () => {
-
-        const response = await request.put(`${comment.url}/votes/down`)
-            .set('Authorization', `Bearer ${token}`);
-
-        expect(response.status).toBe(204);
-
-        const downVotedComment = await Comment.findById(comment._id);
-
-        expect(downVotedComment.downVotes).toBe(1);
-
-    })
 
 })
 
-describe('delete comment', () => {
+describe.only('delete comment', () => {
 
     it('DElETE request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
 

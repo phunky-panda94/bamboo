@@ -11,8 +11,6 @@ router.get('/:postId/comments/:commentId', commentController.get);
 
 router.put('/:postId/comments/:commentId', authenticateToken, sanitiseComment, commentController.update);
 
-router.put('/:postId/comments/:commentId/votes/:direction', commentController.updateVotes);
-
 router.delete('/:postId/comments/:commentId', authenticateToken, commentController.delete);
 
 module.exports = router;

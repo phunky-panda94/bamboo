@@ -79,25 +79,6 @@ exports.update = async (req, res) => {
 
 }
 
-exports.updateVotes = async (req, res) => {
-
-    const { commentId, direction } = req.params;
-
-    let comment;
-    let votes;
-
-    direction === 'up' ? votes = { upVotes: 1 } : votes = { downVotes: 1 };
-
-    try {
-        await Comment.findByIdAndUpdate(commentId, { $inc: votes });
-    } catch (err) {
-        return res.status(400).json({ error: 'comment could not be updated'});
-    }
-
-    res.status(204).end();
-
-}
-
 exports.delete = async (req, res) => {
 
     const { commentId } = req.params;
