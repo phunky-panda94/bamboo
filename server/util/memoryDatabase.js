@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../src/user/user.model');
 const Post = require('../src/post/post.model');
 const Comment = require('../src/comment/comment.model');
+const Vote = require('../src/vote/vote.model');
 
 let database;
 
@@ -33,18 +34,39 @@ exports.seed = async () => {
 
     await user.save();
 
-    const post = new Post({
+    const postA = await Post.create({
         author: user._id,
         content: 'this is a post',
         title: 'this is the Title'
     })
 
-    await post.save();
+    const postB = await Post.create({
+        author: user._id,
+        content: 'this is another post',
+        title: 'this is the title'
+    })
+
+    const commentA = await Comment.create({
+        user: user._id,
+        post: postA._id,
+        content: "this is a comment"
+    })
 
     await Comment.create({
         user: user._id,
-        post: post._id,
-        content: "this is a comment"
+        post: postB._id,
+        content: "this is another comment"
+    })
+
+    await Vote.create({
+        user: user._id,
+        content: postA._id,
+    })
+
+    await Vote.create({
+        user: user._id,
+        content: commentA._id,
+        down: true
     })
 
 }
