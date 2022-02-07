@@ -145,7 +145,7 @@ describe('update', () => {
 
 })
 
-describe('delete', () => {
+describes('delete', () => {
 
     it('DELETE request to /api/votes/:id removes vote from database and return status 202', async () => {
 
