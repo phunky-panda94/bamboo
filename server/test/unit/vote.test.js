@@ -126,7 +126,7 @@ describe('vote controller', () => {
 
     describe('get', () => {
 
-        it('returns 200 and boolean value for whether vote for post by user exists', async () => {
+        it('returns 200 and down value if vote for post by user exists', async () => {
 
             const req = { params: { id: postB._id }, body: { user: user._id } };
             const res = mockResponse();
@@ -134,19 +134,31 @@ describe('vote controller', () => {
             await controller.get(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(expect.anything());
+            expect(res.json).toHaveBeenCalledWith(expect.any(Boolean));
 
         })
 
-        it('returns 200 and boolean value for whether vote for comment by user exists', async () => {
+        it('returns 404 and down value if vote does not exist', async () => {
 
             const req = { params: { id: comment._id }, body: { user: user._id } };
             const res = mockResponse();
 
             await controller.get(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.end).toHaveBeenCalled();
+
+        })
+
+        it('returns 400 if vote cannot be retrieved', async () => {
+
+            const req = { params: { id: '' }, body: { user: '' } };
+            const res = mockResponse();
+
+            await controller.get(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ error: 'error retrieving vote' });
 
         })
 

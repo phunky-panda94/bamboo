@@ -25,6 +25,7 @@ beforeAll(async () => {
     postA = await Post.findOne({ content: 'this is a post' });
     postB = await Post.findOne({ content: 'this is another post' });
     comment = await Comment.findOne({ content: 'this is a comment' });
+    commentB = await Comment.findOne({ content: 'this is another comment' });
     vote = await Vote.findOne({ down: false });
 });
 
@@ -97,12 +98,21 @@ describe('get', () => {
 
     })
 
-    it('GET request to /api/votes/post/:id should return true / false and status 200', async () => {
+    it('GET request to /api/votes/comment/:id should return true / false and status 200', async () => {
 
-        const response = await request.get(`${route}/post/123`)
-            .set('Authorization', `Bearer ${token}`)
+        const response = await request.get(`${route}/comment/${commentB._id.toString()}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(404);
+
+    })
+
+    it('GET request to /api/votes/post/:id should return status 400', async () => {
+
+        const response = await request.get(`${route}/post/${null}`)
+            .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(400);
 
     })
 
