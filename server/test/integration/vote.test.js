@@ -87,32 +87,22 @@ describe('create', () => {
 
 describe('get', () => {
 
-    it('GET request to /api/votes/comment/:id should return vote and status 200', async () => {
+    it('GET request to /api/votes/comment/:id should return true and status 200', async () => {
 
-        const response = await request.get(`${route}/comment/${comment._id.toString()}`);
+        const response = await request.get(`${route}/comment/${comment._id.toString()}`)
+            .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(200);
-        expect(response.body[0].user).toBe(user._id.toString());
-        expect(response.body[0].content).toBe(comment._id.toString());
+        expect(response.body).toBe(true);
 
     })
 
-    it('GET request to /api/votes/post/:id should return vote and status 200', async () => {
+    it('GET request to /api/votes/post/:id should return true / false and status 200', async () => {
 
-        const response = await request.get(`${route}/post/${postA._id.toString()}`);
+        const response = await request.get(`${route}/post/123`)
+            .set('Authorization', `Bearer ${token}`)
 
-        expect(response.status).toBe(200);
-        expect(response.body[0].user).toBe(user._id.toString());
-        expect(response.body[0].content).toBe(postA._id.toString());
-
-    })
-
-    it('GET request to /api/votes/comtent/:id returns 400 and error message if content does not exist', async () => {
-
-        const response = await request.get(`${route}/comment/123`);
-
-        expect(response.status).toBe(400);
-        expect(response.body.error).toBe('error retrieving votes');
+        expect(response.status).toBe(404);
 
     })
 
@@ -145,7 +135,7 @@ describe('update', () => {
 
 })
 
-describes('delete', () => {
+describe('delete', () => {
 
     it('DELETE request to /api/votes/:id removes vote from database and return status 202', async () => {
 

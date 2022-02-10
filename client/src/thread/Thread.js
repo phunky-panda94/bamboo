@@ -7,9 +7,10 @@ import { useParams } from 'react-router-dom';
 
 function Thread(props) {
 
-    const { user, loggedIn } = props;
+    const { token, user, loggedIn } = props;
     const { id } = useParams();
     const [post, setPost] = useState();
+    const [votes, setVotes] = useState();
     const [comments, setComments] = useState();
     
     useEffect(() => {
@@ -20,14 +21,15 @@ function Thread(props) {
             const data = await response.json();
             
             let post = {
+                id: data._id,
                 author: `${data.author.firstName} ${data.author.lastName}`,
                 content: data.content,
                 date: data.date,
                 title: data.title,
                 votes: data.votes
             }
-            
             setPost(post);
+            setVotes(post.votes);
         }
 
         async function fetchComments() {
@@ -46,8 +48,8 @@ function Thread(props) {
     
     return (
         <div className="post-container flex flex-col flex-ai-c">
-            {post && <PostHeader title={post.title} votes={post.votes}/>}
-            {post && <Post user={user} loggedIn={loggedIn} post={post} setComments={setComments}/>}
+            {post && <PostHeader title={post.title} votes={votes} setVotes={setVotes}/>}
+            {post && <Post token={token} user={user} loggedIn={loggedIn} post={post} votes={votes} setVotes={setVotes} setComments={setComments}/>}
             {comments && comments.map(comment => {
                 let details = {
                     user: `${comment.user.firstName} ${comment.user.lastName}`,

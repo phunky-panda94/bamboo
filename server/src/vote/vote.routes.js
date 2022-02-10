@@ -5,9 +5,9 @@ const voteController = require('./vote.controller');
 
 router.post('/', authenticateToken, voteController.create);
 
-router.get('/post/:id', voteController.get);
+router.get('/post/:id', authenticateToken, voteController.get);
 
-router.get('/comment/:id', voteController.get);
+router.get('/comment/:id', authenticateToken, voteController.get);
 
 router.put('/:id/:down', authenticateToken, voteController.update);
 

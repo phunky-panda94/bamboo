@@ -21,18 +21,23 @@ exports.create = async (req, res) => {
 
 exports.get = async (req, res) => {
 
-    const { id } = req.params;
+    const content = req.params.id;
+    const user = req.body.user;
 
-    let votes;
+    let vote;
 
     try {
-        votes = await Vote.find({ content: id });
-    } catch {
-        return res.status(400).json({ error: 'error retrieving votes' });
+        vote = await Vote.findOne({ user: user, content: content }, 'down');
+    } catch (err) {
+        return res.status(400).json({ error: 'error retrieving vote' });
     }
-
-    res.status(200).json(votes);
-
+    
+    if (vote) {
+        res.status(200).json(vote.down);
+    } else {
+        res.status(404).end();
+    }
+    
 }
 
 exports.update = async (req, res) => {

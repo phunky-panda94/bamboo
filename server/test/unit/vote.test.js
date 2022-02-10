@@ -126,39 +126,27 @@ describe('vote controller', () => {
 
     describe('get', () => {
 
-        it('returns 200 if votes for post retrieved', async () => {
+        it('returns 200 and boolean value for whether vote for post by user exists', async () => {
 
-            const req = { params: { id: post._id } };
+            const req = { params: { id: postB._id }, body: { user: user._id } };
             const res = mockResponse();
 
             await controller.get(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(expect.any(Array));
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
 
         })
 
-        it('returns 200 if votes for comment retrieved', async () => {
+        it('returns 200 and boolean value for whether vote for comment by user exists', async () => {
 
-            const req = { params: { id: comment._id } };
+            const req = { params: { id: comment._id }, body: { user: user._id } };
             const res = mockResponse();
 
             await controller.get(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(expect.any(Array));
-
-        })
-
-        it('returns 400 if post does not exist', async () => {
-
-            const req = { params: { id: 'abc' } };
-            const res = mockResponse();
-
-            await controller.get(req, res);
-
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({ error: 'error retrieving votes' });
+            expect(res.json).toHaveBeenCalled();
 
         })
 
@@ -214,7 +202,7 @@ describe('vote controller', () => {
             await controller.delete(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({ error: 'vote could not be deleted' });
+            expect(res.json).toHaveBeenCalledWith({ error: 'error deleting vote' });
 
         })
 
@@ -258,6 +246,7 @@ describe('vote routes', () => {
 
         await request.get(`${route}/post/123}`);
 
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
         expect(mockController.get).toHaveBeenCalled();
 
     })
@@ -266,6 +255,7 @@ describe('vote routes', () => {
 
         await request.get(`${route}/comment/123`);
 
+        expect(mockAuth.authenticateToken).toHaveBeenCalled();
         expect(mockController.get).toHaveBeenCalled();
 
     })

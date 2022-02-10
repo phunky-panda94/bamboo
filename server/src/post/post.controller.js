@@ -25,11 +25,13 @@ exports.get = async (req, res) => {
     let post;
 
     try {
-        post = await Post.findById(id).populate('author', 'firstName lastName');
+        post = await Post.findById(id)
+            .populate('author', 'firstName lastName')
+            .populate('votes');
     } catch (err) {
         return res.status(404).json({ error: 'post not found' });
     }
-
+    
     res.status(200).json(post);
 
 }
@@ -41,6 +43,7 @@ exports.getAll = async (req, res) => {
     try {
         posts = await Post.find({})
             .populate('author', 'firstName lastName')
+            .populate('votes')
             .sort({ date: 'desc' });
     } catch (err) {
         console.log(err)

@@ -69,6 +69,15 @@ describe('post model', () => {
 
     })
 
+    it('virtual votes method should return total votes of post', async () => {
+
+        const post = await Post.findOne()
+            .populate('votes');
+        
+        expect(post.votes).toBeTruthy();
+
+    })
+
 })
 
 describe('post controllers', () => {

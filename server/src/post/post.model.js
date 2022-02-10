@@ -18,11 +18,9 @@ const PostSchema = new mongoose.Schema({
         type: String,
         maxLength: 50,
         required: true
-    },
-    votes: {
-        type: Number,
-        default: 0
     }
+}, {
+    toJSON: { virtuals: true }
 })
 
 PostSchema.virtual('url').get(function() {
@@ -31,6 +29,13 @@ PostSchema.virtual('url').get(function() {
 
 PostSchema.virtual('slug').get(function() {
     return this.title.toLowerCase().replaceAll(' ', '-');
+})
+
+PostSchema.virtual('votes',{
+    ref: 'Vote',
+    localField: '_id',
+    foreignField: 'content',
+    count: true
 })
 
 module.exports = mongoose.model('Post', PostSchema);

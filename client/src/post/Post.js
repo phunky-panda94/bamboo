@@ -1,19 +1,74 @@
 import './Post.css';
 import { getTimeElapsed } from '../util/helpers';
 import CommentBox from '../comment/CommentBox';
+import { useEffect, useState } from 'react';
 
 function Post(props) {
 
-    const { author, content, date, title, votes } = props.post;
-    const { setComments, loggedIn, user } = props;
+    const { id, author, content, date, title } = props.post;
+    const { setComments, loggedIn, token, user, votes, setVotes } = props;
+    const [vote, setVote] = useState(null);
 
+    const handleClick = async (down) => {
+
+        const api = "http://localhost:8000/api/votes/";
+
+        const vote = {
+            user: user._id,
+            content: id,
+            down: down
+        }
+
+        const response = await fetch(api, {
+            method: 'post',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(vote)
+        })
+        
+        if (response.status === 201) {
+            setVotes(votes + 1);
+        }
+
+    }
+
+    useEffect(() => {
+        async function checkVote() {
+            let api = `http://localhost:8000/api/votes/post/${id}`;
+            const response = await fetch(api, { 
+                mode: 'cors',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const down = await response.json();
+            setVote(down);
+        }
+        checkVote();
+    }, [token, votes, id])
+    
     return (
         <div className="post-container flex flex-col flex-ai-c">
             <div className="bg-white post flex">
                 <div className="post-votes flex flex-col flex-ai-c">
-                    <button className="vote-btn material-icons-outlined">thumb_up</button>
-                    {votes}
-                    <button className="vote-btn material-icons-outlined">thumb_down</button>
+                    {vote === null ?
+                        <>
+                        <button className="vote-btn material-icons-outlined" onClick={() => handleClick(false)}>thumb_up</button>
+                        {votes}
+                        <button className="vote-btn material-icons-outlined" onClick={() => handleClick(true)}>thumb_down</button>
+                        </>
+                    :
+                        <>
+                        <button className={vote ? "vote-btn material-icons-outlined" : "voted vote-btn material-icons-outlined"} onClick={() => handleClick(false)}>thumb_up</button>
+                        {votes}
+                        <button className={vote ? "voted vote-btn material-icons-outlined" : "vote-btn material-icons-outlined"} onClick={() => handleClick(true)}>thumb_down</button>
+                        </>
+                    }
                 </div>
                 <div className="post-content flex flex-col flex-jc-sb">
                     <div className="post-details">

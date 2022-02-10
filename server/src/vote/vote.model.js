@@ -8,6 +8,7 @@ const VoteSchema = mongoose.Schema({
     },
     content: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'onModel',
         required: true
     },
     down: {

@@ -59,7 +59,7 @@ describe('create post', () => {
 
 })
 
-describe('get post', () => {
+describe.only('get post', () => {
 
     it('GET request to /api/posts returns all posts in response body and status 200', async () => {
 
@@ -67,6 +67,7 @@ describe('get post', () => {
         
         expect(response.status).toBe(200);
         expect(response.body.length).toBeGreaterThan(0);
+        expect(response.body[0].votes.length).toBe(0);
 
     })
 
@@ -77,6 +78,7 @@ describe('get post', () => {
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
         expect(response.body.content).toBe('this is a post');
+        expect(response.body.votes).toBeTruthy();
 
     })
 

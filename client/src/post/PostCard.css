@@ -29,6 +29,11 @@
     background-color: #acaca7;
 }
 
+.voted {
+    color: #ffffff;
+    background-color: #acaca7;
+}
+
 .post-content {
     padding: 10px;
     width: 95%;
