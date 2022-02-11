@@ -1,7 +1,7 @@
 import './Post.css';
 import { getTimeElapsed } from '../util/helpers';
 import CommentBox from '../comment/CommentBox';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function Post(props) {
 
@@ -9,16 +9,27 @@ function Post(props) {
     const { setComments, loggedIn, token, user, votes, setVotes } = props;
     const [vote, setVote] = useState(null);
 
-    const handleClick = async (down) => {
+    const getVote = useCallback(async () => {
+        const api = `http://localhost:8000/api/votes/post/${id}`;
+        const response = await fetch(api, { 
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        setVote(data);
+    }, [token, id])
 
-        const api = "http://localhost:8000/api/votes/";
-
+    const createVote = async (down) => {
+        let api = "http://localhost:8000/api/votes/";
         const vote = {
             user: user._id,
             content: id,
             down: down
         }
-
         const response = await fetch(api, {
             method: 'post',
             headers: {
@@ -31,26 +42,45 @@ function Post(props) {
         
         if (response.status === 201) {
             setVotes(votes + 1);
+            await getVote();
         }
+    }
 
+    const updateVote = async (down) => {
+        let api = `http://localhost:8000/api/votes/${vote._id}/${down}`;
+        const response = await fetch(api, {
+            method: 'put',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.status === 204) {
+            await getVote();
+        }
+    }
+
+    const deleteVote = async () => {
+        const api = `http://localhost:8000/api/votes/${vote._id}`;
+        const response = await fetch(api, {
+            method: 'delete',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (response.status === 202) {
+            setVotes(votes - 1);
+            setVote(null);
+        }
     }
 
     useEffect(() => {
-        async function checkVote() {
-            let api = `http://localhost:8000/api/votes/post/${id}`;
-            const response = await fetch(api, { 
-                mode: 'cors',
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            const down = await response.json();
-            setVote(down);
-        }
-        checkVote();
-    }, [token, votes, id])
+        getVote();
+    }, [getVote])
     
     return (
         <div className="post-container flex flex-col flex-ai-c">
@@ -58,15 +88,15 @@ function Post(props) {
                 <div className="post-votes flex flex-col flex-ai-c">
                     {vote === null ?
                         <>
-                        <button className="vote-btn material-icons-outlined" onClick={() => handleClick(false)}>thumb_up</button>
+                        <button className="vote-btn material-icons-outlined" onClick={() => createVote(false)}>thumb_up</button>
                         {votes}
-                        <button className="vote-btn material-icons-outlined" onClick={() => handleClick(true)}>thumb_down</button>
+                        <button className="vote-btn material-icons-outlined" onClick={() => createVote(true)}>thumb_down</button>
                         </>
                     :
                         <>
-                        <button className={vote ? "vote-btn material-icons-outlined" : "voted vote-btn material-icons-outlined"} onClick={() => handleClick(false)}>thumb_up</button>
+                        <button className={vote.down ? "vote-btn material-icons-outlined" : "voted vote-btn material-icons-outlined"} onClick={vote.down ? () => updateVote(false) : deleteVote}>thumb_up</button>
                         {votes}
-                        <button className={vote ? "voted vote-btn material-icons-outlined" : "vote-btn material-icons-outlined"} onClick={() => handleClick(true)}>thumb_down</button>
+                        <button className={vote.down ? "voted vote-btn material-icons-outlined" : "vote-btn material-icons-outlined"} onClick={vote.down ? deleteVote : () => updateVote(true)}>thumb_down</button>
                         </>
                     }
                 </div>

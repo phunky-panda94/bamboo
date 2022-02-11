@@ -33,7 +33,7 @@ exports.get = async (req, res) => {
     }
     
     if (vote) {
-        res.status(200).json(vote.down);
+        res.status(200).json(vote);
     } else {
         res.status(404).end();
     }
