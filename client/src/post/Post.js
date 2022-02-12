@@ -2,12 +2,19 @@ import './Post.css';
 import { getTimeElapsed } from '../util/helpers';
 import CommentBox from '../comment/CommentBox';
 import Vote from '../vote/Vote';
+import { useState } from 'react';
 
 function Post(props) {
 
     const { id, author, content, date, title } = props.post;
     const { setComments, loggedIn, user, votes, setVotes } = props;
+
+    const [edit, setEdit] = useState(false);
     
+    const handleClick = () => {
+        edit ? setEdit(false) : setEdit(true);
+    }
+
     return (
         <div className="post-container flex flex-col flex-ai-c">
             <div className="bg-white post flex">
@@ -25,7 +32,11 @@ function Post(props) {
                         </div>
                         <div className="flex flex-row flex-ai-c flex-jc-sb">
                             <h3>{title}</h3>
-                            <button className="edit-btn material-icons-outlined">edit</button>
+                            {author === `${user.firstName} ${user.lastName}` && 
+                            <button className={`${edit ? 'on' : ''} edit-btn material-icons-outlined`} onClick={handleClick}>
+                                edit
+                            </button>
+                            }
                         </div>
                         <p>{content}</p>
                     </div>
