@@ -1,9 +1,12 @@
 import './Comment.css';
+import Vote from '../vote/Vote';
+import { useState } from 'react';
 import { getTimeElapsed } from '../util/helpers';
 
 function Comment(props) {
 
-    const { user, content, date, votes } = props.comment
+    const { id, user, content, date } = props.comment
+    const [votes, setVotes] = useState(props.comment.votes);
 
     return (
         <div className="bg-white comment-container flex flex-row flex-jc-c">
@@ -19,9 +22,7 @@ function Comment(props) {
                     <p>{content}</p>
                 </div>
                 <div className="flex flex-ai-c">
-                    <button className="vote-btn material-icons-outlined">thumb_up</button>
-                    <span>{votes}</span>
-                    <button className="vote-btn material-icons-outlined">thumb_down</button>
+                    <Vote id={id} user={user} votes={votes} setVotes={setVotes}/>
                     <button className="comment-btn">Reply</button>
                     <button className="comment-btn">Share</button>
                     <button className="comment-btn">Save</button>

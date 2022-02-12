@@ -16,24 +16,6 @@
     width: 5%;
 }
 
-.vote-btn {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-}
-
-.vote-btn:hover {
-    color: #ffffff;
-    background-color: #acaca7;
-}
-
-.voted {
-    color: #ffffff;
-    background-color: #acaca7;
-}
-
 .post-content {
     padding: 10px;
     width: 95%;

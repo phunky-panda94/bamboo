@@ -1,10 +1,13 @@
 import './PostCard.css';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getTimeElapsed } from '../util/helpers';
+import Vote from '../vote/Vote';
 
 function PostCard(props) {
 
-    const { id, author, content, date, title, votes } = props.post;
+    const { id, author, content, date, title, user } = props.post;
+    const [votes, setVotes] = useState(props.post.votes);
     const navigate = useNavigate();
 
     const handleClick = (event) => {
@@ -16,9 +19,7 @@ function PostCard(props) {
     return (
         <div className="bg-white post-card flex" onClick={handleClick}>
             <div className="bg-light-grey post-votes flex flex-col flex-ai-c">
-                <button className="vote-btn material-icons-outlined">thumb_up</button>
-                {votes}
-                <button className="vote-btn material-icons-outlined">thumb_down</button>
+                <Vote id={id} user={user} votes={votes} setVotes={setVotes}/> 
             </div>
             <div className="post-content flex flex-col flex-jc-sb">
                 <div className="post-details">

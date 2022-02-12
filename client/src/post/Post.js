@@ -1,104 +1,18 @@
 import './Post.css';
 import { getTimeElapsed } from '../util/helpers';
 import CommentBox from '../comment/CommentBox';
-import { useCallback, useEffect, useState } from 'react';
+import Vote from '../vote/Vote';
 
 function Post(props) {
 
     const { id, author, content, date, title } = props.post;
-    const { setComments, loggedIn, token, user, votes, setVotes } = props;
-    const [vote, setVote] = useState(null);
-
-    const getVote = useCallback(async () => {
-        const api = `http://localhost:8000/api/votes/post/${id}`;
-        const response = await fetch(api, { 
-            mode: 'cors',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        setVote(data);
-    }, [token, id])
-
-    const createVote = async (down) => {
-        let api = "http://localhost:8000/api/votes/";
-        const vote = {
-            user: user._id,
-            content: id,
-            down: down
-        }
-        const response = await fetch(api, {
-            method: 'post',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(vote)
-        })
-        
-        if (response.status === 201) {
-            setVotes(votes + 1);
-            await getVote();
-        }
-    }
-
-    const updateVote = async (down) => {
-        let api = `http://localhost:8000/api/votes/${vote._id}/${down}`;
-        const response = await fetch(api, {
-            method: 'put',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
-        if (response.status === 204) {
-            await getVote();
-        }
-    }
-
-    const deleteVote = async () => {
-        const api = `http://localhost:8000/api/votes/${vote._id}`;
-        const response = await fetch(api, {
-            method: 'delete',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
-
-        if (response.status === 202) {
-            setVotes(votes - 1);
-            setVote(null);
-        }
-    }
-
-    useEffect(() => {
-        getVote();
-    }, [getVote])
+    const { setComments, loggedIn, user, votes, setVotes } = props;
     
     return (
         <div className="post-container flex flex-col flex-ai-c">
             <div className="bg-white post flex">
                 <div className="post-votes flex flex-col flex-ai-c">
-                    {vote === null ?
-                        <>
-                        <button className="vote-btn material-icons-outlined" onClick={() => createVote(false)}>thumb_up</button>
-                        {votes}
-                        <button className="vote-btn material-icons-outlined" onClick={() => createVote(true)}>thumb_down</button>
-                        </>
-                    :
-                        <>
-                        <button className={vote.down ? "vote-btn material-icons-outlined" : "voted vote-btn material-icons-outlined"} onClick={vote.down ? () => updateVote(false) : deleteVote}>thumb_up</button>
-                        {votes}
-                        <button className={vote.down ? "voted vote-btn material-icons-outlined" : "vote-btn material-icons-outlined"} onClick={vote.down ? deleteVote : () => updateVote(true)}>thumb_down</button>
-                        </>
-                    }
+                    <Vote id={id} user={user} votes={votes} setVotes={setVotes}/>
                 </div>
                 <div className="post-content flex flex-col flex-jc-sb">
                     <div className="post-details">

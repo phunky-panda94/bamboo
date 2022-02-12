@@ -52,6 +52,7 @@ function Thread(props) {
             {post && <Post token={token} user={user} loggedIn={loggedIn} post={post} votes={votes} setVotes={setVotes} setComments={setComments}/>}
             {comments && comments.map(comment => {
                 let details = {
+                    id: comment._id,
                     user: `${comment.user.firstName} ${comment.user.lastName}`,
                     content: comment.content,
                     date: comment.date,

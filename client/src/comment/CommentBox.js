@@ -16,9 +16,8 @@ function CommentBox(props) {
         event.preventDefault();
         
         const api = `http://localhost:8000/api/posts/${id}/comments/`
-        
         const token = localStorage.getItem('token');
-
+        
         const newComment = {
             user: user._id,
             content: comment
