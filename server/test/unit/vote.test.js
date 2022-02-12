@@ -134,18 +134,25 @@ describe('vote controller', () => {
             await controller.get(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(expect.any(Boolean));
+            expect(res.json).toHaveBeenCalledWith(expect.anything());
 
         })
 
-        it('returns 404 and down value if vote does not exist', async () => {
+        it('returns 204 if vote does not exist for the content', async () => {
 
-            const req = { params: { id: comment._id }, body: { user: user._id } };
+            const newComment = await Comment.create({
+                user: user._id,
+                post: post._id,
+                content: 'this is another new comment',
+
+            })
+
+            const req = { params: { id: newComment._id.toString() }, body: { user: user._id } };
             const res = mockResponse();
 
             await controller.get(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.status).toHaveBeenCalledWith(204);
             expect(res.end).toHaveBeenCalled();
 
         })
