@@ -25,7 +25,10 @@ function PostCard(props) {
             <div className="post-content flex flex-col flex-jc-sb">
                 <div className="post-details">
                     <div className="dark-grey flex flex-jc-sb">
-                        <span>Posted by <Link to="" className="author">{author}</Link></span>
+                        <span>Posted by <Link to="" className="author">
+                            {author === `${user.firstName} ${user.lastName}` ? 'you' : author}
+                            </Link>
+                        </span>
                         <span>{getTimeElapsed(date, Date.now())}</span>
                     </div>
                     <h3>{title}</h3>

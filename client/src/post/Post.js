@@ -18,11 +18,15 @@ function Post(props) {
                     <div className="post-details">
                         <div className="dark-grey flex flex-jc-sb">
                             <span>Posted by <a className="author" href="/">
-                                {author}</a>
+                                {author === `${user.firstName} ${user.lastName}` ? 'you' : author}
+                                </a>
                             </span>
                             <span>{getTimeElapsed(date, Date.now())}</span>
                         </div>
-                        <h3>{title}</h3>
+                        <div className="flex flex-row flex-ai-c flex-jc-sb">
+                            <h3>{title}</h3>
+                            <button className="edit-btn material-icons-outlined">edit</button>
+                        </div>
                         <p>{content}</p>
                     </div>
                     <div className="flex flex-row">
