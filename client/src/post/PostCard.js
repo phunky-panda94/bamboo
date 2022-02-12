@@ -6,7 +6,8 @@ import Vote from '../vote/Vote';
 
 function PostCard(props) {
 
-    const { id, author, content, date, title, user } = props.post;
+    const { id, author, content, date, title } = props.post;
+    const { user } = props;
     const [votes, setVotes] = useState(props.post.votes);
     const navigate = useNavigate();
 
