@@ -57,9 +57,9 @@ exports.getAll = async (req, res) => {
 exports.update = async (req, res) => {
 
     const { id } = req.params
-    const { user, content } = req.body;
+    const { user, content, title } = req.body;
     let post;
-
+    
     try {
         post = await Post.findById(id);
     } catch (err) {
@@ -72,6 +72,7 @@ exports.update = async (req, res) => {
 
     try {
         post.content = content;
+        post.title = title;
         await post.save();
     } catch (err) {
         return res.status(400).json({ error: 'post could not be updated' });
