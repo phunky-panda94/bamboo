@@ -14,7 +14,7 @@ beforeAll(async () => {
     await database.seed(); 
     user = await User.findOne();
     token = createToken(user._id.toString());
-    post = await Post.findOne();
+    post = await Post.findOne({ content: 'this is a post' });
 });
 
 afterAll(async () => await database.disconnect());
@@ -59,7 +59,7 @@ describe('create post', () => {
 
 })
 
-describe.only('get post', () => {
+describe('get post', () => {
 
     it('GET request to /api/posts returns all posts in response body and status 200', async () => {
 
@@ -160,13 +160,22 @@ describe('update post', () => {
 
 describe('delete post', () => {
 
-    it('DELETE request to /api/posts/:id deletes post from database and returns status 202', async () => {
+    const Comment = require('../../src/comment/comment.model');
+    const Vote = require('../../src/vote/vote.model');
+
+    it('DELETE request to /api/posts/:id deletes post, its comments and votes from database and returns status 202', async () => {
 
         const response = await request.delete(post.url)
             .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(202);
         expect(await Post.findById(post._id)).toBeFalsy();
+
+        const comments = await Comment.find({ post: post._id});
+        expect(comments.length).toBe(0);
+
+        const votes = await Vote.find({ content: post._id });
+        expect(votes.length).toBe(0);
         
     })
 

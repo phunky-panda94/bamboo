@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Comment = require('../comment/comment.model');
+const Vote = require('../vote/vote.model');
 
 const PostSchema = new mongoose.Schema({
     author: {
@@ -36,6 +38,12 @@ PostSchema.virtual('votes',{
     localField: '_id',
     foreignField: 'content',
     count: true
+})
+
+PostSchema.pre('deleteOne', { document: false, query: true }, async function() {
+    const post = await this.model.findOne(this.getFilter());
+    await Vote.deleteMany({ content: post._id });
+    await Comment.deleteMany({ post: post._id });
 })
 
 module.exports = mongoose.model('Post', PostSchema);

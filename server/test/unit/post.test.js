@@ -181,7 +181,8 @@ describe('post controllers', () => {
                 params: { id: existingPost._id },
                 body: { 
                     user: user._id.toString(),
-                    content: "I'm Batman" 
+                    content: "I'm Batman",
+                    title: 'updated title' 
                 }
             };
 
@@ -191,9 +192,10 @@ describe('post controllers', () => {
 
             expect(res.status).toHaveBeenCalledWith(204);
 
-            const updatedPost = Post.findById(existingPost._id);
-
-            expect(updatedPost).toBeTruthy();
+            const updatedPost = await Post.findById(existingPost._id);
+            
+            expect(updatedPost.content).toBe("I'm Batman");
+            expect(updatedPost.title).toBe('updated title');
 
         })
 
@@ -215,10 +217,11 @@ describe('post controllers', () => {
         it('update should return 404 if post does not exist', async () => {
 
             const req = {
-                params: { id: 'abcd' },
+                params: { id: '123' },
                 body: { 
                     user: user._id.toString(),
-                    content: 'abcd' 
+                    content: 'abcd',
+                    title: 'title' 
                 }
             };
 
@@ -238,7 +241,7 @@ describe('post controllers', () => {
                 params: { id: existingPost._id },
                 body: { 
                     user: user._id.toString(),
-                    content: '' 
+                    content: ''
                 }
             };
 
@@ -256,7 +259,7 @@ describe('post controllers', () => {
 
     describe('delete', () => {
 
-        it('delete should remove the post from the database and return status 202', async () => {
+        it('delete should return status 202', async () => {
 
             const req = { params: { id: existingPost._id } }
             const res = mockResponse();

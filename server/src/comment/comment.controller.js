@@ -95,7 +95,7 @@ exports.delete = async (req, res) => {
     if (user !== comment.user.toString()) return res.status(403).json({ error: 'forbidden' });
 
     try {
-        await Comment.findByIdAndDelete(commentId);
+        await Comment.deleteOne({ _id: commentId});
     } catch (err) { 
         return res.status(400).json({ error: 'comment could not be deleted' });
     }

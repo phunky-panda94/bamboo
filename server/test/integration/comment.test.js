@@ -19,7 +19,7 @@ beforeAll(async () => {
     user = await User.findOne();
     token = createToken(user._id.toString());
     post = await Post.findOne();
-    comment = await Comment.findOne();
+    comment = await Comment.findOne({ content: 'this is a comment' });
 });
 
 afterAll(async () => database.disconnect());
@@ -197,6 +197,8 @@ describe('update comment', () => {
 
 describe('delete comment', () => {
 
+    const Vote = require('../../src/vote/vote.model');
+
     it('DElETE request to /api/posts/:postId/comments/:commentId returns 404 if comment not found', async () => {
 
         const response = await request.delete(`${post.url}/comments/123`)
@@ -244,6 +246,9 @@ describe('delete comment', () => {
 
         expect(response.status).toBe(202);
         expect(await Comment.findById(comment._id)).toBeFalsy();
+
+        const votes = await Vote.find({ content: comment._id });
+        expect(votes.length).toBe(0);
 
     })
 
