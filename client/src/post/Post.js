@@ -3,17 +3,18 @@ import { getTimeElapsed } from '../util/helpers';
 import CommentBox from '../comment/CommentBox';
 import Vote from '../vote/Vote';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Post(props) {
 
     const { id, author, date } = props.post;
-    const { setComments, loggedIn, user, votes, setVotes } = props;
-
+    const { setComments, setPosts, loggedIn, user, votes, setVotes } = props;
+    const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const [title, setTitle] = useState(props.post.title);
     const [content, setContent] = useState(props.post.content);
     
-    const handleClick = () => {
+    const handleEdit = () => {
         if (edit) {
             if (title !== props.post.title || content !== props.post.content) {
                 updatePost();
@@ -56,6 +57,23 @@ function Post(props) {
         })
     }
 
+    const deletePost = async () => {
+        let api = `http://localhost:8000/api/posts/${id}`;
+        const token = localStorage.getItem('token');
+        await fetch(api, {
+            method: 'delete',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        api = "http://localhost:8000/api/posts";
+        const response = await fetch(api, { mode: 'cors' });
+        const posts = await response.json();
+        setPosts(posts);
+        navigate('/');
+    }
+
     return (
         <div className="post-container flex flex-col flex-ai-c">
             <div className="bg-white post flex">
@@ -74,9 +92,14 @@ function Post(props) {
                         <div className="flex flex-row flex-ai-c flex-jc-sb">
                             {edit ? <input name="title" className="field title" type="text" required={true} value={title} onChange={handleChange}/> : <h3>{title}</h3>}
                             {author === `${user.firstName} ${user.lastName}` && 
-                            <button className={`${edit ? 'on' : ''} edit-btn material-icons-outlined`} onClick={handleClick}>
+                            <div>
+                            <button className={`${edit ? 'on' : ''} modify-btn material-icons-outlined`} onClick={handleEdit}>
                                 edit
                             </button>
+                            <button className="modify-btn material-icons-outlined" onClick={() => deletePost()}>
+                                delete
+                            </button>
+                            </div>
                             }
                         </div>
                         <div className={edit ? "comment-box" : ""}>

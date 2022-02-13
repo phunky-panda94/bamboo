@@ -6,6 +6,7 @@ import { getTimeElapsed } from '../util/helpers';
 function Comment(props) {
 
     const { id, post, user, date } = props.comment
+    const { setComments } = props;
     const [votes, setVotes] = useState(props.comment.votes);
     const [edit, setEdit] = useState(false);
     const [content, setContent] = useState(props.comment.content);
@@ -40,6 +41,22 @@ function Comment(props) {
         })
     }
 
+    const deleteComment = async () => {
+        let api = `http://localhost:8000/api/posts/${post}/comments/${id}`;
+        const token = localStorage.getItem('token');
+        await fetch(api, {
+            method: 'delete',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        api = `http://localhost:8000/api/posts/${post}/comments`;
+        const response = await fetch(api, { mode: 'cors' });
+        const comments = await response.json();
+        setComments(comments);
+    }
+
     return (
         <div className="bg-white comment-container flex flex-row flex-jc-c">
             <div className="user-avatar flex flex-jc-c">
@@ -49,7 +66,8 @@ function Comment(props) {
                 <div className="comment-header dark-grey flex flex-ai-c flex-jc-sb">
                     <div className="flex flex-ai-c">
                         <a href="#" className="user">{user}</a>
-                        <button className={`${edit ? 'on' : ''} edit-btn material-icons-outlined`} onClick={handleClick}>edit</button>
+                        <button className={`${edit ? 'on' : ''} modify-btn material-icons-outlined`} onClick={handleClick}>edit</button>
+                        <button className="modify-btn material-icons-outlined" onClick={() => deleteComment()}>delete</button>
                     </div>
                     <span>{getTimeElapsed(date, Date.now())}</span>
                 </div>

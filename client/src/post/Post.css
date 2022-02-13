@@ -6,7 +6,7 @@
     width: 60vw;
 }
 
-.edit-btn {
+.modify-btn {
     background-color: transparent;
     border: 1px solid transparent;
     color: inherit;
@@ -19,7 +19,7 @@
     background-color: #e5e8e1;
 }
 
-.edit-btn:hover {
+.modify-btn:hover {
     border: 1px solid #acaca7;
     border-radius: 5px;
     background-color: #e5e8e1;

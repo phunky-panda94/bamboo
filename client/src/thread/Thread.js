@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 function Thread(props) {
 
-    const { token, user, loggedIn } = props;
+    const { setPosts, token, user, loggedIn } = props;
     const { id } = useParams();
     const [post, setPost] = useState();
     const [votes, setVotes] = useState();
@@ -48,7 +48,7 @@ function Thread(props) {
     return (
         <div className="post-container flex flex-col flex-ai-c">
             {post && <PostHeader title={post.title} votes={votes} setVotes={setVotes}/>}
-            {post && <Post token={token} user={user} loggedIn={loggedIn} post={post} votes={votes} setVotes={setVotes} setComments={setComments}/>}
+            {post && <Post token={token} user={user} loggedIn={loggedIn} post={post} votes={votes} setVotes={setVotes} setPosts={setPosts} setComments={setComments}/>}
             {comments && comments.map(comment => {
                 let postUser = `${user.firstName} ${user.lastName}`;
                 let commentUser = `${comment.user.firstName} ${comment.user.lastName}`;
@@ -64,7 +64,7 @@ function Thread(props) {
                     date: comment.date,
                     votes: comment.votes
                 }
-                return <Comment key={comment._id} comment={details}/>
+                return <Comment key={comment._id} comment={details} setComments={setComments}/>
             })}
         </div>
     )
