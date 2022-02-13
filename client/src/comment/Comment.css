@@ -23,6 +23,11 @@
     width: 100%;
 }
 
+.comment-header {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .text-area {
     border: none;
     box-shadow: none;
