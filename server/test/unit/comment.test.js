@@ -13,7 +13,8 @@ beforeAll(async () => {
     await database.seed();
     user = await User.findOne({ email: 'bwayne@wayne.com' });
     post = await Post.findOne({ author: user._id, content: 'this is a post' });
-    comment = await Comment.findOne({ content: 'this is a comment' });
+    comment = await Comment.findOne({ content: 'this is a comment' })
+        .populate('votes');
 });
 
 afterAll(async() => await database.disconnect());
@@ -66,6 +67,11 @@ describe('comment model', () => {
 
         expect(comment.url).toBe(`/api/posts/${post._id}/comments/${comment._id}`);
 
+    })
+
+    it('virtual votes method should return vote count of comment', () => {
+        expect(comment.votes).toBeTruthy();
+        expect(comment.votes).toBe(1);
     })
 
 })

@@ -33,10 +33,17 @@ PostSchema.virtual('slug').get(function() {
     return this.title.toLowerCase().replaceAll(' ', '-');
 })
 
-PostSchema.virtual('votes',{
+PostSchema.virtual('votes', {
     ref: 'Vote',
     localField: '_id',
     foreignField: 'content',
+    count: true
+})
+
+PostSchema.virtual('comments', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'post',
     count: true
 })
 

@@ -75,7 +75,16 @@ describe('post model', () => {
             .populate('votes');
         
         expect(post.votes).toBeTruthy();
+        expect(post.votes).toBe(1);
 
+    })
+
+    it('virtual comments method should return total comments of the post', async () => {
+        const post = await Post.findOne()
+            .populate('comments');
+
+        expect(post.comments).toBeTruthy();
+        expect(post.comments).toBe(1);
     })
 
 })

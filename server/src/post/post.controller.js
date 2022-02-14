@@ -27,7 +27,8 @@ exports.get = async (req, res) => {
     try {
         post = await Post.findById(id)
             .populate('author', 'firstName lastName')
-            .populate('votes');
+            .populate('votes')
+            .populate('comments');
     } catch (err) {
         return res.status(404).json({ error: 'post not found' });
     }
@@ -44,6 +45,7 @@ exports.getAll = async (req, res) => {
         posts = await Post.find({})
             .populate('author', 'firstName lastName')
             .populate('votes')
+            .populate('comments')
             .sort({ date: 'desc' });
     } catch (err) {
         console.log(err)
