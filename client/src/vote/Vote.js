@@ -3,7 +3,7 @@ import './Vote.css';
 
 function Vote(props) {
 
-    const { id, user, votes, setVotes } = props;
+    const { id, user, votes, setFormType, toggleForm, setVotes } = props;
     const [vote, setVote] = useState(null);
     const token = localStorage.getItem('token')
 
@@ -78,17 +78,22 @@ function Vote(props) {
         }
     }
 
+    const handleNotLoggedIn = () => {
+        setFormType('Login');
+        toggleForm();
+    }
+
     useEffect(() => {
-        getVote();
-    }, [getVote])
+        if (user) getVote();
+    }, [user, getVote])
     
     return (
         <>
         {vote === null ?
             <>
-            <button className="vote-btn material-icons-outlined" onClick={() => createVote(false)}>thumb_up</button>
+            <button className="vote-btn material-icons-outlined" onClick={user ? () => createVote(false) : () => handleNotLoggedIn()}>thumb_up</button>
             {votes}
-            <button className="vote-btn material-icons-outlined" onClick={() => createVote(true)}>thumb_down</button>
+            <button className="vote-btn material-icons-outlined" onClick={user ? () => createVote(true) : () => handleNotLoggedIn()}>thumb_down</button>
             </>
         :
             <>

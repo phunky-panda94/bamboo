@@ -6,8 +6,8 @@ import Vote from '../vote/Vote';
 
 function PostCard(props) {
 
-    const { id, author, content, date, title } = props.post;
-    const { user } = props;
+    const { id, author, comments, content, date, title } = props.post;
+    const { setFormType, toggleForm, user } = props;
     const [votes, setVotes] = useState(props.post.votes);
     const navigate = useNavigate();
 
@@ -20,13 +20,13 @@ function PostCard(props) {
     return (
         <div className="bg-white post-card flex" onClick={handleClick}>
             <div className="bg-light-grey post-votes flex flex-col flex-ai-c">
-                <Vote id={id} user={user} votes={votes} setVotes={setVotes}/> 
+                <Vote setFormType={setFormType} toggleForm={toggleForm} id={id} user={user} votes={votes} setVotes={setVotes}/> 
             </div>
             <div className="post-content flex flex-col flex-jc-sb">
                 <div className="post-details">
                     <div className="dark-grey flex flex-jc-sb">
                         <span>Posted by <Link to="" className="author">
-                            {author === `${user.firstName} ${user.lastName}` ? 'you' : author}
+                            {user && author === `${user.firstName} ${user.lastName}` ? 'you' : author}
                             </Link>
                         </span>
                         <span>{getTimeElapsed(date, Date.now())}</span>
@@ -36,16 +36,17 @@ function PostCard(props) {
                 </div>
                 <div className="flex flex-row">
                     <Link to={`/posts/${id}`} className="post-btn flex flex-row flex-ai-c">
-                        <span>Comments</span>
                         <span className="material-icons-outlined">comment</span>
+                        {comments > 0 && <span>{comments}</span>}
+                        <span>Comments</span>
                     </Link>
                     <Link to="" className="post-btn flex flex-row flex-ai-c">
-                        <span>Share</span>
                         <span className="material-icons-outlined">share</span>
+                        <span>Share</span>
                     </Link>
                     <button className="post-btn flex flex-row flex-ai-c">
-                        <span>Save</span>
                         <span className="material-icons-outlined">bookmark_border</span>
+                        <span>Save</span>
                     </button>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import NewPostBox from '../post/NewPostBox';
 
 function Feed(props) {
 
-    const { loggedIn, posts, title, setTitle, user } = props;
+    const { setFormType, toggleForm, loggedIn, posts, title, setTitle, user } = props;
 
     return (
         <div className="flex flex-jc-c">
@@ -18,10 +18,11 @@ function Feed(props) {
                         content: post.content,
                         date: post.date,
                         title: post.title,
-                        votes: post.votes
+                        votes: post.votes,
+                        comments: post.comments
                     }
 
-                    return <PostCard key={post._id} post={details} user={user}/>
+                    return <PostCard key={post._id} post={details} user={user} setFormType={setFormType} toggleForm={toggleForm}/>
                 })}
             </div>
         </div>

@@ -52,10 +52,10 @@ function App() {
             <Header setFormType={setFormType} toggleForm={toggleForm} loggedIn={loggedIn} setLoggedIn={setLoggedIn} user={user} setUser={setUser}/>
             {displayForm && <Form type={formType} setLoggedIn={setLoggedIn} toggleForm={toggleForm} setUser={setUser}/>}
             <Routes>
-                <Route path="/" element={<Feed loggedIn={loggedIn} title={title} setTitle={setTitle} posts={posts} user={user}/>} />
+                <Route path="/" element={<Feed setFormType={setFormType} toggleForm={toggleForm} loggedIn={loggedIn} title={title} setTitle={setTitle} posts={posts} user={user}/>} />
                 <Route path="/profile" element={<Profile user={user}/>} />
                 <Route path="/create-post" element={<NewPost setPosts={setPosts} title={title} setTitle={setTitle} user={user}/>} />
-                <Route path="/posts/:id" element={<Thread setPosts={setPosts} token={token} user={user} loggedIn={loggedIn}/>} />
+                <Route path="/posts/:id" element={<Thread setFormType={setFormType} toggleForm={toggleForm} setPosts={setPosts} token={token} user={user} loggedIn={loggedIn}/>} />
             </Routes>
         </Router>
     );

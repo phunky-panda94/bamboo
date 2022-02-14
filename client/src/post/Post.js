@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function Post(props) {
 
     const { id, author, date } = props.post;
-    const { setComments, setPosts, loggedIn, user, votes, setVotes } = props;
+    const { comments, setComments, setPosts, loggedIn, user, votes, setVotes, setFormType, toggleForm } = props;
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const [title, setTitle] = useState(props.post.title);
@@ -78,20 +78,21 @@ function Post(props) {
         <div className="post-container flex flex-col flex-ai-c">
             <div className="bg-white post flex">
                 <div className="post-votes flex flex-col flex-ai-c">
-                    <Vote id={id} user={user} votes={votes} setVotes={setVotes}/>
+                    <Vote id={id} user={user} votes={votes} setVotes={setVotes} setFormType={setFormType}
+                toggleForm={toggleForm}/>
                 </div>
                 <div className="post-content flex flex-col flex-jc-sb">
                     <div className="post-details">
                         <div className="dark-grey flex flex-jc-sb">
                             <span>Posted by <a className="author" href="/">
-                                {author === `${user.firstName} ${user.lastName}` ? 'you' : author}
+                                {user && author === `${user.firstName} ${user.lastName}` ? 'you' : author}
                                 </a>
                             </span>
                             <span>{getTimeElapsed(date, Date.now())}</span>
                         </div>
                         <div className="flex flex-row flex-ai-c flex-jc-sb">
                             {edit ? <input name="title" className="field title" type="text" required={true} value={title} onChange={handleChange}/> : <h3>{title}</h3>}
-                            {author === `${user.firstName} ${user.lastName}` && 
+                            {user && author === `${user.firstName} ${user.lastName}` && 
                             <div>
                             <button className={`${edit ? 'on' : ''} modify-btn material-icons-outlined`} onClick={handleEdit}>
                                 edit
@@ -108,16 +109,17 @@ function Post(props) {
                     </div>
                     <div className="flex flex-row">
                         <a className="post-btn flex flex-row flex-ai-c" href="/">
-                            <span>Comments</span>
                             <span className="material-icons-outlined">comment</span>
+                            {comments > 0 && <span>{comments}</span>}
+                            <span>Comments</span>
                         </a>
                         <a className="post-btn flex flex-row flex-ai-c" href="/">
-                            <span>Share</span>
                             <span className="material-icons-outlined">share</span>
+                            <span>Share</span>
                         </a>
                         <a className="post-btn flex flex-row flex-ai-c" href="/">
-                            <span>Save</span>
                             <span className="material-icons-outlined">bookmark_border</span>
+                            <span>Save</span>
                         </a>
                     </div>
                     <CommentBox setComments={setComments} user={user} loggedIn={loggedIn}/>

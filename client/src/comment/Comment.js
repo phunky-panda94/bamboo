@@ -5,8 +5,8 @@ import { getTimeElapsed } from '../util/helpers';
 
 function Comment(props) {
 
-    const { id, post, user, date } = props.comment
-    const { setComments } = props;
+    const { id, post, date } = props.comment
+    const { setComments, setFormType, toggleForm, user } = props;
     const [votes, setVotes] = useState(props.comment.votes);
     const [edit, setEdit] = useState(false);
     const [content, setContent] = useState(props.comment.content);
@@ -65,9 +65,13 @@ function Comment(props) {
             <div className="comment-container">
                 <div className="comment-header dark-grey flex flex-ai-c flex-jc-sb">
                     <div className="flex flex-ai-c">
-                        <a href="#" className="user">{user}</a>
+                        <a href="#" className="user">{props.comment.user}</a>
+                        {user && props.comment.user === `${user.firstName} ${user.lastName}` &&
+                        <>
                         <button className={`${edit ? 'on' : ''} modify-btn material-icons-outlined`} onClick={handleClick}>edit</button>
                         <button className="modify-btn material-icons-outlined" onClick={() => deleteComment()}>delete</button>
+                        </>
+                        }
                     </div>
                     <span>{getTimeElapsed(date, Date.now())}</span>
                 </div>
@@ -76,7 +80,8 @@ function Comment(props) {
                         {edit ? <textarea name="content" className="medium-font text-area" value={content} onChange={handleChange} /> : <p>{content}</p>}
                     </div>
                     <div className="flex flex-ai-c">
-                        <Vote id={id} user={user} votes={votes} setVotes={setVotes}/>
+                        <Vote id={id} user={user} votes={votes} setVotes={setVotes} setFormType={setFormType}
+                toggleForm={toggleForm}/>
                         <button className="comment-btn">Reply</button>
                         <button className="comment-btn">Share</button>
                         <button className="comment-btn">Save</button>

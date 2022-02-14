@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 function Thread(props) {
 
-    const { setPosts, token, user, loggedIn } = props;
+    const { setPosts, token, user, loggedIn, setFormType, toggleForm } = props;
     const { id } = useParams();
     const [post, setPost] = useState();
     const [votes, setVotes] = useState();
@@ -26,8 +26,10 @@ function Thread(props) {
                 content: data.content,
                 date: data.date,
                 title: data.title,
-                votes: data.votes
+                votes: data.votes,
+                comments: data.comments
             }
+
             setPost(post);
             setVotes(post.votes);
         }
@@ -48,13 +50,28 @@ function Thread(props) {
     return (
         <div className="post-container flex flex-col flex-ai-c">
             {post && <PostHeader title={post.title} votes={votes} setVotes={setVotes}/>}
-            {post && <Post token={token} user={user} loggedIn={loggedIn} post={post} votes={votes} setVotes={setVotes} setPosts={setPosts} setComments={setComments}/>}
+            {post && <Post 
+                token={token} 
+                user={user} 
+                loggedIn={loggedIn} 
+                post={post} 
+                votes={votes} 
+                setVotes={setVotes} 
+                setPosts={setPosts} 
+                setComments={setComments}
+                setFormType={setFormType}
+                toggleForm={toggleForm} 
+            />}
             {comments && comments.map(comment => {
-                let postUser = `${user.firstName} ${user.lastName}`;
+                let postUser;
                 let commentUser = `${comment.user.firstName} ${comment.user.lastName}`;
 
+                if (user) {
+                    postUser = `${user.firstName} ${user.lastName}`;
+                }
+
                 let fullName;
-                postUser === commentUser ? fullName = 'You' : fullName = commentUser;
+                postUser && postUser === commentUser ? fullName = 'You' : fullName = commentUser;
 
                 let details = {
                     id: comment._id,
@@ -64,7 +81,8 @@ function Thread(props) {
                     date: comment.date,
                     votes: comment.votes
                 }
-                return <Comment key={comment._id} comment={details} setComments={setComments}/>
+                return <Comment key={comment._id} comment={details} setComments={setComments} user={user} setFormType={setFormType}
+                toggleForm={toggleForm}/>
             })}
         </div>
     )
