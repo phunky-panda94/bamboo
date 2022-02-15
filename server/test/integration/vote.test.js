@@ -88,22 +88,14 @@ describe('create', () => {
 
 describe('get', () => {
 
-    it('GET request to /api/votes/comment/:id should return true and status 200', async () => {
+    it('GET request to /api/votes/comment/:id should return vote id and if down or up vote and status 200', async () => {
 
         const response = await request.get(`${route}/comment/${comment._id.toString()}`)
             .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).toBe(200);
-        expect(response.body).toBe(true);
-
-    })
-
-    it('GET request to /api/votes/comment/:id should return true / false and status 200', async () => {
-
-        const response = await request.get(`${route}/comment/${commentB._id.toString()}`)
-            .set('Authorization', `Bearer ${token}`);
-
-        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('_id');
+        expect(response.body).toHaveProperty('down', true);
 
     })
 

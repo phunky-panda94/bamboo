@@ -67,7 +67,8 @@ describe('get post', () => {
         
         expect(response.status).toBe(200);
         expect(response.body.length).toBeGreaterThan(0);
-        expect(response.body[0].votes.length).toBe(0);
+        expect(response.body[0]).toHaveProperty('votes');
+        expect(response.body[0]).toHaveProperty('comments');
 
     })
 
@@ -102,7 +103,10 @@ describe('update post', () => {
 
         const response = await request.put(post.url)
             .set('Authorization', `Bearer ${token}`)
-            .send({ content: 'this is an updated post' });
+            .send({ 
+                content: 'this is an updated post',
+                title: 'this is an updated title' 
+            });
 
         expect(response.status).toBe(204);
 
