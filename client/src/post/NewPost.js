@@ -60,10 +60,10 @@ function NewPost(props) {
 
     return (
         <div className="flex flex-jc-c">
-            <div className="new-post">
+            <div className="bg-white new-post">
                 <form onSubmit={handleSubmit}>
                     <input className="field title" name="title" placeholder="Title" type="text" required={true} value={title} onChange={handleChange} />
-                    <textarea name="content" className="medium-font text-area" placeholder="Create your post" value={content} onChange={handleChange} />
+                    <textarea name="content" className="medium-font post-area" placeholder="Create your post" value={content} onChange={handleChange} />
                     <button className="bg-dark-green white btn submit-btn" type="submit" disabled={content.length === 0 || title.length === 0}>Post</button>
                 </form>
             </div>

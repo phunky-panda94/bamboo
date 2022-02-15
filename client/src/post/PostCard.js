@@ -12,7 +12,7 @@ function PostCard(props) {
     const navigate = useNavigate();
 
     const handleClick = (event) => {
-        if (event.target.tagName === 'DIV') {
+        if (event.target.tagName !== 'SPAN' && event.target.tagName !== 'BUTTON') {
             navigate(`/posts/${id}`);
         }
     }
