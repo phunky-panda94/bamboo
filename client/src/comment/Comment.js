@@ -56,7 +56,7 @@ function Comment(props) {
         const comments = await response.json();
         setComments(comments);
     }
-
+    
     return (
         <div className="bg-white comment-container flex flex-row flex-jc-c">
             <div className="user-avatar flex flex-jc-c">
@@ -66,7 +66,7 @@ function Comment(props) {
                 <div className="comment-header dark-grey flex flex-ai-c flex-jc-sb">
                     <div className="flex flex-ai-c">
                         <a href="#" className="user">{props.comment.user}</a>
-                        {user && props.comment.user === `${user.firstName} ${user.lastName}` &&
+                        {user && props.comment.user === 'You' &&
                         <>
                         <button className={`${edit ? 'on' : ''} modify-btn material-icons-outlined`} onClick={handleClick}>edit</button>
                         <button className="modify-btn material-icons-outlined" onClick={() => deleteComment()}>delete</button>
