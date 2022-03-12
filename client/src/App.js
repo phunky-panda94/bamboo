@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './header/Header';
@@ -23,18 +24,20 @@ function App() {
 
     useEffect(() => {
         async function fetchPosts() {
-            let api = "http://localhost:8000/api/posts";
+            let api = `${env.SERVER}/posts`;
         
             const response = await fetch(api, { mode: 'cors' });
             const data = await response.json();
             setPosts(data);
+            console.log(posts);
         }
         fetchPosts();
         
         async function fetchUser() {
-            let api = "http://localhost:8000/api/user";
+            let api = `${env.SERVER}/user`;
 
-            const response = await fetch(api, { 
+            const response = await fetch(api, {
+                mode: 'cors', 
                 headers: { authorization: `Bearer ${token}` }
             });
             const data = await response.json();

@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import './Profile.css';
 import PostCard from '../post/PostCard';
 import { useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ function Profile(props) {
     
     useEffect(() => {
         async function fetchUserPosts() {
-            let api = `http://localhost:8000/api/user/${user._id}/posts`
+            let api = `${env.SERVER}/user/${user._id}/posts`
             const response = await fetch(api, { mode: 'cors' });
             const data = await response.json();
             setUserPosts(data);

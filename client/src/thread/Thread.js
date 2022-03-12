@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import './Thread.css';
 import Post from '../post/Post';
 import PostHeader from '../post/PostHeader';
@@ -15,7 +16,7 @@ function Thread(props) {
     
     useEffect(() => {
         async function fetchPost() {
-            let api = `http://localhost:8000/api/posts/${id}`;
+            let api = `${env.SERVER}/posts/${id}`;
             
             const response = await fetch(api, { mode: 'cors' });
             const data = await response.json();
@@ -35,7 +36,7 @@ function Thread(props) {
         }
 
         async function fetchComments() {
-            let api = `http://localhost:8000/api/posts/${id}/comments`;
+            let api = `${env.SERVER}/posts/${id}/comments`;
 
             const response = await fetch(api, { mode: 'cors' });
             const comments = await response.json();

@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import './Post.css';
 import { getTimeElapsed } from '../util/helpers';
 import CommentBox from '../comment/CommentBox';
@@ -38,7 +39,7 @@ function Post(props) {
     }
 
     const updatePost = async () => {
-        let api = `http://localhost:8000/api/posts/${id}`;
+        let api = `${env.SERVER}/posts/${id}`;
         const token = localStorage.getItem('token');
 
         const updatedPost = {
@@ -58,7 +59,7 @@ function Post(props) {
     }
 
     const deletePost = async () => {
-        let api = `http://localhost:8000/api/posts/${id}`;
+        let api = `${env.SERVER}/posts/${id}`;
         const token = localStorage.getItem('token');
         await fetch(api, {
             method: 'delete',
@@ -67,7 +68,7 @@ function Post(props) {
             }
         })
 
-        api = "http://localhost:8000/api/posts";
+        api = `${env.SERVER}/posts`;
         const response = await fetch(api, { mode: 'cors' });
         const posts = await response.json();
         setPosts(posts);

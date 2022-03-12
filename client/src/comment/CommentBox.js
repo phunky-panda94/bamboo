@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import './Comment.css';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -15,7 +16,7 @@ function CommentBox(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         
-        const api = `http://localhost:8000/api/posts/${id}/comments/`
+        const api = `${env.SERVER}/posts/${id}/comments/`
         const token = localStorage.getItem('token');
         
         const newComment = {
@@ -37,7 +38,7 @@ function CommentBox(props) {
 
         if (response.status === 201) {
             setComment('');
-            let api = `http://localhost:8000/api/posts/${id}/comments`;
+            let api = `${env.SERVER}/posts/${id}/comments`;
 
             const response = await fetch(api, { mode: 'cors' });
             const comments = await response.json();

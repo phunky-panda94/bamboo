@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import { useCallback, useEffect, useState } from 'react';
 import './Vote.css';
 
@@ -8,7 +9,7 @@ function Vote(props) {
     const token = localStorage.getItem('token')
 
     const getVote = useCallback(async () => {
-        const api = `http://localhost:8000/api/votes/post/${id}`;
+        const api = `${env.SERVER}/votes/post/${id}`;
         const response = await fetch(api, { 
             mode: 'cors',
             headers: {
@@ -24,7 +25,7 @@ function Vote(props) {
     }, [token, id])
 
     const createVote = async (down) => {
-        let api = "http://localhost:8000/api/votes/";
+        let api = `${env.SERVER}/votes/`;
         const vote = {
             user: user._id,
             content: id,
@@ -47,7 +48,7 @@ function Vote(props) {
     }
 
     const updateVote = async (down) => {
-        let api = `http://localhost:8000/api/votes/${vote._id}/${down}`;
+        let api = `${env.SERVER}/votes/${vote._id}/${down}`;
         const response = await fetch(api, {
             method: 'put',
             headers: {
@@ -62,7 +63,7 @@ function Vote(props) {
     }
 
     const deleteVote = async () => {
-        const api = `http://localhost:8000/api/votes/${vote._id}`;
+        const api = `${env.SERVER}/votes/${vote._id}`;
         const response = await fetch(api, {
             method: 'delete',
             headers: {

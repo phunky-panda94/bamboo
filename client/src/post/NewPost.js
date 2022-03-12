@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import './NewPost.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +25,7 @@ function NewPost(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        let api = "http://localhost:8000/api/posts";
+        let api = `${env.SERVER}/posts`;
         
         const post = {
             user: user._id,
@@ -47,7 +48,7 @@ function NewPost(props) {
         if (response.status === 201) {
             setTitle('');
 
-            let api = "http://localhost:8000/api/posts";
+            let api = `${env.SERVER}/posts`;
         
             const response = await fetch(api, { mode: 'cors' });
             const data = await response.json();

@@ -1,3 +1,4 @@
+import env from 'react-dotenv';
 import './Form.css';
 import Field from './Field';
 import { useState } from 'react';
@@ -15,7 +16,7 @@ function Form(props) {
     }
 
     const handleLogin = async (event) => {
-        const api = 'http://localhost:8000/api/user/login';
+        const api = `${env.SERVER}/user/login`;
         const details = {
             email: event.target.elements['email'].value,
             password: event.target.elements['password'].value
@@ -47,7 +48,7 @@ function Form(props) {
     }
 
     const handleRegister = async (event) => { 
-        const api = 'http://localhost:8000/api/user/register';
+        const api = `${env.SERVER}/user/register`;
         const details = {
             firstName: event.target.elements['firstName'].value,
             lastName: event.target.elements['lastName'].value,
