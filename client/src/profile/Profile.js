@@ -35,7 +35,7 @@ function Profile(props) {
                     })}
                 </div>
                 <div className="bg-white profile-card flex flex-col flex-jc-c">
-                    <img src="/panda.png" className="logo"></img>
+                    <img src="/panda.png" className="logo" alt="avatar image"></img>
                     <table>
                         <tr>
                             <td><b>Name:</b></td>
