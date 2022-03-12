@@ -29,7 +29,6 @@ function App() {
             const response = await fetch(api, { mode: 'cors' });
             const data = await response.json();
             setPosts(data);
-            console.log(posts);
         }
         fetchPosts();
         
