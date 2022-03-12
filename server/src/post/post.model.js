@@ -29,10 +29,6 @@ PostSchema.virtual('url').get(function() {
     return `/api/posts/${this._id}`;
 })
 
-PostSchema.virtual('slug').get(function() {
-    return this.title.toLowerCase().replaceAll(' ', '-');
-})
-
 PostSchema.virtual('votes', {
     ref: 'Vote',
     localField: '_id',
