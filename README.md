@@ -22,3 +22,5 @@ Using Node.js, Express, MongoDB and Mongoose:
 - NoSQL models and queries
 - Authentication using `JWT` and `bcryptjs`
 - Input validation and sanitisation using `express-validator`
+
+![bamboo drawio](https://user-images.githubusercontent.com/63854834/157994143-f244308d-e12e-4d99-a6c9-8a4b80cca924.svg)
