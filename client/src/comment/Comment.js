@@ -65,7 +65,7 @@ function Comment(props) {
             <div className="comment-container">
                 <div className="comment-header dark-grey flex flex-ai-c flex-jc-sb">
                     <div className="flex flex-ai-c">
-                        <a href="#" className="user">{props.comment.user}</a>
+                        <a href="/" className="user">{props.comment.user}</a>
                         {user && props.comment.user === 'You' &&
                         <>
                         <button className={`${edit ? 'on' : ''} modify-btn material-icons-outlined`} onClick={handleClick}>edit</button>
