@@ -124,9 +124,14 @@ function Form(props) {
                                 {registered && 'Welcome! Logging you in...'}
                             </button>
                             {type === 'Login' ? 
+                                <>
                                 <span className="small-font">
                                     Forgot your <a className="dark-green" href="/">username</a> or <a className="dark-green" href="/">password</a>?
                                 </span>
+                                <span className="small-font">
+                                    Not a panda? <a className="dark-green" href="/">Sign up</a>
+                                </span>
+                                </>
                             :
                                 <span className="small-font">
                                     Already a panda? <a className="dark-green" href="/">Log in</a>
